@@ -1,0 +1,19 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/DB_PETMATE?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    username: root
+    password: 1234
+
+server:
+  port: 8090
+
+mybatis:
+  config-location: classpath:mybatis/config/mybatis-config.xml
+  mapper-locations: classpath:mybatis/mappers/**/*.xml
+  type-aliases-package: com.petmate.dto
+
+jwt:
+  secret: djdjdjeueueushshshznmqasdklheqweqwasdasxzc
+  expiration: 60000  # 1분
+  refresh-expiration: 604800000 # 7일

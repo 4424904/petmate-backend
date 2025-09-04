@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.petmate.repository.mybatis.user.MemberMapper">
+
+    <select id="findById"
+            parameterType="string"
+            resultType="com.petmate.dto.MemberDto">
+
+        SELECT
+            *
+        FROM
+            MEMBER
+        WHERE
+            ID = #{id}
+
+    </select>
+
+    <insert
+            id="signup"
+            parameterType="com.petmate.dto.MemberDto">
+
+        INSERT
+            INTO
+        MEMBER (
+            ID,
+            PW,
+            MAIL
+            )
+
+        VALUES (
+            #{id},
+            #{pw},
+            #{mail}
+            )
+
+    </insert>
+
+</mapper>
