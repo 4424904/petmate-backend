@@ -1,4 +1,4 @@
-package com.petmate.backend;
+package com.petmate;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
