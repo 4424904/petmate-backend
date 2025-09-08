@@ -15,7 +15,7 @@ spring:
   # JPA 설정 (메인)
   jpa:
     hibernate:
-      ddl-auto: update  # 개발용 (운영에서는 validate 사용)
+      ddl-auto: update # 개발용 (운영에서는 validate 사용)
     show-sql: true
     properties:
       hibernate:
@@ -63,10 +63,11 @@ mybatis:
   config-location: classpath:mybatis/config/mybatis-config.xml
   mapper-locations: classpath:mybatis/mappers/**/*.xml
   type-aliases-package: com.petmate.dto
+
 # JWT 설정
 jwt:
   secret: djdjdjeueueushshshznmqasdklheqweqwasdasxzc
-  issuer: ${JWT_ISSUER}
+  issuer: petmate
   expiration: 60000
   refresh-expiration: 604800000
 # 로깅 설정
