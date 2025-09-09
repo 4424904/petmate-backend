@@ -1,4 +1,4 @@
-package com.petmate.common.entity.test;
+package com.petmate.domain.test.entity;
 
 public enum JpaTestProvider {
     NAVER("네이버"),

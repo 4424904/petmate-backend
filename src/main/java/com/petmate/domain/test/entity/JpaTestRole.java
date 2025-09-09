@@ -1,4 +1,4 @@
-package com.petmate.common.entity.test;
+package com.petmate.domain.test.entity;
 
 public enum JpaTestRole {
     GUEST("비회원"),

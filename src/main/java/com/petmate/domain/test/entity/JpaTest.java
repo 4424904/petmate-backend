@@ -1,4 +1,4 @@
-package com.petmate.common.entity.test;
+package com.petmate.domain.test.entity;
 
 import com.petmate.common.entity.BaseEntity;
 import jakarta.persistence.*;

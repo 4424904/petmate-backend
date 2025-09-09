@@ -1,16 +1,18 @@
-package com.petmate.test.service;
-
-import com.petmate.entity.test.JpaTest;
-import com.petmate.entity.test.JpaTestRole;
-import com.petmate.entity.test.JpaTestProvider;
-import com.petmate.repository.jpa.test.JpaTestRepository;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+package com.petmate.domain.test.service;
 
 import java.util.List;
 import java.util.Optional;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.petmate.domain.test.entity.JpaTest;
+import com.petmate.domain.test.entity.JpaTestProvider;
+import com.petmate.domain.test.entity.JpaTestRole;
+import com.petmate.domain.test.repository.JpaTestRepository;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor

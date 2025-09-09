@@ -1,11 +1,12 @@
-package com.petmate.common.repository.jpa.test;
+package com.petmate.domain.test.repository;
 
-import com.petmate.common.entity.test.JpaTest;
-import com.petmate.common.entity.test.JpaTestProvider;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
+import com.petmate.domain.test.entity.JpaTest;
+import com.petmate.domain.test.entity.JpaTestProvider;
 
 import java.util.Optional;
 
