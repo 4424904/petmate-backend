@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.petmate.domain.test.entity.JpaTest;
+import com.petmate.domain.user.entity.UserEntity;
 import com.petmate.domain.test.service.JpaTestService;
 
 import lombok.RequiredArgsConstructor;
@@ -31,47 +31,47 @@ public class JpaTestController {
 
     // 전체 조회
     @GetMapping
-    public ResponseEntity<List<JpaTest>> getAllTests() {
+    public ResponseEntity<List<UserEntity>> getAllTests() {
         log.info("JPA 테스트 전체 조회 요청");
-        List<JpaTest> tests = jpaTestService.findAll();
+        List<UserEntity> tests = jpaTestService.findAll();
         return ResponseEntity.ok(tests);
     }
 
     // ID로 조회
     @GetMapping("/{id}")
-    public ResponseEntity<JpaTest> getTestById(@PathVariable Long id) {
+    public ResponseEntity<UserEntity> getTestById(@PathVariable Integer id) {
         log.info("JPA 테스트 ID {} 조회 요청", id);
-        JpaTest test = jpaTestService.findById(id);
+        UserEntity test = jpaTestService.findById(id);
         return test != null ? ResponseEntity.ok(test) : ResponseEntity.notFound().build();
     }
 
     // 생성
     @PostMapping
-    public ResponseEntity<JpaTest> createTest(@RequestBody Map<String, String> request) {
+    public ResponseEntity<UserEntity> createTest(@RequestBody Map<String, String> request) {
         log.info("JPA 테스트 생성 요청: {}", request);
         
         String name = request.get("name");
         String description = request.get("description");
         
-        JpaTest createdTest = jpaTestService.createTest(name, description);
+        UserEntity createdTest = jpaTestService.createTest(name, description);
         return ResponseEntity.ok(createdTest);
     }
 
     // 수정
     @PutMapping("/{id}")
-    public ResponseEntity<JpaTest> updateTest(@PathVariable Long id, @RequestBody Map<String, String> request) {
+    public ResponseEntity<UserEntity> updateTest(@PathVariable Integer id, @RequestBody Map<String, String> request) {
         log.info("JPA 테스트 ID {} 수정 요청: {}", id, request);
         
         String name = request.get("name");
         String description = request.get("description");
         
-        JpaTest updatedTest = jpaTestService.updateTest(id, name, description);
+        UserEntity updatedTest = jpaTestService.updateTest(id, name, description);
         return updatedTest != null ? ResponseEntity.ok(updatedTest) : ResponseEntity.notFound().build();
     }
 
     // 삭제
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteTest(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteTest(@PathVariable Integer id) {
         log.info("JPA 테스트 ID {} 삭제 요청", id);
         boolean deleted = jpaTestService.deleteTest(id);
         return deleted ? ResponseEntity.ok().build() : ResponseEntity.notFound().build();
@@ -79,9 +79,9 @@ public class JpaTestController {
 
     // 이메일로 조회
     @GetMapping("/email/{email}")
-    public ResponseEntity<JpaTest> getTestByEmail(@PathVariable String email) {
+    public ResponseEntity<UserEntity> getTestByEmail(@PathVariable String email) {
         log.info("JPA 테스트 이메일 {} 조회 요청", email);
-        JpaTest test = jpaTestService.findByEmail(email);
+        UserEntity test = jpaTestService.findByEmail(email);
         return test != null ? ResponseEntity.ok(test) : ResponseEntity.notFound().build();
     }
 

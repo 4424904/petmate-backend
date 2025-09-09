@@ -1,14 +1,15 @@
 package com.petmate.domain.test.service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.petmate.domain.test.entity.JpaTest;
-import com.petmate.domain.test.entity.JpaTestProvider;
-import com.petmate.domain.test.entity.JpaTestRole;
+import com.petmate.domain.user.entity.UserEntity;
+import com.petmate.common.repository.CodeRepository;
+import com.petmate.common.util.CodeUtil;
 import com.petmate.domain.test.repository.JpaTestRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -22,57 +23,97 @@ public class JpaTestService {
 
     private final JpaTestRepository jpaTestRepository;
 
+    private final CodeUtil codeUtil;
+
     // 전체 조회
-    public List<JpaTest> findAll() {
+    public List<UserEntity> findAll() {
         log.info("JPA 테스트 전체 조회");
-        return jpaTestRepository.findAll();
+        List<UserEntity> userEntities = jpaTestRepository.findAll();
+
+        userEntities.forEach(userEntity -> {
+            userEntity.setRole(codeUtil.getUserRoleName(userEntity.getRole()));
+            userEntity.setStatus(codeUtil.getUserStatusName(userEntity.getStatus()));
+            userEntity.setMainService(codeUtil.getServiceTypeName(userEntity.getMainService()));
+            userEntity.setCareSpecies(codeUtil.getSpeciesName(userEntity.getCareSpecies()));
+            userEntity.setGender(codeUtil.getGenderName(userEntity.getGender()));
+        });
+
+        return userEntities;
     }
 
     // ID로 조회
-    public JpaTest findById(Long id) {
+    public UserEntity findById(Integer id) {
         log.info("JPA 테스트 ID {} 조회", id);
         return jpaTestRepository.findById(id).orElse(null);
     }
 
     // 이메일로 조회
-    public JpaTest findByEmail(String email) {
+    public UserEntity findByEmail(String email) {
         log.info("JPA 테스트 이메일 {} 조회", email);
         return jpaTestRepository.findActiveByEmail(email).orElse(null);
     }
 
     // 생성
     @Transactional
-    public JpaTest createTest(String name, String description) {
+    public UserEntity createTest(String name, String description) {
         log.info("JPA 테스트 생성: name={}, description={}", name, description);
         
         // 테스트용 이메일 생성 (중복 방지)
         String email = "test" + System.currentTimeMillis() + "@example.com";
         
-        JpaTest jpaTest = JpaTest.builder()
+        UserEntity userEntity = UserEntity.builder()
                 .name(name != null ? name : "테스트 이름")
                 .email(email)
+                .address("테스트 주소")
+                .nickName("테스트닉네임" + System.currentTimeMillis())
+                .provider("KAKAO")
                 .profileImage("https://via.placeholder.com/150")
-                .role(JpaTestRole.GUEST)
-                .provider(JpaTestProvider.KAKAO)
-                .providerId("test_" + System.currentTimeMillis())
+                .phone("010-0000-0000")
+                .birthDate(LocalDate.of(1990, 1, 1))
+                .gender("M")
+                .role("O") // 반려인
+                .mainService("P")
+                .careSpecies("D")
+                .status("A") // 활성
+                .emailVerified("N")
                 .build();
 
-        JpaTest savedTest = jpaTestRepository.save(jpaTest);
+        UserEntity savedTest = jpaTestRepository.save(userEntity);
         log.info("JPA 테스트 생성 완료: id={}", savedTest.getId());
         return savedTest;
     }
 
     // 수정
     @Transactional
-    public JpaTest updateTest(Long id, String name, String description) {
+    public UserEntity updateTest(Integer id, String name, String description) {
         log.info("JPA 테스트 수정: id={}, name={}", id, name);
         
-        Optional<JpaTest> optionalTest = jpaTestRepository.findById(id);
+        Optional<UserEntity> optionalTest = jpaTestRepository.findById(id);
         if (optionalTest.isPresent()) {
-            JpaTest jpaTest = optionalTest.get();
-            jpaTest.updateProfile(name, "https://via.placeholder.com/150");
+            UserEntity userEntity = optionalTest.get();
+            
+            // UserEntity는 불변 객체이므로 Builder 패턴으로 새 객체 생성
+            UserEntity updatedEntity = UserEntity.builder()
+                    .id(userEntity.getId())
+                    .email(userEntity.getEmail())
+                    .address(userEntity.getAddress())
+                    .nickName(userEntity.getNickName())
+                    .provider(userEntity.getProvider())
+                    .name(name != null ? name : userEntity.getName()) // 새 이름
+                    .profileImage("https://via.placeholder.com/150") // 새 프로필 이미지
+                    .phone(userEntity.getPhone())
+                    .birthDate(userEntity.getBirthDate())
+                    .gender(userEntity.getGender())
+                    .role(userEntity.getRole())
+                    .mainService(userEntity.getMainService())
+                    .careSpecies(userEntity.getCareSpecies())
+                    .status(userEntity.getStatus())
+                    .emailVerified(userEntity.getEmailVerified())
+                    .build();
+            
+            UserEntity savedEntity = jpaTestRepository.save(updatedEntity);
             log.info("JPA 테스트 수정 완료: id={}", id);
-            return jpaTest; // JPA dirty checking으로 자동 업데이트
+            return savedEntity;
         }
         
         log.warn("JPA 테스트 수정 실패 - ID {} 찾을 수 없음", id);
@@ -81,7 +122,7 @@ public class JpaTestService {
 
     // 삭제
     @Transactional
-    public boolean deleteTest(Long id) {
+    public boolean deleteTest(Integer id) {
         log.info("JPA 테스트 삭제: id={}", id);
         
         if (jpaTestRepository.existsById(id)) {
@@ -104,14 +145,22 @@ public class JpaTestService {
         
         // 샘플 데이터 생성
         for (int i = 1; i <= 5; i++) {
-            JpaTest testData = JpaTest.builder()
+            UserEntity testData = UserEntity.builder()
                     .name("테스트 사용자 " + i)
                     .email("test" + i + "@example.com")
+                    .address("테스트 주소 " + i)
+                    .nickName("테스트닉네임" + i)
+                    .provider(i % 3 == 0 ? "GOOGLE" : 
+                             i % 2 == 0 ? "NAVER" : "KAKAO")
                     .profileImage("https://via.placeholder.com/150")
-                    .role(i % 2 == 0 ? JpaTestRole.OWNER : JpaTestRole.PETMATE)
-                    .provider(i % 3 == 0 ? JpaTestProvider.GOOGLE : 
-                             i % 2 == 0 ? JpaTestProvider.NAVER : JpaTestProvider.KAKAO)
-                    .providerId("init_test_" + i)
+                    .phone("010-000" + String.format("%d-000%d", i, i))
+                    .birthDate(LocalDate.of(1990 + i, 1, 1))
+                    .gender(i % 2 == 0 ? "F" : "M")
+                    .role(i % 2 == 0 ? "O" : "P") // O:반려인, P:펫메이트
+                    .mainService("P")
+                    .careSpecies("D")
+                    .status("A") // 활성
+                    .emailVerified("N")
                     .build();
             
             jpaTestRepository.save(testData);
@@ -128,7 +177,7 @@ public class JpaTestService {
     // 활성 사용자 수 조회 (추가 기능)
     public long getActiveCount() {
         return jpaTestRepository.findAll().stream()
-                .filter(test -> test.getIsActive())
+                .filter(user -> "A".equals(user.getStatus()))
                 .count();
     }
 }
