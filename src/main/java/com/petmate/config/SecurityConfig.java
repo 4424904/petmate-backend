@@ -39,7 +39,8 @@ public class SecurityConfig {
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**","/oauth2/**","/login/**","/login/oauth2/**",
-                                "/error","/favicon.ico","/static/**").permitAll()
+                                "/error","/favicon.ico","/static/**",
+                                "/api/payment/**","/api/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .oauth2Login(o -> o
