@@ -3,39 +3,34 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.petmate.repository.mybatis.user.MemberMapper">
+<mapper namespace="com.petmate.common.repository.mybatis.user.MemberMapper">
 
+    <!-- 회원 조회 -->
     <select id="findById"
-            parameterType="string"
-            resultType="com.petmate.dto.MemberDto">
-
+            parameterType="java.lang.String"
+            resultType="com.petmate.domain.auth.dto.response.MemberDto">
         SELECT
-            *
-        FROM
-            MEMBER
-        WHERE
-            ID = #{id}
-
+        no,
+        id,
+        pw,
+        mail
+        FROM member
+        WHERE id = #{id}
     </select>
 
-    <insert
-            id="signup"
-            parameterType="com.petmate.dto.MemberDto">
-
-        INSERT
-            INTO
-        MEMBER (
-            ID,
-            PW,
-            MAIL
-            )
-
+    <!-- 회원 가입 -->
+    <insert id="signup"
+            parameterType="com.petmate.domain.auth.dto.response.MemberDto">
+        INSERT INTO member (
+        id,
+        pw,
+        mail
+        )
         VALUES (
-            #{id},
-            #{pw},
-            #{mail}
-            )
-
+        #{id},
+        #{pw},
+        #{mail}
+        )
     </insert>
 
 </mapper>
