@@ -1,6 +1,6 @@
-package com.petmate.payment.dto.response;
+package com.petmate.domain.payment.dto.response;
 
-import com.petmate.payment.entity.PaymentEntity;
+import com.petmate.domain.payment.entity.PaymentEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

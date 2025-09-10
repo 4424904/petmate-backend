@@ -1,8 +1,8 @@
-package com.petmate.payment.controller;
+package com.petmate.domain.payment.controller;
 
-import com.petmate.payment.dto.request.PaymentRequestDto;
-import com.petmate.payment.dto.response.PaymentResponseDto;
-import com.petmate.payment.service.PaymentService;
+import com.petmate.domain.payment.dto.request.PaymentRequestDto;
+import com.petmate.domain.payment.dto.response.PaymentResponseDto;
+import com.petmate.domain.payment.service.PaymentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

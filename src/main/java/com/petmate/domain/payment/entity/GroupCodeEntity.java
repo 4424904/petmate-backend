@@ -1,4 +1,4 @@
-package com.petmate.payment.entity;
+package com.petmate.domain.payment.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

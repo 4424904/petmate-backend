@@ -1,7 +1,7 @@
 package com.petmate.config;
 
-import com.petmate.payment.entity.GroupCodeEntity;
-import com.petmate.payment.repository.jpa.CommonCodeRepository;
+import com.petmate.domain.payment.entity.GroupCodeEntity;
+import com.petmate.domain.payment.repository.jpa.CommonCodeRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
