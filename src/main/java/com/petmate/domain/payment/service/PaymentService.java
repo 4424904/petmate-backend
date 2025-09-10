@@ -1,11 +1,11 @@
-package com.petmate.payment.service;
+package com.petmate.domain.payment.service;
 
-import com.petmate.payment.dto.request.PaymentRequestDto;
-import com.petmate.payment.dto.response.PaymentResponseDto;
-import com.petmate.payment.entity.GroupCodeEntity;
-import com.petmate.payment.entity.PaymentEntity;
-import com.petmate.payment.repository.jpa.CommonCodeRepository;
-import com.petmate.payment.repository.jpa.PaymentRepository;
+import com.petmate.domain.payment.dto.request.PaymentRequestDto;
+import com.petmate.domain.payment.dto.response.PaymentResponseDto;
+import com.petmate.domain.payment.entity.GroupCodeEntity;
+import com.petmate.domain.payment.entity.PaymentEntity;
+import com.petmate.domain.payment.repository.jpa.CommonCodeRepository;
+import com.petmate.domain.payment.repository.jpa.PaymentRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

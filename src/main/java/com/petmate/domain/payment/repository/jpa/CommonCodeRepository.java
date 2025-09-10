@@ -1,6 +1,6 @@
-package com.petmate.payment.repository.jpa;
+package com.petmate.domain.payment.repository.jpa;
 
-import com.petmate.payment.entity.GroupCodeEntity;
+import com.petmate.domain.payment.entity.GroupCodeEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

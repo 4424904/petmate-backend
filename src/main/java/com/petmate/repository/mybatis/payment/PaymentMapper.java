@@ -1,6 +1,6 @@
 package com.petmate.repository.mybatis.payment;
 
-import com.petmate.payment.entity.PaymentEntity;
+import com.petmate.domain.payment.entity.PaymentEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 

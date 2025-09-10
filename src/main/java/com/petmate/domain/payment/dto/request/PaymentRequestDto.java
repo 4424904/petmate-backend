@@ -1,4 +1,4 @@
-package com.petmate.payment.dto.request;
+package com.petmate.domain.payment.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
