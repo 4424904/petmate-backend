@@ -2,7 +2,6 @@ package com.petmate.security;
 
 import com.petmate.security.jwt.JwtClaimAccessor;
 import com.petmate.security.jwt.JwtUtil;
-import io.jsonwebtoken.Claims;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -14,7 +13,6 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -34,6 +32,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         String userId   = String.valueOf(a.get("userId"));
         String provider = String.valueOf(a.getOrDefault("provider", "oauth2")).toUpperCase(Locale.ROOT);
         String email    = a.get("email")    == null ? null : String.valueOf(a.get("email"));
+        String name     = a.get("name")     == null ? null : String.valueOf(a.get("name"));         // name 추가
         String nickname = a.get("nickname") == null ? null : String.valueOf(a.get("nickname"));
         String picture  = a.get("picture")  == null ? null : String.valueOf(a.get("picture"));
 
@@ -41,7 +40,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         String access = jwtUtil.issue(
                 userId,
                 jwtUtil.accessTtlMs(),
-                JwtClaimAccessor.accessClaims(List.of("USER"), provider, email, nickname, picture)
+                JwtClaimAccessor.accessClaims(List.of("USER"), provider, email, name, nickname, picture) // name 넣기
         );
         String refresh = jwtUtil.issue(
                 userId,

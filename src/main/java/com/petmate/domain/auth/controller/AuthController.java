@@ -138,6 +138,7 @@ public class AuthController {
             UserInfoResponseDto dto = new UserInfoResponseDto(
                     claims.getSubject(),
                     JwtClaimAccessor.email(claims),
+                    JwtClaimAccessor.name(claims),        // name 필드 반영
                     JwtClaimAccessor.nickname(claims),
                     JwtClaimAccessor.picture(claims),
                     JwtClaimAccessor.provider(claims),

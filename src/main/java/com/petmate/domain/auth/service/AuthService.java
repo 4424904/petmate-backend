@@ -42,6 +42,7 @@ public class AuthService {
                         List.of("USER"),      // 권한
                         "LOCAL",              // provider
                         member.getMail(),     // email
+                        null,                 // name  <-- 이 부분 추가
                         null,                 // nickname
                         null                  // picture
                 )
@@ -79,11 +80,12 @@ public class AuthService {
                 userId,
                 jwtUtil.accessTtlMs(),
                 JwtClaimAccessor.accessClaims(
-                        List.of("USER"),
-                        "LOCAL",
-                        null,
-                        null,
-                        null
+                        List.of("USER"),    // roles
+                        "LOCAL",            // provider
+                        null,               // email
+                        null,               // name
+                        null,               // nickname
+                        null                // picture
                 )
         );
 

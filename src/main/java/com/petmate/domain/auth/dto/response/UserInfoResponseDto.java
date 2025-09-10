@@ -9,6 +9,7 @@ import java.util.List;
 public class UserInfoResponseDto {
     private String userId;
     private String email;
+    private String name;      // 이 부분 추가
     private String nickname;
     private String picture;
     private String provider;

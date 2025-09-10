@@ -16,18 +16,21 @@ public final class JwtClaimAccessor {
     public static final String ROLES = "roles";
     public static final String PROV = "prov";
     public static final String EMAIL = "email";
+    public static final String NAME = "name";          // name 필드 추가
     public static final String NICKNAME = "nickname";
     public static final String PICTURE = "picture";
     public static final String JTI = "jti";
 
     // 발급 시 사용할 미니 팩토리
     public static Map<String,Object> accessClaims(List<String> roles, String provider,
-                                                  String email, String nickname, String picture) {
+                                                  String email, String name,   // name 추가
+                                                  String nickname, String picture) {
         var claims = new java.util.HashMap<String,Object>();
         claims.put(TYP, "access");
         if (roles != null)    claims.put(ROLES, roles);
         if (provider != null) claims.put(PROV, provider);
         if (email != null)    claims.put(EMAIL, email);
+        if (name != null)     claims.put(NAME, name);          // name 클레임 추가
         if (nickname != null) claims.put(NICKNAME, nickname);
         if (picture != null)  claims.put(PICTURE, picture);
         return claims;
@@ -41,6 +44,7 @@ public final class JwtClaimAccessor {
     public static String type(Claims c) { return string(c.get(TYP)); }
     public static String provider(Claims c) { return string(c.get(PROV)); }
     public static String email(Claims c) { return string(c.get(EMAIL)); }
+    public static String name(Claims c) { return string(c.get(NAME)); }       // name 꺼내기 추가
     public static String nickname(Claims c) { return string(c.get(NICKNAME)); }
     public static String picture(Claims c) { return string(c.get(PICTURE)); }
 
