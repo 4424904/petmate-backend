@@ -26,8 +26,7 @@ public class JwtUtil {
             @Value("${jwt.secret}") String secret,
             @Value("${jwt.expiration}") long accessTtlMs,
             @Value("${jwt.refresh-expiration}") long refreshTtlMs,
-            @Value("${jwt.issuer:petmate}") String issuer
-    ) {
+            @Value("${jwt.issuer:petmate}") String issuer) {
         this.secret = secret;
         this.accessTtlMs = accessTtlMs;
         this.refreshTtlMs = refreshTtlMs;
@@ -40,7 +39,7 @@ public class JwtUtil {
     }
 
     /** 범용 발급 */
-    public String issue(String subject, long ttlMs, Map<String,Object> claims) {
+    public String issue(String subject, long ttlMs, Map<String, Object> claims) {
         Date now = new Date();
         return Jwts.builder()
                 .claims(claims)
@@ -58,13 +57,37 @@ public class JwtUtil {
                 .parseSignedClaims(token).getPayload();
     }
 
-    public boolean validate(String token) { try { parse(token); return true; } catch (Exception e) { return false; } }
-    public boolean isExpired(String token) { try { return parse(token).getExpiration().before(new Date()); } catch (Exception e) { return true; } }
-    public String subject(String token) { return parse(token).getSubject(); }
+    public boolean validate(String token) {
+        try {
+            parse(token);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public boolean isExpired(String token) {
+        try {
+            return parse(token).getExpiration().before(new Date());
+        } catch (Exception e) {
+            return true;
+        }
+    }
+
+    public String subject(String token) {
+        return parse(token).getSubject();
+    }
 
     /** 선택적 헬퍼 */
-    public Object claim(String token, String name) { return parse(token).get(name); }
+    public Object claim(String token, String name) {
+        return parse(token).get(name);
+    }
 
-    public long accessTtlMs() { return accessTtlMs; }
-    public long refreshTtlMs() { return refreshTtlMs; }
+    public long accessTtlMs() {
+        return accessTtlMs;
+    }
+
+    public long refreshTtlMs() {
+        return refreshTtlMs;
+    }
 }
