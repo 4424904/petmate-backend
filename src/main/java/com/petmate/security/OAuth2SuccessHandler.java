@@ -41,7 +41,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         String nickname = str(a.get("nickname"), null);
         String picture  = str(a.get("picture"), null);
 
-        // DB 업서트 (간소화 시그니처)
+        // DB 업서트
         Integer userId = userService.applyBasicUser(email, provider, name, nickname);
 
         // JWT 발급: subject = DB userId

@@ -9,8 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.oauth2.core.user.OAuth2User;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,7 +18,10 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/address")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*")
+@CrossOrigin(
+        origins = "http://localhost:3000",
+        allowCredentials = "true"
+)
 @Slf4j
 public class AddressController {
 
@@ -37,12 +39,11 @@ public class AddressController {
      */
 
     // 주소 목록 조회
-    @GetMapping
-    public ResponseEntity<List<AddressResponseDto>> getAddresses(
-            @AuthenticationPrincipal OAuth2User principal) {
+    @GetMapping("/{id}")
+    public ResponseEntity<List<AddressResponseDto>> getAddresses() {
 
-        String userId = principal.getAttribute("userId"); // "google_12345" 형태
-        String email = principal.getAttribute("email");
+        String userId = SecurityContextHolder.getContext().getAuthentication().getName();
+        String email = "N/A";
 
         log.info("사용자 주소 목록 조회 요청 - userId: {}, email: {}", userId, email);
 
@@ -66,12 +67,11 @@ public class AddressController {
     // 주소 추가
     @PostMapping
     public ResponseEntity<AddressResponseDto> createAddress(
-            @Valid @RequestBody AddressCreateRequestDto addressCreateRequestDto,
-            @AuthenticationPrincipal OAuth2User principal
+            @Valid @RequestBody AddressCreateRequestDto addressCreateRequestDto
     ) {
 
-        String userId = principal.getAttribute("userId");
-        String email = principal.getAttribute("email");
+        String userId = SecurityContextHolder.getContext().getAuthentication().getName();
+        String email = "N/A";
 
         log.info("주소 추가 요청 - userId: {}, email: {}, 주소: {}",
                 userId, email, addressCreateRequestDto.getAddress());
@@ -102,12 +102,11 @@ public class AddressController {
     @PutMapping("/{id}")
     public ResponseEntity<AddressResponseDto> updateAddress(
             @PathVariable Integer id,
-            @Valid @RequestBody AddressUpdateRequestDto addressUpdateRequestDto,
-            @AuthenticationPrincipal OAuth2User principal
+            @Valid @RequestBody AddressUpdateRequestDto addressUpdateRequestDto
     ) {
 
-        String userId = principal.getAttribute("userId");
-        String email = principal.getAttribute("email");
+        String userId = SecurityContextHolder.getContext().getAuthentication().getName();
+        String email = "N/A";
 
         log.info("주소 수정 요청 - userId: {}, email: {}, 주소 ID: {}",
                 userId, email, id);
@@ -135,12 +134,11 @@ public class AddressController {
     // 주소 삭제
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteAddress(
-            @PathVariable Integer id,
-            @AuthenticationPrincipal OAuth2User principal
+            @PathVariable Integer id
     ) {
 
-        String userId = principal.getAttribute("userId");
-        String email = principal.getAttribute("email");
+        String userId = SecurityContextHolder.getContext().getAuthentication().getName();
+        String email = "N/A";
 
         log.info("주소 삭제 요청 - userId: {}, email: {}, 주소 ID: {}",
                 userId, email, id);
@@ -162,13 +160,12 @@ public class AddressController {
     }
 
     // 기본 주소 설정
-    @PatchMapping("/{id}/default")
+    @PutMapping("/{id}/default")
     public ResponseEntity<Void> setDefaultAddress(
-            @PathVariable Integer id,
-            @AuthenticationPrincipal OAuth2User principal
+            @PathVariable Integer id
     ) {
-        String userId = principal.getAttribute("userId");
-        String email = principal.getAttribute("email");
+        String userId = SecurityContextHolder.getContext().getAuthentication().getName();
+        String email = "N/A";
 
         log.info("기본 주소 설정 요청 - userId: {}, email: {}, 주소 ID: {}",
                 userId, email, id);
