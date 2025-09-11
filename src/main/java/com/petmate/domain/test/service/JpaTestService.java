@@ -64,7 +64,6 @@ public class JpaTestService {
         UserEntity userEntity = UserEntity.builder()
                 .name(name != null ? name : "테스트 이름")
                 .email(email)
-                .address("테스트 주소")
                 .nickName("테스트닉네임" + System.currentTimeMillis())
                 .provider("KAKAO")
                 .profileImage("https://via.placeholder.com/150")
@@ -96,7 +95,6 @@ public class JpaTestService {
             UserEntity updatedEntity = UserEntity.builder()
                     .id(userEntity.getId())
                     .email(userEntity.getEmail())
-                    .address(userEntity.getAddress())
                     .nickName(userEntity.getNickName())
                     .provider(userEntity.getProvider())
                     .name(name != null ? name : userEntity.getName()) // 새 이름
@@ -148,7 +146,6 @@ public class JpaTestService {
             UserEntity testData = UserEntity.builder()
                     .name("테스트 사용자 " + i)
                     .email("test" + i + "@example.com")
-                    .address("테스트 주소 " + i)
                     .nickName("테스트닉네임" + i)
                     .provider(i % 3 == 0 ? "GOOGLE" : 
                              i % 2 == 0 ? "NAVER" : "KAKAO")

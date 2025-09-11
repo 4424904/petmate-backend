@@ -1,18 +1,21 @@
+// com/petmate/security/OAuth2SuccessHandler.java
 package com.petmate.security;
 
+import com.petmate.domain.user.service.UserService;
 import com.petmate.security.jwt.JwtClaimAccessor;
 import com.petmate.security.jwt.JwtUtil;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -22,54 +25,45 @@ import java.util.Map;
 public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
     private final JwtUtil jwtUtil;
+    private final UserService userService;
 
     @Override
+    @Transactional
     public void onAuthenticationSuccess(HttpServletRequest req, HttpServletResponse res,
-                                        Authentication authentication) throws IOException, ServletException {
+                                        Authentication authentication) throws IOException {
         OAuth2User p = (OAuth2User) authentication.getPrincipal();
         Map<String, Object> a = p.getAttributes();
 
-        String userId   = String.valueOf(a.get("userId"));
-        String provider = String.valueOf(a.getOrDefault("provider", "oauth2")).toUpperCase(Locale.ROOT);
-        String email    = a.get("email")    == null ? null : String.valueOf(a.get("email"));
-        String name     = a.get("name")     == null ? null : String.valueOf(a.get("name"));         // name 추가
-        String nickname = a.get("nickname") == null ? null : String.valueOf(a.get("nickname"));
-        String picture  = a.get("picture")  == null ? null : String.valueOf(a.get("picture"));
+        String provider = str(a.get("provider"), "oauth2").toUpperCase(Locale.ROOT);
+        String rawId    = str(a.get("userId"), str(a.get("id"), str(a.get("sub"), "0")));
+        String email    = str(a.get("email"), provider.toLowerCase(Locale.ROOT) + "_" + rawId + "@oauth.local");
+        String name     = str(a.get("name"), null);
+        String nickname = str(a.get("nickname"), null);
+        String picture  = str(a.get("picture"), null);
 
-        // 액세스/리프레시 발급 (JwtUtil + JwtClaimAccessor 조합)
+        // DB 업서트 (간소화 시그니처)
+        Integer userId = userService.applyBasicUser(email, provider, name, nickname);
+
+        // JWT 발급: subject = DB userId
         String access = jwtUtil.issue(
-                userId,
+                String.valueOf(userId),
                 jwtUtil.accessTtlMs(),
-                JwtClaimAccessor.accessClaims(List.of("USER"), provider, email, name, nickname, picture) // name 넣기
+                JwtClaimAccessor.accessClaims(List.of("USER"), provider, email, name, nickname, picture)
         );
-        String refresh = jwtUtil.issue(
-                userId,
-                jwtUtil.refreshTtlMs(),
-                JwtClaimAccessor.refreshClaims()
-        );
-
-        boolean isLocal = "localhost".equals(req.getServerName()) || "127.0.0.1".equals(req.getServerName());
-
-        ResponseCookie refreshCookie = ResponseCookie.from("refreshToken", refresh)
-                .httpOnly(true)
-                .secure(!isLocal)
-                .sameSite(isLocal ? "Lax" : "None")
-                .path("/")
-                .maxAge(7 * 24 * 60 * 60)
-                .build();
-        res.addHeader("Set-Cookie", refreshCookie.toString());
-
-        ResponseCookie accessCookie = ResponseCookie.from("accessToken", access)
-                .httpOnly(true)
-                .secure(!isLocal)
-                .sameSite(isLocal ? "Lax" : "None")
-                .path("/")
-                .maxAge(5 * 60)
-                .build();
-        res.addHeader("Set-Cookie", accessCookie.toString());
 
         String next = req.getParameter("next");
         String path = (next != null && next.startsWith("/")) ? next : "/home";
-        res.sendRedirect("http://localhost:3000" + path);
+
+        String url = "http://localhost:3000/oauth2/redirect"
+                + "?accessToken=" + URLEncoder.encode(access, StandardCharsets.UTF_8)
+                + "&next="        + URLEncoder.encode(path,   StandardCharsets.UTF_8);
+
+        res.sendRedirect(url);
+    }
+
+    private static String str(Object v, String def) {
+        if (v == null) return def;
+        String s = String.valueOf(v);
+        return (s.isBlank() || "null".equalsIgnoreCase(s)) ? def : s;
     }
 }

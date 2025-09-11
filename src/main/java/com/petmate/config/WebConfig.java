@@ -1,28 +1,40 @@
 package com.petmate.config;
 
-import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.*;
 
 @Slf4j
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
-	@Override
+    @Value("${app.upload.dir:C:/petmate}")
+    private String uploadRoot; // 로컬 파일 저장 루트
+
+    @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**") 							// 모든 경로에 대해
-                .allowedOrigins("http://localhost:3000", "http://localhost:3001") 	// 허용할 Origin
-                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") 		// 허용할 HTTP 메서드
-                .allowedHeaders("*") 							// 허용할 헤더
-                .allowCredentials(true); 						// 자격 증명 허용 (쿠키 포함)
-        
-        log.info("CORS configuration has been applied: Allowed Origins - http://localhost:3000, http://localhost:3001");
-        
+        registry.addMapping("/**")
+                // 개발용 허용 오리진
+                .allowedOrigins("http://localhost:3000", "http://localhost:3001")
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                .allowedHeaders("*")
+                .allowCredentials(true)
+                .maxAge(3600);
+        log.info("CORS applied. origins=http://localhost:3000, http://localhost:3001");
     }
-	
+
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        // 로컬 저장 파일 정적 제공: /files/** → C:/petmate/**
+        String location = "file:" + (uploadRoot.endsWith("/") ? uploadRoot : uploadRoot + "/");
+        registry.addResourceHandler("/files/**")
+                .addResourceLocations(location)
+                .setCachePeriod(3600);
+        log.info("Static mapping applied. /files/** -> {}", location);
+    }
 }
+
 
 // 중복된코드 제거
 

@@ -1,5 +1,6 @@
 package com.petmate.config;
 
+import org.springframework.http.HttpMethod;
 import com.petmate.security.JwtAuthenticationFilter;
 import com.petmate.security.CustomOAuth2UserService;
 import com.petmate.security.OAuth2SuccessHandler;
@@ -31,16 +32,27 @@ public class SecurityConfig {
         return cfg.getAuthenticationManager();
     }
 
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .cors(c -> {})
                 .csrf(c -> c.disable())
+                // JWT만 쓸 거면 STATELESS, OAuth2 세션 필요하면 IF_REQUIRED 유지
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**","/oauth2/**","/login/**","/login/oauth2/**",
-                                "/error","/favicon.ico","/static/**",
-                                "/api/payment/**","/api/**").permitAll()
+                        // CORS preflight
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        // 정적 리소스(업로드 노출)
+                        .requestMatchers("/files/**", "/static/**", "/favicon.ico", "/error").permitAll()
+                        // 공개 API
+                        .requestMatchers(
+                                "/auth/**","/oauth2/**","/login/**","/login/oauth2/**",
+                                "/api/payment/**","/api/**"
+                        ).permitAll()
+                        // 펫메이트 신청은 반드시 인증
+                        .requestMatchers(HttpMethod.POST, "/petmate/apply").authenticated()
+                        // 나머지는 인증
                         .anyRequest().authenticated()
                 )
                 .oauth2Login(o -> o

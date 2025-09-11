@@ -39,10 +39,6 @@ public class UserEntity extends BaseEntity {
     @Column(name = "EMAIL", nullable = false, unique = true, columnDefinition = "VARCHAR(255) COMMENT '이메일 (고유값)'")
     private String email;
 
-    @Column(name = "ADDRESS", nullable = false, length = 255)
-    @Comment("주소")
-    private String address;
-
     @Column(name = "NICK_NAME", nullable = false, length = 80)
     @Comment("닉네임")
     private String nickName;
