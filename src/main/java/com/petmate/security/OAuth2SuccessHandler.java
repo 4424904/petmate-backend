@@ -71,5 +71,6 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         String next = req.getParameter("next");
         String path = (next != null && next.startsWith("/")) ? next : "/home";
         res.sendRedirect("http://localhost:3000" + path);
+
     }
 }

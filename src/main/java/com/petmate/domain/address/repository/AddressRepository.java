@@ -30,12 +30,12 @@ public interface AddressRepository extends JpaRepository<AddressEntity, Integer>
 
     // 기존 기본 주소를 일반 주소로 변경
     @Modifying
-    @Query(value = "UPDATE ADDRESS SET IS_DEFAULT = 0 WHERE OWNER_ID = :ownerId AND IS_DEFAULT = 1", nativeQuery = true)
+    @Query(value = "UPDATE address SET IS_DEFAULT = 0 WHERE OWNER_ID = :ownerId AND IS_DEFAULT = 1", nativeQuery = true)
     void resetDefaultAddress(@Param("ownerId") Integer ownerId); // string -> integer
 
     // 특정 주소를 기본 주소로 설정
     @Modifying
-    @Query(value = "UPDATE ADDRESS SET IS_DEFAULT = 1 WHERE ID = :addressId AND OWNER_ID = :owner_id", nativeQuery = true)
+    @Query(value = "UPDATE address SET IS_DEFAULT = 1 WHERE ID = :addressId AND OWNER_ID = :ownerId", nativeQuery = true)
     void setDefaultAddress(@Param("addressId") Integer addressId, @Param("ownerId") Integer ownerId);
 
     // 사용자별 주소 존재 여부 확인
