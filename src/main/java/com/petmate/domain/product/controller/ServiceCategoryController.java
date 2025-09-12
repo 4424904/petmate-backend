@@ -23,10 +23,11 @@ public class ServiceCategoryController {
         log.info("서비스 카테고리 목록 조회 요청");
 
         List<Map<String, Object>> categories = Arrays.asList(
-                createCategory("P", "펜션"),
-                createCategory("H", "호텔"),
-                createCategory("C", "카페"),
-                createCategory("R", "식당")
+                createCategory("C", "돌봄"),
+                createCategory("W", "산책"),
+                createCategory("G", "미용"),
+                createCategory("M", "병원"),
+                createCategory("E", "기타")
         );
 
         log.info("서비스 카테고리 {} 개 반환", categories.size());
