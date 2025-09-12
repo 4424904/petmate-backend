@@ -2,6 +2,7 @@ package com.petmate.common.util;
 
 import org.springframework.stereotype.Component;
 
+import com.petmate.common.entity.CodeEntity;
 import com.petmate.common.repository.CodeRepository;
 
 @Component
@@ -14,11 +15,19 @@ public class CodeUtil {
     }
 
     public String getCodeName(String groupCode, String code) {
-        return codeRepository.findByGroupCodeAndCode(groupCode, code).getCodeNameKor();
+        CodeEntity codeEntity = codeRepository.findByGroupCodeAndCode(groupCode, code);
+        if (codeEntity == null) {
+            return "";
+        }
+        return codeEntity.getCodeNameKor();
     }
 
     public String getCodeNameEng(String groupCode, String code) {
-        return codeRepository.findByGroupCodeAndCode(groupCode, code).getCodeNameEng();
+        CodeEntity codeEntity = codeRepository.findByGroupCodeAndCode(groupCode, code);
+        if (codeEntity == null) {
+            return "";
+        }
+        return codeEntity.getCodeNameEng();
     }
 
 
