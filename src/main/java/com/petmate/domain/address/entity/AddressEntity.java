@@ -42,11 +42,11 @@ public class AddressEntity {
     @Column(name = "POSTCODE", length = 10)
     private String postCode;
 
-    @Column(name = "LAT", precision = 10, scale = 7)
-    private BigDecimal lat;
+    @Column(name = "LATITUDE", precision = 10, scale = 7)
+    private BigDecimal latitude;
 
-    @Column(name = "LNG", precision = 10, scale = 7)
-    private BigDecimal lng;
+    @Column(name = "LONGITUDE", precision = 10, scale = 7)
+    private BigDecimal longitude;
 
     @Column(name = "IS_DEFAULT", nullable = false)
     @Builder.Default

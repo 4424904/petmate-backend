@@ -88,8 +88,8 @@ public class AddressService {
                 .detailAddr(requestDto.getDetail())
                 .alias(requestDto.getAlias())
                 .postCode(requestDto.getPostcode())
-                .lat(requestDto.getLatitude())
-                .lng(requestDto.getLongitude())
+                .latitude(requestDto.getLatitude())
+                .longitude(requestDto.getLongitude())
                 .isDefault(requestDto.getIsDefault() ? 1 : 0)
                 .build();
 
@@ -132,8 +132,8 @@ public class AddressService {
                 .detailAddr(requestDto.getDetail())
                 .alias(requestDto.getAlias())
                 .postCode(requestDto.getPostcode())
-                .lat(requestDto.getLatitude())
-                .lng(requestDto.getLongitude())
+                .latitude(requestDto.getLatitude())
+                .longitude(requestDto.getLongitude())
                 .isDefault(requestDto.getIsDefault() ? 1 : 0)
                 .createdAt(addressEntity.getCreatedAt())
                 .build();
@@ -192,8 +192,8 @@ public class AddressService {
                 .alias(addressEntity.getAlias())
                 .isDefault(addressEntity.getIsDefault() == 1)
                 .postcode(addressEntity.getPostCode())
-                .latitude(addressEntity.getLat())
-                .longitude(addressEntity.getLng())
+                .latitude(addressEntity.getLatitude())
+                .longitude(addressEntity.getLongitude())
                 .createdAt(addressEntity.getCreatedAt())
                 .updatedAt(addressEntity.getUpdatedAt())
                 .build();
