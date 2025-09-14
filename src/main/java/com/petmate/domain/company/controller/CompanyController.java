@@ -3,6 +3,7 @@ package com.petmate.domain.company.controller;
 
 import com.petmate.domain.company.dto.request.CompanyRegisterRequestDto;
 import com.petmate.domain.company.dto.request.CompanyUpdateRequestDto;
+import com.petmate.domain.company.dto.response.BusinessValidationResult;
 import com.petmate.domain.company.dto.response.CompanyResponseDto;
 import com.petmate.domain.company.service.CompanyService;
 import lombok.RequiredArgsConstructor;
@@ -105,8 +106,36 @@ public class CompanyController {
     }
 
 
-
-
-
+    // 사업자등록번호 검증
+    @PostMapping("/validate-business")
+    public ResponseEntity<BusinessValidationResult> validateBusiness(
+            @RequestBody Map<String, String> request) {
+        
+        log.info("사업자등록번호 검증 요청: {}", request);
+        
+        String businessNumber = request.get("businessNumber");
+        if (businessNumber == null || businessNumber.trim().isEmpty()) {
+            return ResponseEntity.badRequest()
+                .body(BusinessValidationResult.builder()
+                    .businessNumber("")
+                    .isValid(false)
+                    .message("사업자등록번호를 입력해주세요")
+                    .build());
+        }
+        
+        // 숫자만 추출
+        String cleanBusinessNumber = businessNumber.replaceAll("[^0-9]", "");
+        if (cleanBusinessNumber.length() != 10) {
+            return ResponseEntity.badRequest()
+                .body(BusinessValidationResult.builder()
+                    .businessNumber(cleanBusinessNumber)
+                    .isValid(false)
+                    .message("사업자등록번호는 10자리 숫자여야 합니다")
+                    .build());
+        }
+        
+        BusinessValidationResult result = companyService.validateBusinessNumber(cleanBusinessNumber);
+        return ResponseEntity.ok(result);
+    }
 
 }

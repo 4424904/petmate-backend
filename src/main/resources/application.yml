@@ -87,4 +87,11 @@ logging:
     com.petmate.security: INFO
     org.springframework.security: INFO
 
+# 애플리케이션 설정
+app:
+  encryption:
+    secret-key: PetMateSecretKey123456789012  # 32자리 AES 키
+  nts:
+    service-key: e6szMk7BwlyW91nmIcFPASpeypEm9M%2FZ50I99%2Ff9%2FPQLgbrANut%2BSa9oMD%2Fx9j1V5lS38o%2FrWlHp%2BAq1%2BmoUVQ%3D%3D  # 국세청 API 서비스키
+
 

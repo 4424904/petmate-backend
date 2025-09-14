@@ -2,16 +2,24 @@ package com.petmate.domain.company.service;
 
 import com.petmate.common.service.ImageService;
 import com.petmate.common.util.CodeUtil;
+import com.petmate.util.EncryptionUtil;
 import com.petmate.domain.company.dto.request.CompanyRegisterRequestDto;
 import com.petmate.domain.company.dto.request.CompanyUpdateRequestDto;
 import com.petmate.domain.company.dto.response.BusinessData;
+import com.petmate.domain.company.dto.response.BusinessValidationResult;
 import com.petmate.domain.company.dto.response.CompanyResponseDto;
 import com.petmate.domain.company.entity.CompanyEntity;
 import com.petmate.domain.company.repository.CompanyRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -26,6 +34,10 @@ public class CompanyService {
     private final CompanyRepository companyRepository;
     private final CodeUtil codeUtil;
     private final ImageService imageService;
+    private final EncryptionUtil encryptionUtil;
+
+    @Value("${app.nts.service-key}")
+    private String ntsServiceKey;
 
     @Transactional
     public CompanyResponseDto registerCompany(CompanyRegisterRequestDto dto, Integer userId) {
@@ -82,8 +94,12 @@ public class CompanyService {
 
         // 개인(일반인) vs 사업자별 추가 정보
         if ("PERSONAL".equals(dto.getType())) {
+            // 주민번호 뒷자리 암호화
+            String encryptedSsnSecond = dto.getSsnSecond() != null ? 
+                encryptionUtil.encrypt(dto.getSsnSecond()) : null;
+            
             builder.ssnFirst(dto.getSsnFirst())
-                   .ssnSecond(dto.getSsnSecond())
+                   .ssnSecond(encryptedSsnSecond)
                    .personalName(dto.getPersonalName());
         } else {
             builder.bizRegNo(dto.getBizRegNo());
@@ -217,9 +233,10 @@ public class CompanyService {
                 .name(entity.getName())
                 .bizRegNo(entity.getBizRegNo())
                 .repName(entity.getRepName())
-                // 개인(일반인) 정보 추가
+                // 개인(일반인) 정보 추가 (주민번호 뒷자리 복호화)
                 .ssnFirst(entity.getSsnFirst())
-                .ssnSecond(entity.getSsnSecond())
+                .ssnSecond(entity.getSsnSecond() != null ? 
+                    encryptionUtil.decrypt(entity.getSsnSecond()) : null)
                 .personalName(entity.getPersonalName())
                 // 기존 필드들
                 .tel(entity.getTel())
@@ -262,6 +279,72 @@ public class CompanyService {
             return value != null && !value.trim().isEmpty() ? new BigDecimal(value) : null;
         } catch (NumberFormatException e) {
             return null;
+        }
+    }
+
+    /**
+     * 국세청 API를 통한 사업자등록번호 검증
+     */
+    public BusinessValidationResult validateBusinessNumber(String businessNumber) {
+        log.info("사업자등록번호 검증 시작: {}", businessNumber);
+        
+        try {
+            // API URL 구성
+            String url = "http://api.odcloud.kr/api/nts-businessman/v1/validate?serviceKey=" 
+                        + ntsServiceKey + "&returnType=JSON";
+            
+            // 요청 데이터 생성
+            Map<String, Object> requestBody = Map.of("b_no", List.of(businessNumber));
+            
+            // HTTP 헤더 설정
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            
+            // HTTP 요청 엔티티 생성
+            HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, headers);
+            
+            // RestTemplate으로 API 호출
+            RestTemplate restTemplate = new RestTemplate();
+            ResponseEntity<Map> response = restTemplate.postForEntity(url, entity, Map.class);
+            
+            // 응답 처리
+            Map<String, Object> responseBody = response.getBody();
+            log.info("국세청 API 응답: {}", responseBody);
+            
+            if (responseBody != null && "OK".equals(responseBody.get("status_code"))) {
+                @SuppressWarnings("unchecked")
+                List<Map<String, Object>> dataList = (List<Map<String, Object>>) responseBody.get("data");
+                
+                if (!dataList.isEmpty()) {
+                    Map<String, Object> data = dataList.get(0);
+                    String valid = (String) data.get("valid");
+                    
+                    boolean isValid = "01".equals(valid);
+                    String message = isValid ? "유효한 사업자등록번호입니다" : "무효한 사업자등록번호입니다";
+                    
+                    return BusinessValidationResult.builder()
+                        .businessNumber(businessNumber)
+                        .isValid(isValid)
+                        .status(valid)
+                        .message(message)
+                        .build();
+                }
+            }
+            
+            // 응답이 없거나 오류인 경우
+            return BusinessValidationResult.builder()
+                .businessNumber(businessNumber)
+                .isValid(false)
+                .message("사업자등록번호를 조회할 수 없습니다")
+                .build();
+                
+        } catch (Exception e) {
+            log.error("사업자등록번호 검증 중 오류 발생: ", e);
+            return BusinessValidationResult.builder()
+                .businessNumber(businessNumber)
+                .isValid(false)
+                .message("사업자등록번호 검증 중 오류가 발생했습니다: " + e.getMessage())
+                .build();
         }
     }
 }
