@@ -16,7 +16,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/companies")
 @RequiredArgsConstructor
-public class CompanyController {
+public class CompanyListController {
 
     @GetMapping
     public ResponseEntity<List<Map<String, Object>>> getCompanies() {

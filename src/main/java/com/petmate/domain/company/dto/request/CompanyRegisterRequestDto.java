@@ -31,8 +31,8 @@ public class CompanyRegisterRequestDto {
 
     // 주소 정보
     @NotBlank
-    private String roadAddress;
-    private String detailAddress;
+    private String roadAddr;
+    private String detailAddr;
     private String postcode;
     private String latitude;
     private String longitude;
@@ -53,5 +53,5 @@ public class CompanyRegisterRequestDto {
     private String introduction;
 
     // 파일 업로드
-//    private List<MultipartFile> images;
+    private List<MultipartFile> images;
 }
