@@ -62,10 +62,9 @@ public class CompanyService {
                 ? dto.getPersonalName()
                 : dto.getRepresentativeName();
 
-        CompanyEntity company = CompanyEntity.builder()
+        CompanyEntity.CompanyEntityBuilder builder = CompanyEntity.builder()
                 .type(type)
                 .name(companyName)
-                .bizRegNo(dto.getBizRegNo())
                 .repName(repName)
                 .tel(dto.getTel())
                 .repService(repServiceCode)
@@ -79,8 +78,18 @@ public class CompanyService {
                 .createdBy(userId)
                 .descText(dto.getIntroduction())
                 .createdAt(java.time.LocalDateTime.now())
-                .status("P")  // 명시적으로 승인대기 상태 설정
-                .build();
+                .status("P");  // 명시적으로 승인대기 상태 설정
+
+        // 개인(일반인) vs 사업자별 추가 정보
+        if ("PERSONAL".equals(dto.getType())) {
+            builder.ssnFirst(dto.getSsnFirst())
+                   .ssnSecond(dto.getSsnSecond())
+                   .personalName(dto.getPersonalName());
+        } else {
+            builder.bizRegNo(dto.getBizRegNo());
+        }
+
+        CompanyEntity company = builder.build();
 
         CompanyEntity savedCompany = companyRepository.save(company);
 
@@ -208,6 +217,11 @@ public class CompanyService {
                 .name(entity.getName())
                 .bizRegNo(entity.getBizRegNo())
                 .repName(entity.getRepName())
+                // 개인(일반인) 정보 추가
+                .ssnFirst(entity.getSsnFirst())
+                .ssnSecond(entity.getSsnSecond())
+                .personalName(entity.getPersonalName())
+                // 기존 필드들
                 .tel(entity.getTel())
                 .repService(entity.getRepService())
                 .services(entity.getServices())

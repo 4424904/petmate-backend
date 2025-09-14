@@ -32,6 +32,16 @@ public class CompanyEntity extends BaseEntity {
     @Column(name = "REP_NAME", length = 80)
     private String repName;     // 대표자
 
+    // 개인(일반인) 정보 추가
+    @Column(name = "SSN_FIRST", length = 6)
+    private String ssnFirst;    // 주민번호 앞자리
+
+    @Column(name = "SSN_SECOND", length = 7)
+    private String ssnSecond;   // 주민번호 뒷자리
+
+    @Column(name = "PERSONAL_NAME", length = 80)
+    private String personalName; // 개인(일반인) 성함
+
     @Column(name = "TEL", length = 20)
     private String tel;     // 연락처
 

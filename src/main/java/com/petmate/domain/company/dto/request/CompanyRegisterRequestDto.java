@@ -22,7 +22,6 @@ public class CompanyRegisterRequestDto {
     private String ssnFirst;
     private String ssnSecond;
     private String personalName;
-    private String personalCompanyName;
 
     // 사업자 정보
     private String bizRegNo;

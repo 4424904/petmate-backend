@@ -21,6 +21,12 @@ public class CompanyResponseDto {
     private String name;    // 상호명
     private String bizRegNo;    // 사업자번호
     private String repName;     // 대표자
+    
+    // 개인(일반인) 정보 추가
+    private String ssnFirst;    // 주민번호 앞자리
+    private String ssnSecond;   // 주민번호 뒷자리
+    private String personalName; // 개인(일반인) 성함
+    
     private String tel;     // 연락처
     private String descText;   // 소개글
     private String repService;  // 대표서비스(service_type)
