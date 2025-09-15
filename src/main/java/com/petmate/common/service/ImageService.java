@@ -83,30 +83,30 @@ public class ImageService {
     /**
      * 다중 이미지 업로드 (첫 번째 이미지를 썸네일로 설정 옵션)
      */
-    public List<ImageEntity> uploadMultipleImages(List<MultipartFile> files, String imageTypeCode, Long referenceId, 
+    public List<ImageEntity> uploadMultipleImages(List<MultipartFile> files, String imageTypeCode, Long referenceId,
                                                 boolean setFirstAsThumbnail) throws IOException {
-        
+
         validateBasicParams(imageTypeCode, referenceId);
-        
+
         // 파일 업로드
         List<String> uploadedFilePaths = fileUtil.uploadMultipleImages(files, imageTypeCode);
-        
+
         // 현재 최대 표시 순서 조회
         Integer maxOrder = imageRepository.findMaxDisplayOrderByReference(imageTypeCode, referenceId);
         Integer startOrder = (maxOrder != null) ? maxOrder + 1 : 1;
-        
+
         // 첫 번째 이미지를 썸네일로 설정하는 경우 기존 썸네일 해제
         if (setFirstAsThumbnail) {
             imageRepository.clearAllThumbnails(imageTypeCode, referenceId);
         }
-        
+
         List<ImageEntity> savedImages = new ArrayList<>();
-        
+
         for (int i = 0; i < files.size(); i++) {
             MultipartFile file = files.get(i);
             String uploadedPath = uploadedFilePaths.get(i);
             boolean isThumbnail = setFirstAsThumbnail && i == 0;
-            
+
             ImageEntity imageEntity = ImageEntity.builder()
                     .referenceType(imageTypeCode)
                     .referenceId(referenceId)
@@ -120,10 +120,51 @@ public class ImageService {
                     .isThumbnail(isThumbnail ? "Y" : "N")
                     .status("A")
                     .build();
-            
+
             savedImages.add(imageRepository.save(imageEntity));
         }
-        
+
+        return savedImages;
+    }
+
+    /**
+     * 기존 이미지들을 모두 삭제하고 새로운 이미지들로 교체
+     */
+    public List<ImageEntity> replaceAllImages(List<MultipartFile> files, String imageTypeCode, Long referenceId,
+                                            boolean setFirstAsThumbnail) throws IOException {
+
+        validateBasicParams(imageTypeCode, referenceId);
+
+        // 1. 기존 이미지들 모두 삭제
+        deleteAllImagesByReference(imageTypeCode, referenceId);
+
+        // 2. 새로운 이미지들 업로드
+        List<String> uploadedFilePaths = fileUtil.uploadMultipleImages(files, imageTypeCode);
+
+        List<ImageEntity> savedImages = new ArrayList<>();
+
+        for (int i = 0; i < files.size(); i++) {
+            MultipartFile file = files.get(i);
+            String uploadedPath = uploadedFilePaths.get(i);
+            boolean isThumbnail = setFirstAsThumbnail && i == 0;
+
+            ImageEntity imageEntity = ImageEntity.builder()
+                    .referenceType(imageTypeCode)
+                    .referenceId(referenceId)
+                    .originalName(file.getOriginalFilename())
+                    .storedName(extractStoredName(uploadedPath))
+                    .filePath(uploadedPath)
+                    .fileSize(file.getSize())
+                    .fileExtension(getFileExtension(file.getOriginalFilename()))
+                    .mimeType(file.getContentType())
+                    .displayOrder(i + 1)  // 1부터 시작
+                    .isThumbnail(isThumbnail ? "Y" : "N")
+                    .status("A")
+                    .build();
+
+            savedImages.add(imageRepository.save(imageEntity));
+        }
+
         return savedImages;
     }
 

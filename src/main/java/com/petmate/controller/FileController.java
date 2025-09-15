@@ -56,9 +56,9 @@ public class FileController {
             @RequestParam("imageTypeCode") String imageTypeCode,
             @RequestParam("referenceId") Long referenceId,
             @RequestParam(value = "setFirstAsThumbnail", defaultValue = "false") boolean setFirstAsThumbnail) {
-        
+
         Map<String, Object> response = new HashMap<>();
-        
+
         try {
             List<ImageEntity> savedImages = imageService.uploadMultipleImages(files, imageTypeCode, referenceId, setFirstAsThumbnail);
             response.put("success", true);
@@ -80,6 +80,40 @@ public class FileController {
         } catch (IOException e) {
             response.put("success", false);
             response.put("message", "이미지 업로드 중 오류가 발생했습니다.");
+            return ResponseEntity.internalServerError().body(response);
+        }
+    }
+
+    @PostMapping("/upload/replace")
+    public ResponseEntity<Map<String, Object>> replaceAllImages(
+            @RequestParam("files") List<MultipartFile> files,
+            @RequestParam("imageTypeCode") String imageTypeCode,
+            @RequestParam("referenceId") Long referenceId,
+            @RequestParam(value = "setFirstAsThumbnail", defaultValue = "false") boolean setFirstAsThumbnail) {
+
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            List<ImageEntity> savedImages = imageService.replaceAllImages(files, imageTypeCode, referenceId, setFirstAsThumbnail);
+            response.put("success", true);
+            response.put("message", "이미지 교체 성공");
+            response.put("images", savedImages.stream().map(image -> {
+                Map<String, Object> imageInfo = new HashMap<>();
+                imageInfo.put("imageId", image.getId());
+                imageInfo.put("filePath", image.getFilePath());
+                imageInfo.put("originalName", image.getOriginalName());
+                imageInfo.put("isThumbnail", "Y".equals(image.getIsThumbnail()));
+                return imageInfo;
+            }).toList());
+            response.put("uploadCount", savedImages.size());
+            return ResponseEntity.ok(response);
+        } catch (IllegalArgumentException e) {
+            response.put("success", false);
+            response.put("message", e.getMessage());
+            return ResponseEntity.badRequest().body(response);
+        } catch (IOException e) {
+            response.put("success", false);
+            response.put("message", "이미지 교체 중 오류가 발생했습니다.");
             return ResponseEntity.internalServerError().body(response);
         }
     }

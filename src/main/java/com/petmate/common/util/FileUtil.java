@@ -1,5 +1,6 @@
 package com.petmate.common.util;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 import com.petmate.common.util.CodeUtil;
@@ -20,11 +21,14 @@ import java.util.UUID;
 
 @Component
 public class FileUtil {
-    
-    private static final String UPLOAD_DIR = "uploads/images/";
+
+    @Value("${app.upload.dir:C:/petmate}")
+    private String uploadRootDir;
+
+    private static final String IMAGES_SUBDIR = "images";
     private static final List<String> ALLOWED_EXTENSIONS = Arrays.asList("jpg", "jpeg", "png", "gif", "bmp", "webp");
     private static final long MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
-    
+
     private final CodeUtil codeUtil;
     
     public FileUtil(CodeUtil codeUtil) {
@@ -108,14 +112,14 @@ public class FileUtil {
         if (imageTypeCode != null) {
             folderName = getFolderNameByImageType(imageTypeCode) + File.separator;
         }
-        
-        String uploadPath = System.getProperty("user.dir") + File.separator + UPLOAD_DIR + folderName;
+
+        String uploadPath = uploadRootDir + File.separator + IMAGES_SUBDIR + File.separator + folderName;
         Path path = Paths.get(uploadPath);
-        
+
         if (!Files.exists(path)) {
             Files.createDirectories(path);
         }
-        
+
         return uploadPath;
     }
     
@@ -132,14 +136,14 @@ public class FileUtil {
     }
     
     /**
-     * 상대 경로 반환
+     * 상대 경로 반환 (웹에서 접근할 수 있는 경로)
      */
     private String getRelativePath(String imageTypeCode) {
         if (imageTypeCode == null) {
-            return UPLOAD_DIR;
+            return IMAGES_SUBDIR + "/";
         }
         String folderName = getFolderNameByImageType(imageTypeCode);
-        return UPLOAD_DIR + folderName + "/";
+        return IMAGES_SUBDIR + "/" + folderName + "/";
     }
     
     private String generateUniqueFileName(String originalFilename) {
