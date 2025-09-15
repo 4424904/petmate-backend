@@ -34,8 +34,8 @@ public class CompanyResponseDto {
     private String roadAddr;    // 도로명
     private String detailAddr;  // 상세
     private String postcode;    // 우편번호
-    private BigDecimal lat;     // 위도
-    private BigDecimal lng;     // 경도
+    private BigDecimal latitude;     // 위도
+    private BigDecimal longitude;     // 경도
     private Integer createdBy;  // 등록자(FK -> users.id)
     private LocalDateTime createdAt;    // 등록일(기본값: current_timestamp)
 

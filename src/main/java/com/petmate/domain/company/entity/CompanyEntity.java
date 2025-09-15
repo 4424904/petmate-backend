@@ -65,11 +65,11 @@ public class CompanyEntity extends BaseEntity {
     @Column(name = "POSTCODE", length = 10)
     private String postcode;    // 우편번호
 
-    @Column(name = "LAT", precision = 10, scale = 7)
-    private BigDecimal lat;     // 위도
+    @Column(name = "LATITUDE", precision = 10, scale = 7)
+    private BigDecimal latitude;     // 위도
 
-    @Column(name = "LNG", precision = 10, scale = 7)
-    private BigDecimal lng;     // 경도
+    @Column(name = "LONGITUDE", precision = 10, scale = 7)
+    private BigDecimal longitude;     // 경도
 
     @Column(name = "CREATED_BY", nullable = false)
     private Integer createdBy;  // 등록자(FK -> users.id)

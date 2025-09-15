@@ -88,8 +88,8 @@ public class CompanyService {
                 .roadAddr(dto.getRoadAddr())
                 .detailAddr(dto.getDetailAddr())
                 .postcode(dto.getPostcode())
-                .lat(parseBigDecimal(dto.getLatitude()))
-                .lng(parseBigDecimal(dto.getLongitude()))
+                .latitude(parseBigDecimal(dto.getLatitude()))
+                .longitude(parseBigDecimal(dto.getLongitude()))
                 .createdBy(userId)
                 .descText(dto.getIntroduction())
                 .createdAt(java.time.LocalDateTime.now())
@@ -152,8 +152,8 @@ public class CompanyService {
         if (dto.getRoadAddr() != null) company.setRoadAddr(dto.getRoadAddr());
         if (dto.getDetailAddr() != null) company.setDetailAddr(dto.getDetailAddr());
         if (dto.getPostcode() != null) company.setPostcode(dto.getPostcode());
-        if (dto.getLatitude() != null) company.setLat(parseBigDecimal(dto.getLatitude()));
-        if (dto.getLongitude() != null) company.setLng(parseBigDecimal(dto.getLongitude()));
+        if (dto.getLatitude() != null) company.setLatitude(parseBigDecimal(dto.getLatitude()));
+        if (dto.getLongitude() != null) company.setLongitude(parseBigDecimal(dto.getLongitude()));
         if (dto.getServices() != null) company.setServices(dto.getServices());
         if (dto.getOperatingHours() != null) company.setOperatingHours(dto.getOperatingHours());
         if (dto.getRepService() != null) {
@@ -239,8 +239,8 @@ public class CompanyService {
                 .roadAddr(entity.getRoadAddr())
                 .detailAddr(entity.getDetailAddr())
                 .postcode(entity.getPostcode())
-                .lat(entity.getLat())
-                .lng(entity.getLng())
+                .latitude(entity.getLatitude())
+                .longitude(entity.getLongitude ())
                 .createdBy(entity.getCreatedBy())
                 .createdAt(entity.getCreatedAt())
                 .descText(entity.getDescText())
