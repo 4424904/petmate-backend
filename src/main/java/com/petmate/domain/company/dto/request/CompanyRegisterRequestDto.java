@@ -19,9 +19,7 @@ public class CompanyRegisterRequestDto {
     private String type; // "PERSONAL" or "BUSINESS"
 
     // 개인(일반인) 정보
-    private String ssnFirst;
-    private String ssnSecond;
-    private String personalName;
+    private String ssnFirst; // 주민번호 앞자리 (생년월일)
 
     // 사업자 정보
     private String bizRegNo;

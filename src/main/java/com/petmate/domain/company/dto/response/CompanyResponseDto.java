@@ -23,9 +23,7 @@ public class CompanyResponseDto {
     private String repName;     // 대표자
     
     // 개인(일반인) 정보 추가
-    private String ssnFirst;    // 주민번호 앞자리
-    private String ssnSecond;   // 주민번호 뒷자리
-    private String personalName; // 개인(일반인) 성함
+    private String ssnFirst;    // 주민번호 앞자리 (생년월일)
     
     private String tel;     // 연락처
     private String descText;   // 소개글

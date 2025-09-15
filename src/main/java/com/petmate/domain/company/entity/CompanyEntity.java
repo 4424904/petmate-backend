@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "COMPANY")
 @Data
+@EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
@@ -21,7 +22,7 @@ public class CompanyEntity extends BaseEntity {
     private Integer id;
 
     @Column(name = "TYPE", nullable = false, length = 1)
-    private String type; // 개인/법인(company_type)
+    private String type; // 개인,개인/법인사업자(company_type)
 
     @Column(name = "NAME", length = 200)
     private String name;    // 상호명
@@ -34,13 +35,7 @@ public class CompanyEntity extends BaseEntity {
 
     // 개인(일반인) 정보 추가
     @Column(name = "SSN_FIRST", length = 6)
-    private String ssnFirst;    // 주민번호 앞자리
-
-    @Column(name = "SSN_SECOND", length = 7)
-    private String ssnSecond;   // 주민번호 뒷자리
-
-    @Column(name = "PERSONAL_NAME", length = 80)
-    private String personalName; // 개인(일반인) 성함
+    private String ssnFirst;    // 주민번호 앞자리 (생년월일)
 
     @Column(name = "TEL", length = 20)
     private String tel;     // 연락처
@@ -57,6 +52,7 @@ public class CompanyEntity extends BaseEntity {
     @Column(name = "OPERATING_HOURS", columnDefinition = "JSON")
     private String operatingHours;  // 운영시간 정보
 
+    @Builder.Default
     @Column(name = "STATUS", length = 1, nullable = false)
     private String status = "P"; // 승인상태(company_status) - 기본값 "pending"
 
@@ -81,5 +77,7 @@ public class CompanyEntity extends BaseEntity {
     @Column(name = "CREATED_AT", nullable = false, updatable = false)
     private LocalDateTime createdAt;    // 등록일(기본값: current_timestamp)
 
+    @Column(name = "UPDATED_AT")
+    private LocalDateTime updatedAt;    // 수정일(자동 업데이트)
 
 }

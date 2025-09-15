@@ -2,26 +2,17 @@ package com.petmate.domain.company.service;
 
 import com.petmate.common.service.ImageService;
 import com.petmate.common.util.CodeUtil;
-import com.petmate.util.EncryptionUtil;
 import com.petmate.domain.company.dto.request.CompanyRegisterRequestDto;
 import com.petmate.domain.company.dto.request.CompanyUpdateRequestDto;
-import com.petmate.domain.company.dto.response.BusinessData;
-import com.petmate.domain.company.dto.response.BusinessValidationResult;
+import com.petmate.domain.company.dto.response.BusinessInfoResponseDto;
 import com.petmate.domain.company.dto.response.CompanyResponseDto;
 import com.petmate.domain.company.entity.CompanyEntity;
 import com.petmate.domain.company.repository.CompanyRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestTemplate;
 
-import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
@@ -35,58 +26,56 @@ public class CompanyService {
     private final CompanyRepository companyRepository;
     private final CodeUtil codeUtil;
     private final ImageService imageService;
-    private final EncryptionUtil encryptionUtil;
-
-    @Value("${app.nts.service-key:default-key}")
-    private String ntsServiceKey;
 
     @Transactional
     public CompanyResponseDto registerCompany(CompanyRegisterRequestDto dto, Integer userId) {
         log.info("=== 업체 등록 시작 ===");
         log.info("userId: {}", userId);
         log.info("dto.getType(): {}", dto.getType());
+        log.info("dto.getRepresentativeName(): {}", dto.getRepresentativeName());
+        log.info("dto.getCorporationName(): {}", dto.getCorporationName());
         log.info("dto.getRepService(): {}", dto.getRepService());
         log.info("dto.getServices(): {}", dto.getServices());
         log.info("dto.getRoadAddr(): {}", dto.getRoadAddr());
-
+        // 사업자번호 중복 체크
         if (dto.getBizRegNo() != null && companyRepository.existsByBizRegNo(dto.getBizRegNo())) {
             throw new IllegalArgumentException("이미 등록된 사업자등록번호입니다.");
         }
 
+        // CodeUtil 활용한 변환
         String type = "PERSONAL".equals(dto.getType()) ? "P" : "B";
+
+        // 상호명 결정 (개인 업체 중복 체크를 위해 미리 계산)
+        String companyName = "PERSONAL".equals(dto.getType())
+                ? dto.getRepresentativeName() // 개인: 대표자명 = 개인명
+                : dto.getCorporationName();
+
+        // 개인 업체 중복 체크 (한 사람당 하나의 개인 업체만 등록 가능)
+        if ("P".equals(type) && companyName != null) {
+            boolean existsPersonalCompany = companyRepository.existsByTypeAndNameAndCreatedBy(
+                    "P", companyName, userId
+            );
+            if (existsPersonalCompany) {
+                throw new IllegalArgumentException("이미 해당 이름으로 등록된 개인 업체가 있습니다.");
+            }
+        }
         String repServiceCode = findServiceCodeByName(dto.getRepService());
 
-        if (!codeUtil.isValidCode("COMPANY_TYPE", type)) {
-            throw new IllegalArgumentException("유효하지 않은 업체 타입: " + type);
-        }
-        if (!codeUtil.isValidCode("SERVICE_TYPE", repServiceCode)) {
+        // 유효성 검증 (디버깅 추가)
+        log.info("검증할 서비스 타입 코드: {}", repServiceCode);
+        log.info("SERVICE_TYPE 그룹의 모든 코드: {}", codeUtil.getCodeMap("SERVICE_TYPE"));
+
+        boolean isValidServiceType = codeUtil.isValidCode("SERVICE_TYPE", repServiceCode);
+        log.info("SERVICE_TYPE {} 유효성 검증 결과: {}", repServiceCode, isValidServiceType);
+
+        if (!isValidServiceType) {
             throw new IllegalArgumentException("유효하지 않은 서비스 타입: " + repServiceCode);
         }
 
-        // 호환 게터로 상호명 결정
-        String companyName = coalesce(
-                getByGetter(dto, "getName"),
-                getByGetter(dto, "getCompanyName"),
-                getByGetter(dto, "getPersonalCompanyName"),
-                getByGetter(dto, "getCorporationName"),
-                getByGetter(dto, "getCorpName"),
-                getByGetter(dto, "getBusinessName")
-        );
-        if (companyName == null) throw new IllegalArgumentException("상호명은 필수입니다.");
-
-        // 호환 게터로 대표자명 결정
+        // 대표자명 결정
         String repName = "PERSONAL".equals(dto.getType())
-                ? coalesce(
-                getByGetter(dto, "getPersonalName"),
-                getByGetter(dto, "getOwnerName"),
-                getByGetter(dto, "getRepresentativeName"),
-                getByGetter(dto, "getRepName"))
-                : coalesce(
-                getByGetter(dto, "getRepName"),
-                getByGetter(dto, "getRepresentativeName"),
-                getByGetter(dto, "getCeoName"),
-                getByGetter(dto, "getOwnerName"));
-        if (repName == null) throw new IllegalArgumentException("대표자명은 필수입니다.");
+                ? dto.getRepresentativeName() // 개인: 대표자명 = 개인명
+                : dto.getRepresentativeName();
 
         CompanyEntity.CompanyEntityBuilder builder = CompanyEntity.builder()
                 .type(type)
@@ -104,41 +93,38 @@ public class CompanyService {
                 .createdBy(userId)
                 .descText(dto.getIntroduction())
                 .createdAt(java.time.LocalDateTime.now())
-                .status("P");
+                .status("P");  // 명시적으로 승인대기 상태 설정
 
+        // 개인(일반인) vs 사업자별 추가 정보
         if ("PERSONAL".equals(dto.getType())) {
-            String encryptedSsnSecond = dto.getSsnSecond() != null
-                    ? encryptionUtil.encrypt(dto.getSsnSecond()) : null;
+            // JWT 토큰 기반 신원 인증을 별도 API로 처리 완료
+            log.info("개인 업체 등록: repName={}", dto.getRepresentativeName());
 
-            builder.ssnFirst(dto.getSsnFirst())
-                    .ssnSecond(encryptedSsnSecond)
-                    .personalName(coalesce(
-                            getByGetter(dto, "getPersonalName"),
-                            getByGetter(dto, "getOwnerName")));
+            builder.ssnFirst(dto.getSsnFirst());
         } else {
             builder.bizRegNo(dto.getBizRegNo());
         }
 
         CompanyEntity company = builder.build();
+
         CompanyEntity savedCompany = companyRepository.save(company);
 
+        // 업체 이미지 저장 (IMAGE_TYPE: 03 - COMPANY_REG)
         if (dto.getImages() != null && !dto.getImages().isEmpty()) {
             log.info("업체 이미지 저장 시작 - 파일 개수: {}", dto.getImages().size());
             try {
-                Long companyId = savedCompany.getId() != null ? savedCompany.getId().longValue() : null;
-                if (companyId != null) {
-                    List<com.petmate.common.entity.ImageEntity> savedImages = imageService.uploadMultipleImages(
-                            dto.getImages(),
-                            "03",
-                            companyId,
-                            true
-                    );
-                    log.info("업체 이미지 {} 개 저장 완료! 저장된 이미지 IDs: {}",
-                            savedImages.size(),
-                            savedImages.stream().map(img -> img.getId()).toList());
-                }
+                List<com.petmate.common.entity.ImageEntity> savedImages = imageService.uploadMultipleImages(
+                        dto.getImages(),        // 업로드할 파일들
+                        "03",                   // IMAGE_TYPE 코드 (COMPANY_REG)
+                        savedCompany.getId().longValue(),   // 업체 ID (Long 타입으로 변환)
+                        true                    // 첫 번째 이미지를 썸네일로 설정
+                );
+                log.info("업체 이미지 {} 개 저장 완료! 저장된 이미지 IDs: {}",
+                        savedImages.size(),
+                        savedImages.stream().map(img -> img.getId()).toList());
             } catch (Exception e) {
                 log.error("업체 이미지 저장 중 오류 발생: {}", e.getMessage(), e);
+                // 이미지 저장 실패해도 업체 등록은 완료되도록 처리
             }
         } else {
             log.info("업로드할 이미지가 없습니다.");
@@ -147,12 +133,6 @@ public class CompanyService {
         return mapToResponseDto(savedCompany);
     }
 
-    public BusinessData checkBusinessNumber(String businessNumber) {
-        return BusinessData.builder()
-                .companyName("펫메이트(주)")
-                .representativeName("홍길동")
-                .build();
-    }
 
     public CompanyResponseDto getCompanyById(Integer id, Integer userId) {
         CompanyEntity company = companyRepository.findByIdAndCreatedBy(id, userId)
@@ -165,6 +145,7 @@ public class CompanyService {
         CompanyEntity company = companyRepository.findByIdAndCreatedBy(id, userId)
                 .orElseThrow(() -> new IllegalArgumentException("업체를 찾을 수 없습니다."));
 
+        // 업데이트 로직
         if (dto.getName() != null) company.setName(dto.getName());
         if (dto.getTel() != null) company.setTel(dto.getTel());
         if (dto.getDescText() != null) company.setDescText(dto.getDescText());
@@ -179,6 +160,9 @@ public class CompanyService {
             String repServiceCode = findServiceCodeByName(dto.getRepService());
             company.setRepService(repServiceCode);
         }
+
+        // 수정일 자동 설정
+        company.setUpdatedAt(java.time.LocalDateTime.now());
 
         CompanyEntity savedCompany = companyRepository.save(company);
         return mapToResponseDto(savedCompany);
@@ -196,7 +180,8 @@ public class CompanyService {
         CompanyEntity company = companyRepository.findByIdAndCreatedBy(id, userId)
                 .orElseThrow(() -> new IllegalArgumentException("업체를 찾을 수 없습니다."));
 
-        String statusCode = switch (status) {
+        // 상태 코드 변환 (필요시)
+        String statusCode = switch(status) {
             case "PENDING", "P" -> "P";
             case "APPROVED", "A" -> "A";
             case "REJECTED", "R" -> "R";
@@ -215,6 +200,28 @@ public class CompanyService {
                 .toList();
     }
 
+    /**
+     * 프론트엔드용 공통코드 목록 조회
+     */
+    public Map<String, String> getCompanyTypeMap() {
+        return codeUtil.getCodeMap("COMPANY_TYPE");
+    }
+
+    public Map<String, String> getServiceTypeMap() {
+        return codeUtil.getCodeMap("SERVICE_TYPE");
+    }
+
+    public Map<String, String> getCompanyStatusMap() {
+        return codeUtil.getCodeMap("COMPANY_STATUS");
+    }
+
+    // ================================
+    // Private 메서드들
+    // ================================
+
+    /**
+     * Entity → ResponseDto 매핑 (공통코드명 포함)
+     */
     private CompanyResponseDto mapToResponseDto(CompanyEntity entity) {
         return CompanyResponseDto.builder()
                 .id(entity.getId())
@@ -223,9 +230,7 @@ public class CompanyService {
                 .bizRegNo(entity.getBizRegNo())
                 .repName(entity.getRepName())
                 .ssnFirst(entity.getSsnFirst())
-                .ssnSecond(entity.getSsnSecond() != null ?
-                        encryptionUtil.decrypt(entity.getSsnSecond()) : null)
-                .personalName(entity.getPersonalName())
+                // 기존 필드들
                 .tel(entity.getTel())
                 .repService(entity.getRepService())
                 .services(entity.getServices())
@@ -242,17 +247,25 @@ public class CompanyService {
                 .build();
     }
 
+    /**
+     * 서비스명으로 서비스 타입 코드 찾기
+     * 한글 서비스명을 코드로 변환
+     */
     private String findServiceCodeByName(String serviceName) {
-        return switch (serviceName) {
-            case "돌봄" -> "1";
-            case "산책" -> "2";
-            case "미용" -> "3";
-            case "병원" -> "4";
-            case "기타" -> "9";
+        // 한글 서비스명 또는 코드를 코드로 변환
+        return switch(serviceName) {
+            case "돌봄", "1" -> "1";
+            case "산책", "2" -> "2";
+            case "미용", "3" -> "3";
+            case "병원", "4" -> "4";
+            case "기타", "9" -> "9";
             default -> throw new IllegalArgumentException("유효하지 않은 서비스 타입: " + serviceName);
         };
     }
 
+    /**
+     * 문자열을 BigDecimal로 안전하게 변환
+     */
     private BigDecimal parseBigDecimal(String value) {
         try {
             return value != null && !value.trim().isEmpty() ? new BigDecimal(value) : null;
@@ -261,77 +274,38 @@ public class CompanyService {
         }
     }
 
-    // 게터 호환 유틸
-    private String getByGetter(Object target, String getterName) {
-        try {
-            Method m = target.getClass().getMethod(getterName);
-            Object v = m.invoke(target);
-            if (v == null) return null;
-            String s = String.valueOf(v).trim();
-            return s.isEmpty() ? null : s;
-        } catch (Exception ignore) {
-            return null;
-        }
-    }
-
-    // CompanyService.java 내부에 추가
-    public BusinessValidationResult validateBusinessNumber(String businessNumber) {
-        log.info("사업자등록번호 검증 시작: {}", businessNumber);
+    /**
+     * 사업자등록번호 중복 체크 (DB 기반)
+     */
+    public BusinessInfoResponseDto getBusinessInfo(String businessNumber) {
+        log.info("사업자등록번호 중복 체크 시작: 사업자번호={}", businessNumber);
 
         try {
-            String url = "http://api.odcloud.kr/api/nts-businessman/v1/validate"
-                    + "?serviceKey=" + ntsServiceKey + "&returnType=JSON";
+            // DB에서 해당 사업자등록번호가 이미 등록되어 있는지 확인
+            boolean isDuplicate = companyRepository.existsByBizRegNo(businessNumber);
 
-            Map<String, Object> requestBody = Map.of("b_no", List.of(businessNumber));
-
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON);
-
-            HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, headers);
-            RestTemplate restTemplate = new RestTemplate();
-            ResponseEntity<Map> response = restTemplate.postForEntity(url, entity, Map.class);
-
-            Map<String, Object> body = response.getBody();
-            log.info("국세청 API 응답: {}", body);
-
-            if (body != null && "OK".equals(body.get("status_code"))) {
-                @SuppressWarnings("unchecked")
-                List<Map<String, Object>> dataList = (List<Map<String, Object>>) body.get("data");
-                if (dataList != null && !dataList.isEmpty()) {
-                    Map<String, Object> data = dataList.get(0);
-                    String valid = (String) data.get("valid"); // "01" 유효, "02" 오류 등
-                    boolean isValid = "01".equals(valid);
-                    String message = isValid ? "유효한 사업자등록번호입니다" : "무효한 사업자등록번호입니다";
-
-                    return BusinessValidationResult.builder()
-                            .businessNumber(businessNumber)
-                            .isValid(isValid)
-                            .status(valid)
-                            .message(message)
-                            .build();
-                }
+            if (isDuplicate) {
+                return BusinessInfoResponseDto.builder()
+                        .businessNumber(businessNumber)
+                        .isValid(false)
+                        .message("이미 등록된 사업자등록번호입니다")
+                        .build();
+            } else {
+                return BusinessInfoResponseDto.builder()
+                        .businessNumber(businessNumber)
+                        .isValid(true)
+                        .message("등록 가능한 사업자등록번호입니다")
+                        .build();
             }
 
-            return BusinessValidationResult.builder()
-                    .businessNumber(businessNumber)
-                    .isValid(false)
-                    .message("사업자등록번호를 조회할 수 없습니다")
-                    .build();
-
         } catch (Exception e) {
-            log.error("사업자등록번호 검증 중 오류 발생: ", e);
-            return BusinessValidationResult.builder()
+            log.error("사업자등록번호 중복 체크 중 오류 발생: ", e);
+            return BusinessInfoResponseDto.builder()
                     .businessNumber(businessNumber)
                     .isValid(false)
-                    .message("사업자등록번호 검증 중 오류가 발생했습니다: " + e.getMessage())
+                    .message("사업자등록번호 확인 중 오류가 발생했습니다: " + e.getMessage())
                     .build();
         }
     }
 
-
-    @SafeVarargs
-    private final <T> T coalesce(T... vals) {
-        for (T v : vals) if (v != null) return v;
-        return null;
-    }
 }
