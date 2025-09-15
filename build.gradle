@@ -53,6 +53,7 @@ dependencies {
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.6'
 
     implementation 'io.github.cdimascio:java-dotenv:5.2.2'
+    implementation 'commons-io:commons-io:2.16.1'
 
     // Test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'

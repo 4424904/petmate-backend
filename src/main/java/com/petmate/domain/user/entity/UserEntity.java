@@ -51,7 +51,7 @@ public class UserEntity extends BaseEntity {
     @Comment("실명")
     private String name; // 실명
 
-    @Column(name = "PROFILE_IMAGE", nullable = false, length = 500)
+    @Column(name = "PROFILE_IMAGE", nullable = true, length = 500)
     @Comment("프로필 이미지")
     private String profileImage;
     

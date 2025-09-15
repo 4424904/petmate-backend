@@ -3,7 +3,8 @@ server:
 
 app:
   upload:
-    dir: C:/petmate
+    dir: C:/petmate  # /petmate 제거!
+  public-img-url: http://localhost:8090/img/
 spring:
   servlet:
     multipart:
@@ -86,5 +87,14 @@ logging:
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
     com.petmate.security: INFO
     org.springframework.security: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+  file:
+    name: logs/petmate.log  # 로그 파일 경로
+  logback:
+    rollingpolicy:
+      max-file-size: 10MB
+      max-history: 30
 
 

@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 @Getter @Setter
 public class PetmateApplyRequest {
     private String name;            // 이름
@@ -15,5 +17,5 @@ public class PetmateApplyRequest {
     private String provider;        // 소셜 제공자
 
     private MultipartFile profile;          // 프로필 단일
-    private MultipartFile[] certificates;   // 자격증 여러 개
+    private List<MultipartFile> certificates;   // 자격증 여러 개
 }

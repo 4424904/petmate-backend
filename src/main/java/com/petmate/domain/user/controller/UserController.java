@@ -26,7 +26,6 @@ public class UserController {
         return ResponseEntity.ok("펫메이트 신청 완료! 사용자 ID: " + userId);
     }
 
-    /** 기본 유저 등록 (파일 없음, 단순 폼) */
     @PostMapping(value = "/apply", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public ResponseEntity<?> applyUser(
             @RequestParam("email") @Email String email,
@@ -35,9 +34,11 @@ public class UserController {
             @RequestParam(value = "nickName", required = false) String nickName,
             @RequestParam(value = "phone", required = false) String phone,
             @RequestParam(value = "gender", required = false) String gender,
-            @RequestParam(value = "age", required = false) Integer age
+            @RequestParam(value = "age", required = false) Integer age,
+            @RequestParam(value = "profileImageUrl", required = false) String profileImageUrl // ✅ 추가
     ) {
-        Integer userId = userService.applyBasicUser(email, provider, name, nickName, phone, gender, age);
+        Integer userId = userService.applyBasicUser(email, provider, name, nickName, phone, gender, age, profileImageUrl);
         return ResponseEntity.ok("유저 등록 완료! 사용자 ID: " + userId);
     }
+
 }
