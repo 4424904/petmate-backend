@@ -98,4 +98,11 @@ SELECT * FROM common_codes;
   ('ADDRESS_LABEL', '3', 'ETC', '기타', 3);
   
   -- 데이터 확인
-  SELECT * FROM ADDRESS;
+  SELECT * FROM address;
+  
+  SELECT *
+    FROM address
+   WHERE OWNER_ID = '1180396219'
+
+
+  select * from company;

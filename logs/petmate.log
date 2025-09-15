@@ -5065,3 +5065,192 @@ io.jsonwebtoken.ExpiredJwtException: JWT expired 89870 milliseconds ago at 2025-
 2025-09-15 11:13:22 [http-nio-8090-exec-10] INFO  c.p.d.i.c.ImageProxyController - 매핑된 경로: C:\petmate\23\profile\b595fae8-0314-49a9-8066-e2d4a695d35b.png
 2025-09-15 11:13:22 [http-nio-8090-exec-10] INFO  c.p.d.i.c.ImageProxyController - 파일 존재 여부: true, 경로: C:\petmate\23\profile\b595fae8-0314-49a9-8066-e2d4a695d35b.png
 2025-09-15 11:13:22 [http-nio-8090-exec-10] INFO  c.p.d.i.c.ImageProxyController - MIME 타입: image/png
+2025-09-15 11:14:03 [restartedMain] INFO  com.petmate.PetmateApplication - Starting PetmateApplication using Java 21.0.7 with PID 19980 (C:\lfm01\spring_boot\pjt-sts4\petmate-backend-mainb\petmate-backend\build\classes\java\main started by HI-02 in C:\lfm01\spring_boot\pjt-sts4\petmate-backend-mainb\petmate-backend)
+2025-09-15 11:14:03 [restartedMain] DEBUG com.petmate.PetmateApplication - Running with Spring Boot v3.5.5, Spring v6.2.10
+2025-09-15 11:14:03 [restartedMain] INFO  com.petmate.PetmateApplication - No active profile set, falling back to 1 default profile: "default"
+2025-09-15 11:14:03 [restartedMain] INFO  o.s.b.d.restart.ChangeableUrls - The Class-Path manifest attribute in C:\Users\HI-02\.gradle\caches\modules-2\files-2.1\io.github.cdimascio\java-dotenv\5.2.2\f77d54ff193ed4b07415ab8d7b3d0550716aa8c\java-dotenv-5.2.2.jar referenced one or more files that do not exist: file:/C:/Users/HI-02/.gradle/caches/modules-2/files-2.1/io.github.cdimascio/java-dotenv/5.2.2/f77d54ff193ed4b07415ab8d7b3d0550716aa8c/kotlin-stdlib-1.4.0.jar,file:/C:/Users/HI-02/.gradle/caches/modules-2/files-2.1/io.github.cdimascio/java-dotenv/5.2.2/f77d54ff193ed4b07415ab8d7b3d0550716aa8c/kotlin-stdlib-common-1.4.0.jar,file:/C:/Users/HI-02/.gradle/caches/modules-2/files-2.1/io.github.cdimascio/java-dotenv/5.2.2/f77d54ff193ed4b07415ab8d7b3d0550716aa8c/annotations-13.0.jar
+2025-09-15 11:14:03 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2025-09-15 11:14:03 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2025-09-15 11:14:04 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-09-15 11:14:04 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 144 ms. Found 8 JPA repository interfaces.
+2025-09-15 11:14:05 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8090 (http)
+2025-09-15 11:14:05 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-09-15 11:14:05 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.44]
+2025-09-15 11:14:06 [restartedMain] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-09-15 11:14:06 [restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 2878 ms
+2025-09-15 11:14:06 [restartedMain] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-09-15 11:14:06 [restartedMain] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.6.26.Final
+2025-09-15 11:14:06 [restartedMain] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-09-15 11:14:07 [restartedMain] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-09-15 11:14:07 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-09-15 11:14:07 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@47accc1a
+2025-09-15 11:14:07 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-09-15 11:14:07 [restartedMain] INFO  o.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 8.0.43
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-09-15 11:14:09 [restartedMain] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-09-15 11:14:09 [restartedMain] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-09-15 11:14:10 [restartedMain] INFO  o.s.d.j.r.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-09-15 11:14:11 [restartedMain] INFO  com.petmate.config.WebConfig - CORS applied. origins=http://localhost:3000, http://localhost:3001
+2025-09-15 11:14:12 [restartedMain] INFO  com.petmate.config.WebConfig - Static mapping applied. /files/** -> file:C:/petmate/
+2025-09-15 11:14:12 [restartedMain] WARN  o.s.b.a.t.ThymeleafAutoConfiguration$DefaultTemplateResolverConfiguration - Cannot find template location: classpath:/templates/ (please add some templates, check your Thymeleaf configuration, or set spring.thymeleaf.check-template-location=false)
+2025-09-15 11:14:12 [restartedMain] INFO  o.s.b.d.a.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2025-09-15 11:14:12 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8090 (http) with context path '/'
+2025-09-15 11:14:12 [restartedMain] INFO  com.petmate.PetmateApplication - Started PetmateApplication in 10.472 seconds (process running for 11.202)
+2025-09-15 11:14:13 [restartedMain] DEBUG org.hibernate.SQL - 
+    select
+        count(*) 
+    from
+        common_codes gce1_0
+2025-09-15 11:14:13 [restartedMain] INFO  com.petmate.config.DataInitializer - Common codes already initialized
+2025-09-15 11:14:31 [http-nio-8090-exec-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-09-15 11:14:31 [http-nio-8090-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-09-15 11:14:31 [http-nio-8090-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 2 ms
+2025-09-15 11:14:31 [http-nio-8090-exec-1] INFO  c.p.security.JwtAuthenticationFilter - [JWT] GET /auth/me - Authorization: Bearer eyJhbGciOiJIUzI1N...(len=419)
+2025-09-15 11:14:31 [http-nio-8090-exec-1] WARN  c.p.security.JwtAuthenticationFilter - [JWT] verification failed: JWT expired 44652 milliseconds ago at 2025-09-15T02:13:47.000Z. Current time: 2025-09-15T02:14:31.652Z. Allowed clock skew: 0 milliseconds.
+io.jsonwebtoken.ExpiredJwtException: JWT expired 44652 milliseconds ago at 2025-09-15T02:13:47.000Z. Current time: 2025-09-15T02:14:31.652Z. Allowed clock skew: 0 milliseconds.
+	at io.jsonwebtoken.impl.DefaultJwtParser.parse(DefaultJwtParser.java:691)
+	at io.jsonwebtoken.impl.DefaultJwtParser.parse(DefaultJwtParser.java:364)
+	at io.jsonwebtoken.impl.DefaultJwtParser.parse(DefaultJwtParser.java:94)
+	at io.jsonwebtoken.impl.io.AbstractParser.parse(AbstractParser.java:36)
+	at io.jsonwebtoken.impl.io.AbstractParser.parse(AbstractParser.java:29)
+	at io.jsonwebtoken.impl.DefaultJwtParser.parseSignedClaims(DefaultJwtParser.java:830)
+	at com.petmate.security.jwt.JwtUtil.parse(JwtUtil.java:57)
+	at com.petmate.security.JwtAuthenticationFilter.doFilterInternal(JwtAuthenticationFilter.java:57)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter.doFilter(AbstractAuthenticationProcessingFilter.java:235)
+	at org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter.doFilter(AbstractAuthenticationProcessingFilter.java:229)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestRedirectFilter.doFilterInternal(OAuth2AuthorizationRequestRedirectFilter.java:198)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:107)
+	at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:93)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.web.filter.CorsFilter.doFilterInternal(CorsFilter.java:91)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.header.HeaderWriterFilter.doHeadersAfter(HeaderWriterFilter.java:90)
+	at org.springframework.security.web.header.HeaderWriterFilter.doFilterInternal(HeaderWriterFilter.java:75)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.context.SecurityContextHolderFilter.doFilter(SecurityContextHolderFilter.java:82)
+	at org.springframework.security.web.context.SecurityContextHolderFilter.doFilter(SecurityContextHolderFilter.java:69)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter.doFilterInternal(WebAsyncManagerIntegrationFilter.java:62)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.session.DisableEncodeUrlFilter.doFilterInternal(DisableEncodeUrlFilter.java:42)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.FilterChainProxy.doFilterInternal(FilterChainProxy.java:233)
+	at org.springframework.security.web.FilterChainProxy.doFilter(FilterChainProxy.java:191)
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:113)
+	at org.springframework.web.filter.ServletRequestPathFilter.doFilter(ServletRequestPathFilter.java:52)
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:113)
+	at org.springframework.web.filter.CompositeFilter.doFilter(CompositeFilter.java:74)
+	at org.springframework.security.config.annotation.web.configuration.WebSecurityConfiguration$CompositeFilterChainProxy.doFilter(WebSecurityConfiguration.java:319)
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:113)
+	at org.springframework.web.servlet.handler.HandlerMappingIntrospector.lambda$createCacheFilter$4(HandlerMappingIntrospector.java:267)
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:113)
+	at org.springframework.web.filter.CompositeFilter.doFilter(CompositeFilter.java:74)
+	at org.springframework.security.config.annotation.web.configuration.WebMvcSecurityConfiguration$CompositeFilterChainProxy.doFilter(WebMvcSecurityConfiguration.java:240)
+	at org.springframework.web.filter.DelegatingFilterProxy.invokeDelegate(DelegatingFilterProxy.java:362)
+	at org.springframework.web.filter.DelegatingFilterProxy.doFilter(DelegatingFilterProxy.java:278)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:167)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:90)
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:483)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:116)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:93)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:74)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:344)
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:398)
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63)
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:903)
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1769)
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1189)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:658)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+2025-09-15 11:14:31 [http-nio-8090-exec-2] INFO  c.p.security.JwtAuthenticationFilter - [JWT] GET /auth/me - Authorization: <absent>
+2025-09-15 11:14:34 [http-nio-8090-exec-4] INFO  c.p.security.OAuth2SuccessHandler - === OAuth2 인증 성공 처리 시작 ===
+2025-09-15 11:14:34 [http-nio-8090-exec-4] INFO  c.p.security.OAuth2SuccessHandler - OAuth2 사용자 정보: {provider=naver, response={id=2ZBmnoyH7EYixJoarTxtoLrneVrmyXX14s12xmO6yLc, nickname=kimij****, email=kimijug97@naver.com, name=김민중}, providerId=2ZBmnoyH7EYixJoarTxtoLrneVrmyXX14s12xmO6yLc, name=김민중, nickname=kimij****, resultcode=00, message=success, userId=naver_2ZBmnoyH7EYixJoarTxtoLrneVrmyXX14s12xmO6yLc, email=kimijug97@naver.com, picture=null}
+2025-09-15 11:14:34 [http-nio-8090-exec-4] INFO  c.p.security.OAuth2SuccessHandler - 파싱된 사용자 정보 - provider: NAVER, email: kimijug97@naver.com, name: 김민중, nickname: kimij****, picture: null
+2025-09-15 11:14:34 [http-nio-8090-exec-4] INFO  c.p.security.OAuth2SuccessHandler - 사용자 등록/업데이트 시작
+2025-09-15 11:14:34 [http-nio-8090-exec-4] INFO  c.p.domain.user.service.UserService - === applyBasicUser 시작 ===
+2025-09-15 11:14:34 [http-nio-8090-exec-4] INFO  c.p.domain.user.service.UserService - email: kimijug97@naver.com, provider: NAVER, name: 김민중, nickname: kimij****, profileImageUrl: null
+2025-09-15 11:14:34 [http-nio-8090-exec-4] DEBUG org.hibernate.SQL - 
+    select
+        ue1_0.id,
+        ue1_0.birth_date,
+        ue1_0.care_species,
+        ue1_0.created_at,
+        ue1_0.email,
+        ue1_0.email_verified,
+        ue1_0.gender,
+        ue1_0.main_service,
+        ue1_0.name,
+        ue1_0.nick_name,
+        ue1_0.phone,
+        ue1_0.profile_image,
+        ue1_0.provider,
+        ue1_0.role,
+        ue1_0.status,
+        ue1_0.updated_at 
+    from
+        user ue1_0 
+    where
+        ue1_0.email=?
+2025-09-15 11:14:34 [http-nio-8090-exec-4] INFO  c.p.domain.user.service.UserService - 사용자 조회/생성 완료 - userId: 23
+2025-09-15 11:14:34 [http-nio-8090-exec-4] INFO  c.p.domain.user.service.UserService - 사용자 정보 업데이트 완료
+2025-09-15 11:14:34 [http-nio-8090-exec-4] INFO  c.p.domain.user.service.UserService - 프로필 이미지 처리 시작 - profileImageUrl: null
+2025-09-15 11:14:34 [http-nio-8090-exec-4] INFO  c.p.domain.user.service.UserService - 이미지 URL이 없어서 기본 이미지 저장
+2025-09-15 11:14:34 [http-nio-8090-exec-4] INFO  c.p.d.user.service.UserFileService - 실제 프로필 이미지 존재: userId=23, profile=b595fae8-0314-49a9-8066-e2d4a695d35b.png
+2025-09-15 11:14:34 [http-nio-8090-exec-4] INFO  c.p.domain.user.service.UserService - 기본 이미지 저장 완료 - UUID: b595fae8-0314-49a9-8066-e2d4a695d35b.png
+2025-09-15 11:14:34 [http-nio-8090-exec-4] INFO  c.p.domain.user.service.UserService - 사용자 저장 완료 - 최종 profileImage: b595fae8-0314-49a9-8066-e2d4a695d35b.png
+2025-09-15 11:14:34 [http-nio-8090-exec-4] INFO  c.p.domain.user.service.UserService - === applyBasicUser 완료 ===
+2025-09-15 11:14:34 [http-nio-8090-exec-4] INFO  c.p.security.OAuth2SuccessHandler - 사용자 등록/업데이트 완료 - userId: 23
+2025-09-15 11:14:34 [http-nio-8090-exec-4] INFO  c.p.security.OAuth2SuccessHandler - 프로필 이미지 URL 조회 시작
+2025-09-15 11:14:34 [http-nio-8090-exec-4] INFO  c.p.domain.user.service.UserService - 프로필 이미지 조회: kimijug97@naver.com
+2025-09-15 11:14:34 [http-nio-8090-exec-4] DEBUG org.hibernate.SQL - 
+    select
+        pim1_0.uuid,
+        pim1_0.created_at,
+        pim1_0.email,
+        pim1_0.expires_at,
+        pim1_0.real_path 
+    from
+        profile_image_map pim1_0 
+    where
+        pim1_0.email=?
+2025-09-15 11:14:34 [http-nio-8090-exec-4] INFO  c.p.domain.user.service.UserService - profile_image_map에서 UUID 조회: b595fae8-0314-49a9-8066-e2d4a695d35b.png
+2025-09-15 11:14:34 [http-nio-8090-exec-4] INFO  c.p.domain.user.service.UserService - 최종 URL: http://localhost:8090/img/b595fae8-0314-49a9-8066-e2d4a695d35b.png
+2025-09-15 11:14:34 [http-nio-8090-exec-4] INFO  c.p.security.OAuth2SuccessHandler - 조회된 프로필 UUID: http://localhost:8090/img/b595fae8-0314-49a9-8066-e2d4a695d35b.png
+2025-09-15 11:14:34 [http-nio-8090-exec-4] INFO  c.p.security.OAuth2SuccessHandler - 절대 URL 사용: http://localhost:8090/img/b595fae8-0314-49a9-8066-e2d4a695d35b.png
+2025-09-15 11:14:34 [http-nio-8090-exec-4] INFO  c.p.security.OAuth2SuccessHandler - JWT 토큰 발급 시작
+2025-09-15 11:14:34 [http-nio-8090-exec-4] INFO  c.p.security.OAuth2SuccessHandler - JWT 토큰 발급 완료
+2025-09-15 11:14:34 [http-nio-8090-exec-4] INFO  c.p.security.OAuth2SuccessHandler - 리다이렉트 URL: http://localhost:3000/oauth2/redirect?accessToken=eyJhbGciOiJIUzI1NiJ9.eyJyb2xlcyI6WyJVU0VSIl0sIm5hbWUiOiLquYDrr7zspJEiLCJuaWNrbmFtZSI6ImtpbWlqKioqKiIsInR5cCI6ImFjY2VzcyIsInByb3YiOiJOQVZFUiIsImVtYWlsIjoia2ltaWp1Zzk3QG5hdmVyLmNvbSIsInBpY3R1cmUiOiJodHRwOi8vbG9jYWxob3N0OjgwOTAvaW1nL2I1OTVmYWU4LTAzMTQtNDlhOS04MDY2LWUyZDRhNjk1ZDM1Yi5wbmciLCJzdWIiOiIyMyIsImlzcyI6InBldG1hdGUiLCJpYXQiOjE3NTc5MDI0NzQsImV4cCI6MTc1NzkwMjUzNH0.l1L11J2Vtu2FmstvvHpNlSjCHLynPvrEfpsA896eKD4&next=%2Fhome
+2025-09-15 11:14:34 [http-nio-8090-exec-4] INFO  c.p.security.OAuth2SuccessHandler - === OAuth2 인증 성공 처리 완료 ===
+2025-09-15 11:14:34 [http-nio-8090-exec-5] INFO  c.p.security.JwtAuthenticationFilter - [JWT] GET /auth/me - Authorization: Bearer eyJhbGciOiJIUzI1N...(len=419)
+2025-09-15 11:14:34 [http-nio-8090-exec-5] INFO  c.p.security.JwtAuthenticationFilter - [JWT] parsed sub=23, type=access, exp=Mon Sep 15 11:15:34 KST 2025, expired=false
