@@ -52,10 +52,11 @@ public class ProductResponseDto {
 
     private static String getServiceTypeName(String serviceType) {
         switch (serviceType) {
-            case "P": return "펜션";
-            case "H": return "호텔";
-            case "C": return "카페";
-            case "R": return "식당";
+            case "C": return "돌봄";
+            case "W": return "산책";
+            case "G": return "미용";
+            case "M": return "병원";
+            case "E": return  "기타";
             default: return serviceType;
         }
     }

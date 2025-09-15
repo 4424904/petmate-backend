@@ -22,8 +22,8 @@
     <!-- 복잡한 검색 쿼리 -->
     <select id="searchProducts" resultMap="ProductResultMap">
         SELECT p.*, c.name as company_name
-        FROM products p
-        LEFT JOIN companies c ON p.company_id = c.id
+        FROM product p
+        LEFT JOIN company c ON p.company_id = c.id
         <where>
             <if test="companyId != null">
                 AND p.company_id = #{companyId}
@@ -61,7 +61,7 @@
         AVG(price) as avg_price,
         MIN(price) as min_price,
         MAX(price) as max_price
-        FROM products
+        FROM product
         WHERE company_id = #{companyId} AND is_active = 1
         GROUP BY service_type
     </select>

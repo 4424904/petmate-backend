@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -25,6 +26,7 @@ public class ProductService {
 
     private final ProductRepository productRepository;
     private final ProductMapper productMapper;
+    private final AvailabilitySlotService slotService;
 
     // 전체상품조회
     @Transactional(readOnly = true)
@@ -82,22 +84,19 @@ public class ProductService {
         return productRepository.findActiveProductsByCompany(companyId);
     }
 
-    // 통계
-    @Transactional(readOnly = true)
-    public List<Map<String, Object>> getProductStats(Integer companyId) {
-        return productMapper.getProductStatsByCompany(companyId);
-    }
 
     // 상품 수정
+    @Transactional
     public ProductResponseDto updateRepository(Integer id, ProductUpdateRequest productUpdateRequest) {
         log.info("상품 수정 시작 : {}" , id);
         log.info("수정데이터 {}", productUpdateRequest);
+        log.info("수정 요청 minPet: {}, maxPet: {}", productUpdateRequest.getMinPet(), productUpdateRequest.getMaxPet());
 
         // 기존 상품 조회
         ProductEntity existingProduct = productRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("상품을 찾을 수 없습니다." + id));
 
-        log.info("기존 상품 ? {} ", existingProduct);
+        log.info("기존 상품 minPet: {}, maxPet: {}", existingProduct.getMinPet(), existingProduct.getMaxPet());
 
         // 업데이트
         existingProduct.setCompanyId(productUpdateRequest.getCompanyId());
@@ -111,8 +110,11 @@ public class ProductService {
         existingProduct.setMaxPet(productUpdateRequest.getMaxPet());
         existingProduct.setIsActive(productUpdateRequest.getIsActive());
 
+        log.info("수정 후 Entity minPet: {}, maxPet: {}", existingProduct.getMinPet(), existingProduct.getMaxPet());
+
         // jpa로 저장
         ProductEntity updatedProduct = productRepository.save(existingProduct);
+        log.info("저장된 Product minPet: {}, maxPet: {}", updatedProduct.getMinPet(), updatedProduct.getMaxPet());
         log.info("수정 완료!!! {}", updatedProduct);
 
         return  ProductResponseDto.from(updatedProduct);
@@ -130,6 +132,55 @@ public class ProductService {
         // 실제 삭제
         productRepository.delete(productEntity);
         log.info("삭제 완료 {}" , id);
+    }
+
+    // 상품 삭제 전 확인 (슬롯 정보 포함)
+    @Transactional(readOnly = true)
+    public Map<String, Object> checkProductDeletion(Integer id) {
+        log.info("상품 삭제 전 확인 시작: {}", id);
+
+        // 상품 존재 확인
+        ProductEntity product = productRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("상품을 찾을 수 없습니다: " + id));
+
+        // 슬롯 정보 조회
+        Map<String, Object> slotInfo = slotService.getProductSlotInfo(id);
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("product", ProductResponseDto.from(product));
+        result.put("slotInfo", slotInfo);
+
+        log.info("상품 삭제 확인 완료: {} - 슬롯 정보: {}", id, slotInfo);
+        return result;
+    }
+
+    // 슬롯과 함께 상품 삭제
+    @Transactional
+    public void deleteProductWithSlots(Integer id, boolean deleteSlots) {
+        log.info("슬롯과 함께 상품 삭제 시작: {} - 슬롯 삭제: {}", id, deleteSlots);
+
+        // 상품 존재 확인
+        ProductEntity product = productRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("상품을 찾을 수 없습니다: " + id));
+
+        if (deleteSlots) {
+            // 예약된 슬롯이 있는지 확인
+            Map<String, Object> slotInfo = slotService.getProductSlotInfo(id);
+            Long bookedSlots = (Long) slotInfo.get("bookedSlots");
+
+            if (bookedSlots > 0) {
+                log.warn("예약된 슬롯이 있어서 삭제 불가: {} - 예약된 슬롯: {}개", id, bookedSlots);
+                throw new RuntimeException("예약된 슬롯이 있어서 삭제할 수 없습니다. 예약된 슬롯: " + bookedSlots + "개");
+            }
+
+            // 슬롯 먼저 삭제
+            slotService.deleteSlotsByProductId(id);
+            log.info("상품 {}의 모든 슬롯 삭제 완료", id);
+        }
+
+        // 상품 삭제
+        productRepository.delete(product);
+        log.info("상품 삭제 완료: {}", id);
     }
 
 }

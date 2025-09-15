@@ -74,10 +74,18 @@ public class ProductController {
         return ResponseEntity.ok(productResponseDto);
     }
 
-    // 상품 삭제
+    // 상품 삭제 전 확인
+    @GetMapping("/{id}/deletion-check")
+    public ResponseEntity<Map<String, Object>> checkProductDeletion(@PathVariable Integer id) {
+        Map<String, Object> result = productService.checkProductDeletion(id);
+        return ResponseEntity.ok(result);
+    }
+
+    // 슬롯과 함께 상품 삭제
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteProduct(@PathVariable Integer id) {
-        productService.deleteProduct(id);
+    public ResponseEntity<Void> deleteProductWithSlots(@PathVariable Integer id,
+            @RequestParam(defaultValue = "true") boolean deleteSlots) {
+        productService.deleteProductWithSlots(id, deleteSlots);
         return ResponseEntity.noContent().build();
     }
 
