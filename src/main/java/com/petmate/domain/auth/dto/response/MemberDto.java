@@ -1,3 +1,4 @@
+// src/main/java/com/petmate/domain/auth/dto/response/MemberDto.java
 package com.petmate.domain.auth.dto.response;
 
 import lombok.AllArgsConstructor;
@@ -10,10 +11,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MemberDto {
-
     private int no;
     private String id;
     private String pw;
     private String mail;
-
+    private String role;
 }

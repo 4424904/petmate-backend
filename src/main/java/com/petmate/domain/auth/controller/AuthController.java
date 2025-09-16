@@ -38,7 +38,6 @@ public class AuthController {
         String sameSite = isLocal ? "Lax" : "None";
         boolean secure  = !isLocal;
 
-        // refreshToken만 HttpOnly 쿠키로 저장
         ResponseCookie refreshCookie = ResponseCookie.from("refreshToken", result.getRefreshToken())
                 .httpOnly(true)
                 .secure(secure)
@@ -49,7 +48,7 @@ public class AuthController {
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, refreshCookie.toString())
-                .body(new TokenResponseDto(result.getAccessToken())); // accessToken은 바디로만
+                .body(new TokenResponseDto(result.getAccessToken()));
     }
 
     /** 회원가입 */
@@ -71,7 +70,6 @@ public class AuthController {
         String sameSite = isLocal ? "Lax" : "None";
         boolean secure  = !isLocal;
 
-        // accessToken은 프론트 보관 가정. 서버는 refreshToken만 정리.
         ResponseCookie clearRefresh = ResponseCookie.from("refreshToken", "")
                 .httpOnly(true).secure(secure).sameSite(sameSite)
                 .path("/").maxAge(0).build();
@@ -105,7 +103,6 @@ public class AuthController {
         boolean secure  = !isLocal;
 
         if (newToken.getRefreshToken() != null && !newToken.getRefreshToken().isBlank()) {
-            // 로테이션된 새 refreshToken 쿠키 갱신
             ResponseCookie rc = ResponseCookie.from("refreshToken", newToken.getRefreshToken())
                     .httpOnly(true).secure(secure).sameSite(sameSite)
                     .path("/").maxAge(7 * 24 * 60 * 60).build();
@@ -116,7 +113,12 @@ public class AuthController {
         return ResponseEntity.ok(new TokenResponseDto(newToken.getAccessToken()));
     }
 
-    /** 내 정보 조회: 만료 시 자동 재발급하지 않음. 무조건 401 */
+    /**
+     * 내 정보 조회
+     * - 토큰 유효성은 JWT로만 체크
+     * - 실제 응답은 항상 DB(JPA) 기준 최신값
+     * - 만료는 401. 프론트는 /auth/refresh 후 재시도.
+     */
     @GetMapping("/me")
     public ResponseEntity<UserInfoResponseDto> me(
             @RequestHeader(value = HttpHeaders.AUTHORIZATION, required = false) String authHeader,
@@ -137,9 +139,7 @@ public class AuthController {
         }
         if (token == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
-        // 만료/위조 등은 JwtUtil에서 예외로 던지고, ApiExceptionHandler가 401 JSON으로 정리
         if (jwtUtil.isExpired(token)) {
-            // 명시적 401. 프론트는 /auth/refresh 호출 후 재시도.
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
@@ -148,18 +148,14 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        UserInfoResponseDto dto = new UserInfoResponseDto(
-                claims.getSubject(),
-                JwtClaimAccessor.email(claims),
-                JwtClaimAccessor.name(claims),
-                JwtClaimAccessor.nickname(claims),
-                JwtClaimAccessor.picture(claims),
-                JwtClaimAccessor.provider(claims),
-                JwtClaimAccessor.role(claims),
-                JwtClaimAccessor.birthDate(claims),
-                JwtClaimAccessor.gender(claims),
-                JwtClaimAccessor.phone(claims)
-        );
+        String email = JwtClaimAccessor.email(claims);
+        if (email == null || email.isBlank()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        UserInfoResponseDto dto = authService.getUserInfoByEmail(email);
+        if (dto == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+
         return ResponseEntity.ok(dto);
     }
 }

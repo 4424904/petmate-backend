@@ -5,32 +5,38 @@
 
 <mapper namespace="com.petmate.common.repository.mybatis.user.MemberMapper">
 
-    <!-- 회원 조회 -->
+    <!-- DTO 매핑 -->
+    <resultMap id="MemberMap" type="com.petmate.domain.auth.dto.response.MemberDto">
+        <id     column="NO"   property="no"/>
+        <result column="ID"   property="id"/>
+        <result column="PW"   property="pw"/>
+        <result column="MAIL" property="mail"/>
+        <result column="ROLE" property="role"/>
+    </resultMap>
+
+    <!-- 회원 조회: ID -->
     <select id="findById"
-            parameterType="java.lang.String"
-            resultType="com.petmate.domain.auth.dto.response.MemberDto">
+            parameterType="string"
+            resultMap="MemberMap">
         SELECT
-        no,
-        id,
-        pw,
-        mail
-        FROM member
-        WHERE id = #{id}
+        NO, ID, PW, MAIL, ROLE
+        FROM MEMBER
+        WHERE ID = #{id}
     </select>
 
     <!-- 회원 가입 -->
     <insert id="signup"
             parameterType="com.petmate.domain.auth.dto.response.MemberDto">
-        INSERT INTO member (
-        id,
-        pw,
-        mail
-        )
-        VALUES (
-        #{id},
-        #{pw},
-        #{mail}
-        )
+        INSERT INTO MEMBER (ID, PW, MAIL, ROLE)
+        VALUES (#{id}, #{pw}, #{mail}, #{role})
     </insert>
+
+    <!-- 역할 변경(옵션) -->
+    <update id="updateRole"
+            parameterType="com.petmate.domain.auth.dto.response.MemberDto">
+        UPDATE MEMBER
+        SET ROLE = #{role}
+        WHERE ID = #{id}
+    </update>
 
 </mapper>

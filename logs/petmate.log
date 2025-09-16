@@ -41,3 +41,1542 @@
     from
         danal_codes gce1_0
 2025-09-16 09:35:03 [restartedMain] INFO  com.petmate.config.DataInitializer - Common codes already initialized
+2025-09-16 10:17:16 [restartedMain] INFO  com.petmate.PetmateApplication - Starting PetmateApplication using Java 21.0.7 with PID 4620 (C:\lfm01\spring_boot\pjt-sts4\petmate-backend-mainb\petmate-backend\build\classes\java\main started by HI-02 in C:\lfm01\spring_boot\pjt-sts4\petmate-backend-mainb\petmate-backend)
+2025-09-16 10:17:16 [restartedMain] DEBUG com.petmate.PetmateApplication - Running with Spring Boot v3.5.5, Spring v6.2.10
+2025-09-16 10:17:16 [restartedMain] INFO  com.petmate.PetmateApplication - No active profile set, falling back to 1 default profile: "default"
+2025-09-16 10:17:16 [restartedMain] INFO  o.s.b.d.restart.ChangeableUrls - The Class-Path manifest attribute in C:\Users\HI-02\.gradle\caches\modules-2\files-2.1\io.github.cdimascio\java-dotenv\5.2.2\f77d54ff193ed4b07415ab8d7b3d0550716aa8c\java-dotenv-5.2.2.jar referenced one or more files that do not exist: file:/C:/Users/HI-02/.gradle/caches/modules-2/files-2.1/io.github.cdimascio/java-dotenv/5.2.2/f77d54ff193ed4b07415ab8d7b3d0550716aa8c/kotlin-stdlib-1.4.0.jar,file:/C:/Users/HI-02/.gradle/caches/modules-2/files-2.1/io.github.cdimascio/java-dotenv/5.2.2/f77d54ff193ed4b07415ab8d7b3d0550716aa8c/kotlin-stdlib-common-1.4.0.jar,file:/C:/Users/HI-02/.gradle/caches/modules-2/files-2.1/io.github.cdimascio/java-dotenv/5.2.2/f77d54ff193ed4b07415ab8d7b3d0550716aa8c/annotations-13.0.jar
+2025-09-16 10:17:16 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2025-09-16 10:17:16 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2025-09-16 10:17:17 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-09-16 10:17:17 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 172 ms. Found 12 JPA repository interfaces.
+2025-09-16 10:17:19 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8090 (http)
+2025-09-16 10:17:19 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-09-16 10:17:19 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.44]
+2025-09-16 10:17:19 [restartedMain] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-09-16 10:17:19 [restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 2865 ms
+2025-09-16 10:17:19 [restartedMain] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-09-16 10:17:19 [restartedMain] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.6.26.Final
+2025-09-16 10:17:19 [restartedMain] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-09-16 10:17:20 [restartedMain] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-09-16 10:17:20 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-09-16 10:17:20 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@5cb043a7
+2025-09-16 10:17:20 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-09-16 10:17:20 [restartedMain] INFO  o.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 8.0.43
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-09-16 10:17:22 [restartedMain] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-09-16 10:17:22 [restartedMain] DEBUG org.hibernate.SQL - 
+    create table availability_slot (
+        id integer not null auto_increment,
+        booked integer not null,
+        capacity integer not null,
+        company_id integer not null,
+        end_dt datetime(6),
+        product_id integer not null,
+        slot_date date not null,
+        start_dt datetime(6) not null,
+        primary key (id)
+    ) engine=InnoDB
+2025-09-16 10:17:22 [restartedMain] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-09-16 10:17:22 [restartedMain] INFO  o.s.d.j.r.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-09-16 10:17:25 [restartedMain] INFO  com.petmate.config.WebConfig - CORS applied. origins=[localhost:3000, 127.0.0.1:3000, localhost:3001, https://minjung.kr], allowCredentials=false
+2025-09-16 10:17:25 [restartedMain] INFO  com.petmate.config.WebConfig - Static mapping applied. /files/** -> file:C:/petmate/
+2025-09-16 10:17:25 [restartedMain] WARN  o.s.b.a.t.ThymeleafAutoConfiguration$DefaultTemplateResolverConfiguration - Cannot find template location: classpath:/templates/ (please add some templates, check your Thymeleaf configuration, or set spring.thymeleaf.check-template-location=false)
+2025-09-16 10:17:25 [restartedMain] INFO  o.s.b.d.a.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2025-09-16 10:17:25 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8090 (http) with context path '/'
+2025-09-16 10:17:25 [restartedMain] INFO  com.petmate.PetmateApplication - Started PetmateApplication in 10.41 seconds (process running for 11.114)
+2025-09-16 10:17:26 [restartedMain] DEBUG org.hibernate.SQL - 
+    select
+        count(*) 
+    from
+        danal_codes gce1_0
+2025-09-16 10:17:26 [restartedMain] INFO  com.petmate.config.DataInitializer - Common codes already initialized
+2025-09-16 10:18:02 [http-nio-8090-exec-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-09-16 10:18:02 [http-nio-8090-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-09-16 10:18:02 [http-nio-8090-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 1 ms
+2025-09-16 10:18:02 [http-nio-8090-exec-1] INFO  c.p.security.JwtAuthenticationFilter - [JWT] GET /auth/me - expired access token
+2025-09-16 10:18:06 [http-nio-8090-exec-3] INFO  c.p.domain.user.service.UserService - === applyBasicUser 시작 === email=kimijug97@naver.com
+2025-09-16 10:18:06 [http-nio-8090-exec-3] DEBUG org.hibernate.SQL - 
+    select
+        ue1_0.id,
+        ue1_0.birth_date,
+        ue1_0.care_species,
+        ue1_0.created_at,
+        ue1_0.email,
+        ue1_0.email_verified,
+        ue1_0.gender,
+        ue1_0.main_service,
+        ue1_0.name,
+        ue1_0.nick_name,
+        ue1_0.phone,
+        ue1_0.profile_image,
+        ue1_0.provider,
+        ue1_0.role,
+        ue1_0.status,
+        ue1_0.updated_at 
+    from
+        user ue1_0 
+    where
+        ue1_0.email=?
+2025-09-16 10:18:06 [http-nio-8090-exec-3] INFO  c.p.d.user.service.UserFileService - 실제 프로필 이미지 존재: userId=30, profile=1efbd7cd-2ada-4f6b-94a9-fd69dc188cbc.png
+2025-09-16 10:18:06 [http-nio-8090-exec-3] INFO  c.p.domain.user.service.UserService - applyBasicUser 완료 - userId=30, role=4
+2025-09-16 10:18:06 [http-nio-8090-exec-3] DEBUG org.hibernate.SQL - 
+    select
+        ue1_0.id,
+        ue1_0.birth_date,
+        ue1_0.care_species,
+        ue1_0.created_at,
+        ue1_0.email,
+        ue1_0.email_verified,
+        ue1_0.gender,
+        ue1_0.main_service,
+        ue1_0.name,
+        ue1_0.nick_name,
+        ue1_0.phone,
+        ue1_0.profile_image,
+        ue1_0.provider,
+        ue1_0.role,
+        ue1_0.status,
+        ue1_0.updated_at 
+    from
+        user ue1_0 
+    where
+        ue1_0.email=?
+2025-09-16 10:18:06 [http-nio-8090-exec-3] DEBUG org.hibernate.SQL - 
+    select
+        pim1_0.uuid,
+        pim1_0.created_at,
+        pim1_0.email,
+        pim1_0.expires_at,
+        pim1_0.real_path 
+    from
+        profile_image_map pim1_0 
+    where
+        pim1_0.email=?
+2025-09-16 10:20:00 [http-nio-8090-exec-1] INFO  c.p.domain.user.service.UserService - === applyBasicUser 시작 === email=kimijug97@naver.com
+2025-09-16 10:20:00 [http-nio-8090-exec-1] DEBUG org.hibernate.SQL - 
+    select
+        ue1_0.id,
+        ue1_0.birth_date,
+        ue1_0.care_species,
+        ue1_0.created_at,
+        ue1_0.email,
+        ue1_0.email_verified,
+        ue1_0.gender,
+        ue1_0.main_service,
+        ue1_0.name,
+        ue1_0.nick_name,
+        ue1_0.phone,
+        ue1_0.profile_image,
+        ue1_0.provider,
+        ue1_0.role,
+        ue1_0.status,
+        ue1_0.updated_at 
+    from
+        user ue1_0 
+    where
+        ue1_0.email=?
+2025-09-16 10:20:00 [http-nio-8090-exec-1] DEBUG org.hibernate.SQL - 
+    insert 
+    into
+        user
+        (birth_date, care_species, created_at, email, email_verified, gender, main_service, name, nick_name, phone, profile_image, provider, role, status, updated_at) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2025-09-16 10:20:00 [http-nio-8090-exec-1] INFO  c.p.d.user.service.UserFileService - 기본 프로필 이미지 저장 시작: userId=31, 현재값=null
+2025-09-16 10:20:00 [http-nio-8090-exec-1] INFO  c.p.d.user.service.UserFileService - 기본 이미지 리소스 읽기 완료: 46374 bytes
+2025-09-16 10:20:00 [http-nio-8090-exec-1] INFO  c.p.d.user.service.UserFileService - 기본 프로필 저장 경로: C:\petmate\31\profile\c3349d27-ee08-414f-ae94-569ac4ef71bb.png
+2025-09-16 10:20:00 [http-nio-8090-exec-1] INFO  c.p.d.user.service.UserFileService - 기본 프로필 이미지 저장 완료: C:\petmate\31\profile\c3349d27-ee08-414f-ae94-569ac4ef71bb.png
+2025-09-16 10:20:00 [http-nio-8090-exec-1] DEBUG org.hibernate.SQL - 
+    select
+        pim1_0.uuid,
+        pim1_0.created_at,
+        pim1_0.email,
+        pim1_0.expires_at,
+        pim1_0.real_path 
+    from
+        profile_image_map pim1_0 
+    where
+        pim1_0.email=?
+2025-09-16 10:20:00 [http-nio-8090-exec-1] INFO  c.p.d.user.service.UserFileService - UUID 변경으로 인한 재생성: email=kimijug97@naver.com, 기존UUID=1efbd7cd-2ada-4f6b-94a9-fd69dc188cbc.png -> 새UUID=c3349d27-ee08-414f-ae94-569ac4ef71bb.png
+2025-09-16 10:20:00 [http-nio-8090-exec-1] DEBUG org.hibernate.SQL - 
+    delete 
+    from
+        profile_image_map 
+    where
+        uuid=?
+2025-09-16 10:20:00 [http-nio-8090-exec-1] DEBUG org.hibernate.SQL - 
+    select
+        pim1_0.uuid,
+        pim1_0.created_at,
+        pim1_0.email,
+        pim1_0.expires_at,
+        pim1_0.real_path 
+    from
+        profile_image_map pim1_0 
+    where
+        pim1_0.uuid=?
+2025-09-16 10:20:00 [http-nio-8090-exec-1] INFO  c.p.d.user.service.UserFileService - ImageMap 처리 완료: email=kimijug97@naver.com, UUID=c3349d27-ee08-414f-ae94-569ac4ef71bb.png, path=C:\petmate\31\profile\c3349d27-ee08-414f-ae94-569ac4ef71bb.png
+2025-09-16 10:20:00 [http-nio-8090-exec-1] INFO  c.p.domain.user.service.UserService - applyBasicUser 완료 - userId=31, role=1
+2025-09-16 10:20:00 [http-nio-8090-exec-1] DEBUG org.hibernate.SQL - 
+    insert 
+    into
+        profile_image_map
+        (email, expires_at, real_path, uuid) 
+    values
+        (?, ?, ?, ?)
+2025-09-16 10:20:00 [http-nio-8090-exec-1] DEBUG org.hibernate.SQL - 
+    update
+        user 
+    set
+        birth_date=?,
+        care_species=?,
+        email=?,
+        email_verified=?,
+        gender=?,
+        main_service=?,
+        name=?,
+        nick_name=?,
+        phone=?,
+        profile_image=?,
+        provider=?,
+        role=?,
+        status=?,
+        updated_at=? 
+    where
+        id=?
+2025-09-16 10:20:00 [http-nio-8090-exec-1] DEBUG org.hibernate.SQL - 
+    select
+        ue1_0.id,
+        ue1_0.birth_date,
+        ue1_0.care_species,
+        ue1_0.created_at,
+        ue1_0.email,
+        ue1_0.email_verified,
+        ue1_0.gender,
+        ue1_0.main_service,
+        ue1_0.name,
+        ue1_0.nick_name,
+        ue1_0.phone,
+        ue1_0.profile_image,
+        ue1_0.provider,
+        ue1_0.role,
+        ue1_0.status,
+        ue1_0.updated_at 
+    from
+        user ue1_0 
+    where
+        ue1_0.email=?
+2025-09-16 10:20:00 [http-nio-8090-exec-1] DEBUG org.hibernate.SQL - 
+    select
+        pim1_0.uuid,
+        pim1_0.created_at,
+        pim1_0.email,
+        pim1_0.expires_at,
+        pim1_0.real_path 
+    from
+        profile_image_map pim1_0 
+    where
+        pim1_0.email=?
+2025-09-16 10:20:01 [http-nio-8090-exec-3] INFO  c.p.d.i.c.ImageProxyController - 이미지 요청: uuid=c3349d27-ee08-414f-ae94-569ac4ef71bb.png
+2025-09-16 10:20:01 [http-nio-8090-exec-3] INFO  c.p.d.i.service.ProfileImageService - UUID로 경로 조회 시작: c3349d27-ee08-414f-ae94-569ac4ef71bb.png
+2025-09-16 10:20:01 [http-nio-8090-exec-3] DEBUG org.hibernate.SQL - 
+    select
+        pim1_0.uuid,
+        pim1_0.created_at,
+        pim1_0.email,
+        pim1_0.expires_at,
+        pim1_0.real_path 
+    from
+        profile_image_map pim1_0 
+    where
+        pim1_0.uuid=?
+2025-09-16 10:20:01 [http-nio-8090-exec-3] INFO  c.p.d.i.service.ProfileImageService - 매핑 찾음: uuid=c3349d27-ee08-414f-ae94-569ac4ef71bb.png -> path=C:\petmate\31\profile\c3349d27-ee08-414f-ae94-569ac4ef71bb.png
+2025-09-16 10:20:01 [http-nio-8090-exec-3] INFO  c.p.d.i.c.ImageProxyController - 매핑된 경로: C:\petmate\31\profile\c3349d27-ee08-414f-ae94-569ac4ef71bb.png
+2025-09-16 10:20:01 [http-nio-8090-exec-3] INFO  c.p.d.i.c.ImageProxyController - 파일 존재 여부: true, 경로: C:\petmate\31\profile\c3349d27-ee08-414f-ae94-569ac4ef71bb.png
+2025-09-16 10:20:01 [http-nio-8090-exec-3] INFO  c.p.d.i.c.ImageProxyController - MIME 타입: image/png
+2025-09-16 10:20:21 [http-nio-8090-exec-6] INFO  c.p.domain.user.service.UserService - === 펫메이트 신청 시작 === email=kimijug97@naver.com
+2025-09-16 10:20:21 [http-nio-8090-exec-6] DEBUG org.hibernate.SQL - 
+    select
+        ue1_0.id,
+        ue1_0.birth_date,
+        ue1_0.care_species,
+        ue1_0.created_at,
+        ue1_0.email,
+        ue1_0.email_verified,
+        ue1_0.gender,
+        ue1_0.main_service,
+        ue1_0.name,
+        ue1_0.nick_name,
+        ue1_0.phone,
+        ue1_0.profile_image,
+        ue1_0.provider,
+        ue1_0.role,
+        ue1_0.status,
+        ue1_0.updated_at 
+    from
+        user ue1_0 
+    where
+        ue1_0.email=?
+2025-09-16 10:20:21 [http-nio-8090-exec-6] INFO  c.p.d.user.service.UserFileService - 실제 프로필 이미지 존재: userId=31, profile=c3349d27-ee08-414f-ae94-569ac4ef71bb.png
+2025-09-16 10:20:21 [http-nio-8090-exec-6] INFO  c.p.domain.user.service.UserService - 펫메이트 신청 완료 - userId=31, role(old->1)=3
+2025-09-16 10:20:21 [http-nio-8090-exec-6] DEBUG org.hibernate.SQL - 
+    update
+        user 
+    set
+        birth_date=?,
+        care_species=?,
+        email=?,
+        email_verified=?,
+        gender=?,
+        main_service=?,
+        name=?,
+        nick_name=?,
+        phone=?,
+        profile_image=?,
+        provider=?,
+        role=?,
+        status=?,
+        updated_at=? 
+    where
+        id=?
+2025-09-16 10:21:22 [http-nio-8090-exec-3] WARN  o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.web.servlet.resource.NoResourceFoundException: No static resource favicon.ico.]
+2025-09-16 10:23:21 [http-nio-8090-exec-6] INFO  c.p.security.JwtAuthenticationFilter - [JWT] GET /auth/me - expired access token
+2025-09-16 10:23:21 [http-nio-8090-exec-7] INFO  c.p.security.JwtAuthenticationFilter - [JWT] GET /auth/me - expired access token
+2025-09-16 10:27:20 [http-nio-8090-exec-9] INFO  c.p.security.JwtAuthenticationFilter - [JWT] GET /auth/me - expired access token
+2025-09-16 10:27:20 [http-nio-8090-exec-10] INFO  c.p.security.JwtAuthenticationFilter - [JWT] GET /auth/me - expired access token
+2025-09-16 10:27:30 [http-nio-8090-exec-2] INFO  c.p.domain.user.service.UserService - === applyBasicUser 시작 === email=kimijug97@naver.com
+2025-09-16 10:27:30 [http-nio-8090-exec-2] DEBUG org.hibernate.SQL - 
+    select
+        ue1_0.id,
+        ue1_0.birth_date,
+        ue1_0.care_species,
+        ue1_0.created_at,
+        ue1_0.email,
+        ue1_0.email_verified,
+        ue1_0.gender,
+        ue1_0.main_service,
+        ue1_0.name,
+        ue1_0.nick_name,
+        ue1_0.phone,
+        ue1_0.profile_image,
+        ue1_0.provider,
+        ue1_0.role,
+        ue1_0.status,
+        ue1_0.updated_at 
+    from
+        user ue1_0 
+    where
+        ue1_0.email=?
+2025-09-16 10:27:30 [http-nio-8090-exec-2] INFO  c.p.d.user.service.UserFileService - 실제 프로필 이미지 존재: userId=31, profile=c3349d27-ee08-414f-ae94-569ac4ef71bb.png
+2025-09-16 10:27:30 [http-nio-8090-exec-2] INFO  c.p.domain.user.service.UserService - applyBasicUser 완료 - userId=31, role=3
+2025-09-16 10:27:31 [http-nio-8090-exec-2] DEBUG org.hibernate.SQL - 
+    select
+        ue1_0.id,
+        ue1_0.birth_date,
+        ue1_0.care_species,
+        ue1_0.created_at,
+        ue1_0.email,
+        ue1_0.email_verified,
+        ue1_0.gender,
+        ue1_0.main_service,
+        ue1_0.name,
+        ue1_0.nick_name,
+        ue1_0.phone,
+        ue1_0.profile_image,
+        ue1_0.provider,
+        ue1_0.role,
+        ue1_0.status,
+        ue1_0.updated_at 
+    from
+        user ue1_0 
+    where
+        ue1_0.email=?
+2025-09-16 10:27:31 [http-nio-8090-exec-2] DEBUG org.hibernate.SQL - 
+    select
+        pim1_0.uuid,
+        pim1_0.created_at,
+        pim1_0.email,
+        pim1_0.expires_at,
+        pim1_0.real_path 
+    from
+        profile_image_map pim1_0 
+    where
+        pim1_0.email=?
+2025-09-16 10:27:40 [http-nio-8090-exec-6] INFO  c.p.domain.user.service.UserService - === 반려인 신청 시작 === email=kimijug97@naver.com
+2025-09-16 10:27:40 [http-nio-8090-exec-6] DEBUG org.hibernate.SQL - 
+    select
+        ue1_0.id,
+        ue1_0.birth_date,
+        ue1_0.care_species,
+        ue1_0.created_at,
+        ue1_0.email,
+        ue1_0.email_verified,
+        ue1_0.gender,
+        ue1_0.main_service,
+        ue1_0.name,
+        ue1_0.nick_name,
+        ue1_0.phone,
+        ue1_0.profile_image,
+        ue1_0.provider,
+        ue1_0.role,
+        ue1_0.status,
+        ue1_0.updated_at 
+    from
+        user ue1_0 
+    where
+        ue1_0.email=?
+2025-09-16 10:27:40 [http-nio-8090-exec-6] INFO  c.p.d.user.service.UserFileService - 실제 프로필 이미지 존재: userId=31, profile=c3349d27-ee08-414f-ae94-569ac4ef71bb.png
+2025-09-16 10:27:40 [http-nio-8090-exec-6] INFO  c.p.domain.user.service.UserService - 반려인 신청 완료 - userId=31, role(old->3)=4
+2025-09-16 10:27:40 [http-nio-8090-exec-6] DEBUG org.hibernate.SQL - 
+    update
+        user 
+    set
+        birth_date=?,
+        care_species=?,
+        email=?,
+        email_verified=?,
+        gender=?,
+        main_service=?,
+        name=?,
+        nick_name=?,
+        phone=?,
+        profile_image=?,
+        provider=?,
+        role=?,
+        status=?,
+        updated_at=? 
+    where
+        id=?
+2025-09-16 10:30:45 [http-nio-8090-exec-2] INFO  c.p.security.JwtAuthenticationFilter - [JWT] POST /auth/signout - expired access token
+2025-09-16 10:30:52 [http-nio-8090-exec-4] INFO  c.p.domain.user.service.UserService - === applyBasicUser 시작 === email=kimijug97@naver.com
+2025-09-16 10:30:52 [http-nio-8090-exec-4] DEBUG org.hibernate.SQL - 
+    select
+        ue1_0.id,
+        ue1_0.birth_date,
+        ue1_0.care_species,
+        ue1_0.created_at,
+        ue1_0.email,
+        ue1_0.email_verified,
+        ue1_0.gender,
+        ue1_0.main_service,
+        ue1_0.name,
+        ue1_0.nick_name,
+        ue1_0.phone,
+        ue1_0.profile_image,
+        ue1_0.provider,
+        ue1_0.role,
+        ue1_0.status,
+        ue1_0.updated_at 
+    from
+        user ue1_0 
+    where
+        ue1_0.email=?
+2025-09-16 10:30:52 [http-nio-8090-exec-4] DEBUG org.hibernate.SQL - 
+    insert 
+    into
+        user
+        (birth_date, care_species, created_at, email, email_verified, gender, main_service, name, nick_name, phone, profile_image, provider, role, status, updated_at) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2025-09-16 10:30:52 [http-nio-8090-exec-4] INFO  c.p.d.user.service.UserFileService - 기본 프로필 이미지 저장 시작: userId=32, 현재값=null
+2025-09-16 10:30:52 [http-nio-8090-exec-4] INFO  c.p.d.user.service.UserFileService - 기본 이미지 리소스 읽기 완료: 46374 bytes
+2025-09-16 10:30:52 [http-nio-8090-exec-4] INFO  c.p.d.user.service.UserFileService - 기본 프로필 저장 경로: C:\petmate\32\profile\d8f3d945-4652-4197-8b29-aceb8dab2433.png
+2025-09-16 10:30:52 [http-nio-8090-exec-4] INFO  c.p.d.user.service.UserFileService - 기본 프로필 이미지 저장 완료: C:\petmate\32\profile\d8f3d945-4652-4197-8b29-aceb8dab2433.png
+2025-09-16 10:30:52 [http-nio-8090-exec-4] DEBUG org.hibernate.SQL - 
+    select
+        pim1_0.uuid,
+        pim1_0.created_at,
+        pim1_0.email,
+        pim1_0.expires_at,
+        pim1_0.real_path 
+    from
+        profile_image_map pim1_0 
+    where
+        pim1_0.email=?
+2025-09-16 10:30:52 [http-nio-8090-exec-4] INFO  c.p.d.user.service.UserFileService - UUID 변경으로 인한 재생성: email=kimijug97@naver.com, 기존UUID=c3349d27-ee08-414f-ae94-569ac4ef71bb.png -> 새UUID=d8f3d945-4652-4197-8b29-aceb8dab2433.png
+2025-09-16 10:30:52 [http-nio-8090-exec-4] DEBUG org.hibernate.SQL - 
+    delete 
+    from
+        profile_image_map 
+    where
+        uuid=?
+2025-09-16 10:30:52 [http-nio-8090-exec-4] DEBUG org.hibernate.SQL - 
+    select
+        pim1_0.uuid,
+        pim1_0.created_at,
+        pim1_0.email,
+        pim1_0.expires_at,
+        pim1_0.real_path 
+    from
+        profile_image_map pim1_0 
+    where
+        pim1_0.uuid=?
+2025-09-16 10:30:52 [http-nio-8090-exec-4] INFO  c.p.d.user.service.UserFileService - ImageMap 처리 완료: email=kimijug97@naver.com, UUID=d8f3d945-4652-4197-8b29-aceb8dab2433.png, path=C:\petmate\32\profile\d8f3d945-4652-4197-8b29-aceb8dab2433.png
+2025-09-16 10:30:52 [http-nio-8090-exec-4] INFO  c.p.domain.user.service.UserService - applyBasicUser 완료 - userId=32, role=1
+2025-09-16 10:30:52 [http-nio-8090-exec-4] DEBUG org.hibernate.SQL - 
+    insert 
+    into
+        profile_image_map
+        (email, expires_at, real_path, uuid) 
+    values
+        (?, ?, ?, ?)
+2025-09-16 10:30:52 [http-nio-8090-exec-4] DEBUG org.hibernate.SQL - 
+    update
+        user 
+    set
+        birth_date=?,
+        care_species=?,
+        email=?,
+        email_verified=?,
+        gender=?,
+        main_service=?,
+        name=?,
+        nick_name=?,
+        phone=?,
+        profile_image=?,
+        provider=?,
+        role=?,
+        status=?,
+        updated_at=? 
+    where
+        id=?
+2025-09-16 10:30:52 [http-nio-8090-exec-4] DEBUG org.hibernate.SQL - 
+    select
+        ue1_0.id,
+        ue1_0.birth_date,
+        ue1_0.care_species,
+        ue1_0.created_at,
+        ue1_0.email,
+        ue1_0.email_verified,
+        ue1_0.gender,
+        ue1_0.main_service,
+        ue1_0.name,
+        ue1_0.nick_name,
+        ue1_0.phone,
+        ue1_0.profile_image,
+        ue1_0.provider,
+        ue1_0.role,
+        ue1_0.status,
+        ue1_0.updated_at 
+    from
+        user ue1_0 
+    where
+        ue1_0.email=?
+2025-09-16 10:30:52 [http-nio-8090-exec-4] DEBUG org.hibernate.SQL - 
+    select
+        pim1_0.uuid,
+        pim1_0.created_at,
+        pim1_0.email,
+        pim1_0.expires_at,
+        pim1_0.real_path 
+    from
+        profile_image_map pim1_0 
+    where
+        pim1_0.email=?
+2025-09-16 10:30:53 [http-nio-8090-exec-6] INFO  c.p.d.i.c.ImageProxyController - 이미지 요청: uuid=d8f3d945-4652-4197-8b29-aceb8dab2433.png
+2025-09-16 10:30:53 [http-nio-8090-exec-6] INFO  c.p.d.i.service.ProfileImageService - UUID로 경로 조회 시작: d8f3d945-4652-4197-8b29-aceb8dab2433.png
+2025-09-16 10:30:53 [http-nio-8090-exec-6] DEBUG org.hibernate.SQL - 
+    select
+        pim1_0.uuid,
+        pim1_0.created_at,
+        pim1_0.email,
+        pim1_0.expires_at,
+        pim1_0.real_path 
+    from
+        profile_image_map pim1_0 
+    where
+        pim1_0.uuid=?
+2025-09-16 10:30:53 [http-nio-8090-exec-6] INFO  c.p.d.i.service.ProfileImageService - 매핑 찾음: uuid=d8f3d945-4652-4197-8b29-aceb8dab2433.png -> path=C:\petmate\32\profile\d8f3d945-4652-4197-8b29-aceb8dab2433.png
+2025-09-16 10:30:53 [http-nio-8090-exec-6] INFO  c.p.d.i.c.ImageProxyController - 매핑된 경로: C:\petmate\32\profile\d8f3d945-4652-4197-8b29-aceb8dab2433.png
+2025-09-16 10:30:53 [http-nio-8090-exec-6] INFO  c.p.d.i.c.ImageProxyController - 파일 존재 여부: true, 경로: C:\petmate\32\profile\d8f3d945-4652-4197-8b29-aceb8dab2433.png
+2025-09-16 10:30:53 [http-nio-8090-exec-6] INFO  c.p.d.i.c.ImageProxyController - MIME 타입: image/png
+2025-09-16 10:30:57 [http-nio-8090-exec-8] INFO  c.p.domain.user.service.UserService - === 반려인 신청 시작 === email=kimijug97@naver.com
+2025-09-16 10:30:57 [http-nio-8090-exec-8] DEBUG org.hibernate.SQL - 
+    select
+        ue1_0.id,
+        ue1_0.birth_date,
+        ue1_0.care_species,
+        ue1_0.created_at,
+        ue1_0.email,
+        ue1_0.email_verified,
+        ue1_0.gender,
+        ue1_0.main_service,
+        ue1_0.name,
+        ue1_0.nick_name,
+        ue1_0.phone,
+        ue1_0.profile_image,
+        ue1_0.provider,
+        ue1_0.role,
+        ue1_0.status,
+        ue1_0.updated_at 
+    from
+        user ue1_0 
+    where
+        ue1_0.email=?
+2025-09-16 10:30:57 [http-nio-8090-exec-8] INFO  c.p.d.user.service.UserFileService - 실제 프로필 이미지 존재: userId=32, profile=d8f3d945-4652-4197-8b29-aceb8dab2433.png
+2025-09-16 10:30:57 [http-nio-8090-exec-8] INFO  c.p.domain.user.service.UserService - 반려인 신청 완료 - userId=32, role(old->1)=2
+2025-09-16 10:30:57 [http-nio-8090-exec-8] DEBUG org.hibernate.SQL - 
+    update
+        user 
+    set
+        birth_date=?,
+        care_species=?,
+        email=?,
+        email_verified=?,
+        gender=?,
+        main_service=?,
+        name=?,
+        nick_name=?,
+        phone=?,
+        profile_image=?,
+        provider=?,
+        role=?,
+        status=?,
+        updated_at=? 
+    where
+        id=?
+2025-09-16 10:34:06 [http-nio-8090-exec-4] INFO  c.p.security.JwtAuthenticationFilter - [JWT] GET /auth/me - expired access token
+2025-09-16 10:36:55 [http-nio-8090-exec-6] INFO  c.p.security.JwtAuthenticationFilter - [JWT] GET /auth/me - expired access token
+2025-09-16 10:36:58 [http-nio-8090-exec-8] INFO  c.p.domain.user.service.UserService - === applyBasicUser 시작 === email=kimijug97@naver.com
+2025-09-16 10:36:58 [http-nio-8090-exec-8] DEBUG org.hibernate.SQL - 
+    select
+        ue1_0.id,
+        ue1_0.birth_date,
+        ue1_0.care_species,
+        ue1_0.created_at,
+        ue1_0.email,
+        ue1_0.email_verified,
+        ue1_0.gender,
+        ue1_0.main_service,
+        ue1_0.name,
+        ue1_0.nick_name,
+        ue1_0.phone,
+        ue1_0.profile_image,
+        ue1_0.provider,
+        ue1_0.role,
+        ue1_0.status,
+        ue1_0.updated_at 
+    from
+        user ue1_0 
+    where
+        ue1_0.email=?
+2025-09-16 10:36:58 [http-nio-8090-exec-8] INFO  c.p.d.user.service.UserFileService - 실제 프로필 이미지 존재: userId=32, profile=d8f3d945-4652-4197-8b29-aceb8dab2433.png
+2025-09-16 10:36:58 [http-nio-8090-exec-8] INFO  c.p.domain.user.service.UserService - applyBasicUser 완료 - userId=32, role=1
+2025-09-16 10:36:58 [http-nio-8090-exec-8] DEBUG org.hibernate.SQL - 
+    select
+        ue1_0.id,
+        ue1_0.birth_date,
+        ue1_0.care_species,
+        ue1_0.created_at,
+        ue1_0.email,
+        ue1_0.email_verified,
+        ue1_0.gender,
+        ue1_0.main_service,
+        ue1_0.name,
+        ue1_0.nick_name,
+        ue1_0.phone,
+        ue1_0.profile_image,
+        ue1_0.provider,
+        ue1_0.role,
+        ue1_0.status,
+        ue1_0.updated_at 
+    from
+        user ue1_0 
+    where
+        ue1_0.email=?
+2025-09-16 10:36:58 [http-nio-8090-exec-8] DEBUG org.hibernate.SQL - 
+    select
+        pim1_0.uuid,
+        pim1_0.created_at,
+        pim1_0.email,
+        pim1_0.expires_at,
+        pim1_0.real_path 
+    from
+        profile_image_map pim1_0 
+    where
+        pim1_0.email=?
+2025-09-16 10:37:05 [http-nio-8090-exec-1] INFO  c.p.domain.user.service.UserService - === 반려인 신청 시작 === email=kimijug97@naver.com
+2025-09-16 10:37:05 [http-nio-8090-exec-1] DEBUG org.hibernate.SQL - 
+    select
+        ue1_0.id,
+        ue1_0.birth_date,
+        ue1_0.care_species,
+        ue1_0.created_at,
+        ue1_0.email,
+        ue1_0.email_verified,
+        ue1_0.gender,
+        ue1_0.main_service,
+        ue1_0.name,
+        ue1_0.nick_name,
+        ue1_0.phone,
+        ue1_0.profile_image,
+        ue1_0.provider,
+        ue1_0.role,
+        ue1_0.status,
+        ue1_0.updated_at 
+    from
+        user ue1_0 
+    where
+        ue1_0.email=?
+2025-09-16 10:37:05 [http-nio-8090-exec-1] INFO  c.p.d.user.service.UserFileService - 실제 프로필 이미지 존재: userId=32, profile=d8f3d945-4652-4197-8b29-aceb8dab2433.png
+2025-09-16 10:37:05 [http-nio-8090-exec-1] INFO  c.p.domain.user.service.UserService - 반려인 신청 완료 - userId=32, role(old->1)=2
+2025-09-16 10:37:05 [http-nio-8090-exec-1] DEBUG org.hibernate.SQL - 
+    update
+        user 
+    set
+        birth_date=?,
+        care_species=?,
+        email=?,
+        email_verified=?,
+        gender=?,
+        main_service=?,
+        name=?,
+        nick_name=?,
+        phone=?,
+        profile_image=?,
+        provider=?,
+        role=?,
+        status=?,
+        updated_at=? 
+    where
+        id=?
+2025-09-16 10:38:37 [http-nio-8090-exec-6] INFO  c.p.security.JwtAuthenticationFilter - [JWT] GET /auth/me - expired access token
+2025-09-16 10:38:47 [http-nio-8090-exec-9] INFO  c.p.security.JwtAuthenticationFilter - [JWT] GET /auth/me - expired access token
+2025-09-16 10:38:47 [http-nio-8090-exec-10] INFO  c.p.security.JwtAuthenticationFilter - [JWT] GET /auth/me - expired access token
+2025-09-16 10:38:49 [http-nio-8090-exec-2] INFO  c.p.domain.user.service.UserService - === applyBasicUser 시작 === email=kimijug97@naver.com
+2025-09-16 10:38:49 [http-nio-8090-exec-2] DEBUG org.hibernate.SQL - 
+    select
+        ue1_0.id,
+        ue1_0.birth_date,
+        ue1_0.care_species,
+        ue1_0.created_at,
+        ue1_0.email,
+        ue1_0.email_verified,
+        ue1_0.gender,
+        ue1_0.main_service,
+        ue1_0.name,
+        ue1_0.nick_name,
+        ue1_0.phone,
+        ue1_0.profile_image,
+        ue1_0.provider,
+        ue1_0.role,
+        ue1_0.status,
+        ue1_0.updated_at 
+    from
+        user ue1_0 
+    where
+        ue1_0.email=?
+2025-09-16 10:38:49 [http-nio-8090-exec-2] INFO  c.p.d.user.service.UserFileService - 실제 프로필 이미지 존재: userId=32, profile=d8f3d945-4652-4197-8b29-aceb8dab2433.png
+2025-09-16 10:38:49 [http-nio-8090-exec-2] INFO  c.p.domain.user.service.UserService - applyBasicUser 완료 - userId=32, role=2
+2025-09-16 10:38:49 [http-nio-8090-exec-2] DEBUG org.hibernate.SQL - 
+    select
+        ue1_0.id,
+        ue1_0.birth_date,
+        ue1_0.care_species,
+        ue1_0.created_at,
+        ue1_0.email,
+        ue1_0.email_verified,
+        ue1_0.gender,
+        ue1_0.main_service,
+        ue1_0.name,
+        ue1_0.nick_name,
+        ue1_0.phone,
+        ue1_0.profile_image,
+        ue1_0.provider,
+        ue1_0.role,
+        ue1_0.status,
+        ue1_0.updated_at 
+    from
+        user ue1_0 
+    where
+        ue1_0.email=?
+2025-09-16 10:38:49 [http-nio-8090-exec-2] DEBUG org.hibernate.SQL - 
+    select
+        pim1_0.uuid,
+        pim1_0.created_at,
+        pim1_0.email,
+        pim1_0.expires_at,
+        pim1_0.real_path 
+    from
+        profile_image_map pim1_0 
+    where
+        pim1_0.email=?
+2025-09-16 10:52:30 [restartedMain] INFO  com.petmate.PetmateApplication - Starting PetmateApplication using Java 21.0.7 with PID 16088 (C:\lfm01\spring_boot\pjt-sts4\petmate-backend-mainb\petmate-backend\build\classes\java\main started by HI-02 in C:\lfm01\spring_boot\pjt-sts4\petmate-backend-mainb\petmate-backend)
+2025-09-16 10:52:30 [restartedMain] DEBUG com.petmate.PetmateApplication - Running with Spring Boot v3.5.5, Spring v6.2.10
+2025-09-16 10:52:30 [restartedMain] INFO  com.petmate.PetmateApplication - No active profile set, falling back to 1 default profile: "default"
+2025-09-16 10:52:30 [restartedMain] INFO  o.s.b.d.restart.ChangeableUrls - The Class-Path manifest attribute in C:\Users\HI-02\.gradle\caches\modules-2\files-2.1\io.github.cdimascio\java-dotenv\5.2.2\f77d54ff193ed4b07415ab8d7b3d0550716aa8c\java-dotenv-5.2.2.jar referenced one or more files that do not exist: file:/C:/Users/HI-02/.gradle/caches/modules-2/files-2.1/io.github.cdimascio/java-dotenv/5.2.2/f77d54ff193ed4b07415ab8d7b3d0550716aa8c/kotlin-stdlib-1.4.0.jar,file:/C:/Users/HI-02/.gradle/caches/modules-2/files-2.1/io.github.cdimascio/java-dotenv/5.2.2/f77d54ff193ed4b07415ab8d7b3d0550716aa8c/kotlin-stdlib-common-1.4.0.jar,file:/C:/Users/HI-02/.gradle/caches/modules-2/files-2.1/io.github.cdimascio/java-dotenv/5.2.2/f77d54ff193ed4b07415ab8d7b3d0550716aa8c/annotations-13.0.jar
+2025-09-16 10:52:30 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2025-09-16 10:52:30 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2025-09-16 10:52:31 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-09-16 10:52:31 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 173 ms. Found 12 JPA repository interfaces.
+2025-09-16 10:52:33 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8090 (http)
+2025-09-16 10:52:33 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-09-16 10:52:33 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.44]
+2025-09-16 10:52:33 [restartedMain] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-09-16 10:52:33 [restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 2930 ms
+2025-09-16 10:52:33 [restartedMain] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-09-16 10:52:33 [restartedMain] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.6.26.Final
+2025-09-16 10:52:33 [restartedMain] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-09-16 10:52:34 [restartedMain] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-09-16 10:52:34 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-09-16 10:52:34 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@3af7b5c0
+2025-09-16 10:52:34 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-09-16 10:52:35 [restartedMain] INFO  o.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 8.0.43
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-09-16 10:52:36 [restartedMain] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-09-16 10:52:36 [restartedMain] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-09-16 10:52:36 [restartedMain] INFO  o.s.d.j.r.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-09-16 10:52:39 [restartedMain] INFO  com.petmate.config.WebConfig - CORS applied. origins=[localhost:3000, 127.0.0.1:3000, localhost:3001, https://minjung.kr], allowCredentials=false
+2025-09-16 10:52:39 [restartedMain] INFO  com.petmate.config.WebConfig - Static mapping applied. /files/** -> file:C:/petmate/
+2025-09-16 10:52:39 [restartedMain] WARN  o.s.b.a.t.ThymeleafAutoConfiguration$DefaultTemplateResolverConfiguration - Cannot find template location: classpath:/templates/ (please add some templates, check your Thymeleaf configuration, or set spring.thymeleaf.check-template-location=false)
+2025-09-16 10:52:39 [restartedMain] INFO  o.s.b.d.a.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2025-09-16 10:52:39 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8090 (http) with context path '/'
+2025-09-16 10:52:39 [restartedMain] INFO  com.petmate.PetmateApplication - Started PetmateApplication in 10.068 seconds (process running for 10.834)
+2025-09-16 10:52:39 [restartedMain] DEBUG org.hibernate.SQL - 
+    select
+        count(*) 
+    from
+        danal_codes gce1_0
+2025-09-16 10:52:39 [restartedMain] INFO  com.petmate.config.DataInitializer - Common codes already initialized
+2025-09-16 10:52:47 [http-nio-8090-exec-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-09-16 10:52:47 [http-nio-8090-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-09-16 10:52:47 [http-nio-8090-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 1 ms
+2025-09-16 10:52:48 [http-nio-8090-exec-1] INFO  c.p.security.JwtAuthenticationFilter - [JWT] GET /auth/me - expired access token
+2025-09-16 10:52:58 [http-nio-8090-exec-3] INFO  c.p.domain.user.service.UserService - === applyBasicUser 시작 === email=kimijug97@naver.com
+2025-09-16 10:52:58 [http-nio-8090-exec-3] DEBUG org.hibernate.SQL - 
+    select
+        ue1_0.id,
+        ue1_0.birth_date,
+        ue1_0.care_species,
+        ue1_0.created_at,
+        ue1_0.email,
+        ue1_0.email_verified,
+        ue1_0.gender,
+        ue1_0.main_service,
+        ue1_0.name,
+        ue1_0.nick_name,
+        ue1_0.phone,
+        ue1_0.profile_image,
+        ue1_0.provider,
+        ue1_0.role,
+        ue1_0.status,
+        ue1_0.updated_at 
+    from
+        user ue1_0 
+    where
+        ue1_0.email=?
+2025-09-16 10:52:58 [http-nio-8090-exec-3] INFO  c.p.d.user.service.UserFileService - 실제 프로필 이미지 존재: userId=32, profile=d8f3d945-4652-4197-8b29-aceb8dab2433.png
+2025-09-16 10:52:58 [http-nio-8090-exec-3] INFO  c.p.domain.user.service.UserService - applyBasicUser 완료 - userId=32, role=2
+2025-09-16 10:52:58 [http-nio-8090-exec-3] DEBUG org.hibernate.SQL - 
+    select
+        ue1_0.id,
+        ue1_0.birth_date,
+        ue1_0.care_species,
+        ue1_0.created_at,
+        ue1_0.email,
+        ue1_0.email_verified,
+        ue1_0.gender,
+        ue1_0.main_service,
+        ue1_0.name,
+        ue1_0.nick_name,
+        ue1_0.phone,
+        ue1_0.profile_image,
+        ue1_0.provider,
+        ue1_0.role,
+        ue1_0.status,
+        ue1_0.updated_at 
+    from
+        user ue1_0 
+    where
+        ue1_0.email=?
+2025-09-16 10:52:58 [http-nio-8090-exec-3] DEBUG org.hibernate.SQL - 
+    select
+        pim1_0.uuid,
+        pim1_0.created_at,
+        pim1_0.email,
+        pim1_0.expires_at,
+        pim1_0.real_path 
+    from
+        profile_image_map pim1_0 
+    where
+        pim1_0.email=?
+2025-09-16 10:52:58 [http-nio-8090-exec-4] DEBUG c.p.c.r.m.u.MemberMapper.findByEmail - ==>  Preparing: SELECT NO, ID, PW, MAIL, ROLE FROM MEMBER WHERE MAIL = ?
+2025-09-16 10:52:58 [http-nio-8090-exec-4] DEBUG c.p.c.r.m.u.MemberMapper.findByEmail - ==> Parameters: kimijug97@naver.com(String)
+2025-09-16 10:52:59 [http-nio-8090-exec-4] WARN  o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.jdbc.BadSqlGrammarException: <EOL><EOL>### Error querying database.  Cause: java.sql.SQLSyntaxErrorException: Unknown column 'ROLE' in 'field list'<EOL><EOL>### The error may exist in file [C:\lfm01\spring_boot\pjt-sts4\petmate-backend-mainb\petmate-backend\build\resources\main\mybatis\mappers\user\member-mapper.xml]<EOL><EOL>### The error may involve com.petmate.common.repository.mybatis.user.MemberMapper.findByEmail-Inline<EOL><EOL>### The error occurred while setting parameters<EOL><EOL>### SQL: SELECT         NO, ID, PW, MAIL, ROLE         FROM MEMBER         WHERE MAIL = ?<EOL><EOL>### Cause: java.sql.SQLSyntaxErrorException: Unknown column 'ROLE' in 'field list'<EOL>; bad SQL grammar []]
+2025-09-16 10:57:44 [restartedMain] INFO  com.petmate.PetmateApplication - Starting PetmateApplication using Java 21.0.7 with PID 20244 (C:\lfm01\spring_boot\pjt-sts4\petmate-backend-mainb\petmate-backend\build\classes\java\main started by HI-02 in C:\lfm01\spring_boot\pjt-sts4\petmate-backend-mainb\petmate-backend)
+2025-09-16 10:57:44 [restartedMain] DEBUG com.petmate.PetmateApplication - Running with Spring Boot v3.5.5, Spring v6.2.10
+2025-09-16 10:57:44 [restartedMain] INFO  com.petmate.PetmateApplication - No active profile set, falling back to 1 default profile: "default"
+2025-09-16 10:57:44 [restartedMain] INFO  o.s.b.d.restart.ChangeableUrls - The Class-Path manifest attribute in C:\Users\HI-02\.gradle\caches\modules-2\files-2.1\io.github.cdimascio\java-dotenv\5.2.2\f77d54ff193ed4b07415ab8d7b3d0550716aa8c\java-dotenv-5.2.2.jar referenced one or more files that do not exist: file:/C:/Users/HI-02/.gradle/caches/modules-2/files-2.1/io.github.cdimascio/java-dotenv/5.2.2/f77d54ff193ed4b07415ab8d7b3d0550716aa8c/kotlin-stdlib-1.4.0.jar,file:/C:/Users/HI-02/.gradle/caches/modules-2/files-2.1/io.github.cdimascio/java-dotenv/5.2.2/f77d54ff193ed4b07415ab8d7b3d0550716aa8c/kotlin-stdlib-common-1.4.0.jar,file:/C:/Users/HI-02/.gradle/caches/modules-2/files-2.1/io.github.cdimascio/java-dotenv/5.2.2/f77d54ff193ed4b07415ab8d7b3d0550716aa8c/annotations-13.0.jar
+2025-09-16 10:57:44 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2025-09-16 10:57:44 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2025-09-16 10:57:45 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-09-16 10:57:45 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 213 ms. Found 12 JPA repository interfaces.
+2025-09-16 10:57:47 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8090 (http)
+2025-09-16 10:57:47 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-09-16 10:57:47 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.44]
+2025-09-16 10:57:47 [restartedMain] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-09-16 10:57:47 [restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 3006 ms
+2025-09-16 10:57:47 [restartedMain] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-09-16 10:57:47 [restartedMain] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.6.26.Final
+2025-09-16 10:57:47 [restartedMain] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-09-16 10:57:48 [restartedMain] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-09-16 10:57:48 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-09-16 10:57:48 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@3af7b5c0
+2025-09-16 10:57:48 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-09-16 10:57:48 [restartedMain] INFO  o.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 8.0.43
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-09-16 10:57:50 [restartedMain] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-09-16 10:57:50 [restartedMain] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-09-16 10:57:50 [restartedMain] INFO  o.s.d.j.r.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-09-16 10:57:53 [restartedMain] INFO  com.petmate.config.WebConfig - CORS applied. origins=[localhost:3000, 127.0.0.1:3000, localhost:3001, https://minjung.kr], allowCredentials=false
+2025-09-16 10:57:53 [restartedMain] INFO  com.petmate.config.WebConfig - Static mapping applied. /files/** -> file:C:/petmate/
+2025-09-16 10:57:54 [restartedMain] WARN  o.s.b.a.t.ThymeleafAutoConfiguration$DefaultTemplateResolverConfiguration - Cannot find template location: classpath:/templates/ (please add some templates, check your Thymeleaf configuration, or set spring.thymeleaf.check-template-location=false)
+2025-09-16 10:57:54 [restartedMain] INFO  o.s.b.d.a.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2025-09-16 10:57:54 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8090 (http) with context path '/'
+2025-09-16 10:57:54 [restartedMain] INFO  com.petmate.PetmateApplication - Started PetmateApplication in 11.048 seconds (process running for 11.797)
+2025-09-16 10:57:54 [restartedMain] DEBUG org.hibernate.SQL - 
+    select
+        count(*) 
+    from
+        danal_codes gce1_0
+2025-09-16 10:57:54 [restartedMain] INFO  com.petmate.config.DataInitializer - Common codes already initialized
+2025-09-16 10:58:01 [http-nio-8090-exec-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-09-16 10:58:01 [http-nio-8090-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-09-16 10:58:01 [http-nio-8090-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 2 ms
+2025-09-16 10:58:02 [http-nio-8090-exec-1] INFO  c.p.security.JwtAuthenticationFilter - [JWT] GET /auth/me - expired access token
+2025-09-16 10:58:04 [http-nio-8090-exec-3] INFO  c.p.domain.user.service.UserService - === applyBasicUser 시작 === email=kimijug97@naver.com
+2025-09-16 10:58:04 [http-nio-8090-exec-3] DEBUG org.hibernate.SQL - 
+    select
+        ue1_0.id,
+        ue1_0.birth_date,
+        ue1_0.care_species,
+        ue1_0.created_at,
+        ue1_0.email,
+        ue1_0.email_verified,
+        ue1_0.gender,
+        ue1_0.main_service,
+        ue1_0.name,
+        ue1_0.nick_name,
+        ue1_0.phone,
+        ue1_0.profile_image,
+        ue1_0.provider,
+        ue1_0.role,
+        ue1_0.status,
+        ue1_0.updated_at 
+    from
+        user ue1_0 
+    where
+        ue1_0.email=?
+2025-09-16 10:58:04 [http-nio-8090-exec-3] INFO  c.p.d.user.service.UserFileService - 실제 프로필 이미지 존재: userId=32, profile=d8f3d945-4652-4197-8b29-aceb8dab2433.png
+2025-09-16 10:58:04 [http-nio-8090-exec-3] INFO  c.p.domain.user.service.UserService - applyBasicUser 완료 - userId=32, role=2
+2025-09-16 10:58:04 [http-nio-8090-exec-3] DEBUG org.hibernate.SQL - 
+    select
+        ue1_0.id,
+        ue1_0.birth_date,
+        ue1_0.care_species,
+        ue1_0.created_at,
+        ue1_0.email,
+        ue1_0.email_verified,
+        ue1_0.gender,
+        ue1_0.main_service,
+        ue1_0.name,
+        ue1_0.nick_name,
+        ue1_0.phone,
+        ue1_0.profile_image,
+        ue1_0.provider,
+        ue1_0.role,
+        ue1_0.status,
+        ue1_0.updated_at 
+    from
+        user ue1_0 
+    where
+        ue1_0.email=?
+2025-09-16 10:58:04 [http-nio-8090-exec-3] DEBUG org.hibernate.SQL - 
+    select
+        pim1_0.uuid,
+        pim1_0.created_at,
+        pim1_0.email,
+        pim1_0.expires_at,
+        pim1_0.real_path 
+    from
+        profile_image_map pim1_0 
+    where
+        pim1_0.email=?
+2025-09-16 10:58:04 [http-nio-8090-exec-4] DEBUG c.p.c.r.m.u.MemberMapper.findByEmail - ==>  Preparing: SELECT NO, ID, PW, MAIL, ROLE FROM MEMBER WHERE MAIL = ?
+2025-09-16 10:58:04 [http-nio-8090-exec-4] DEBUG c.p.c.r.m.u.MemberMapper.findByEmail - ==> Parameters: kimijug97@naver.com(String)
+2025-09-16 10:58:05 [http-nio-8090-exec-4] WARN  o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.jdbc.BadSqlGrammarException: <EOL><EOL>### Error querying database.  Cause: java.sql.SQLSyntaxErrorException: Unknown column 'ROLE' in 'field list'<EOL><EOL>### The error may exist in file [C:\lfm01\spring_boot\pjt-sts4\petmate-backend-mainb\petmate-backend\build\resources\main\mybatis\mappers\user\member-mapper.xml]<EOL><EOL>### The error may involve com.petmate.common.repository.mybatis.user.MemberMapper.findByEmail-Inline<EOL><EOL>### The error occurred while setting parameters<EOL><EOL>### SQL: SELECT         NO, ID, PW, MAIL, ROLE         FROM MEMBER         WHERE MAIL = ?<EOL><EOL>### Cause: java.sql.SQLSyntaxErrorException: Unknown column 'ROLE' in 'field list'<EOL>; bad SQL grammar []]
+2025-09-16 11:03:26 [restartedMain] INFO  com.petmate.PetmateApplication - Starting PetmateApplication using Java 21.0.7 with PID 15248 (C:\lfm01\spring_boot\pjt-sts4\petmate-backend-mainb\petmate-backend\build\classes\java\main started by HI-02 in C:\lfm01\spring_boot\pjt-sts4\petmate-backend-mainb\petmate-backend)
+2025-09-16 11:03:26 [restartedMain] DEBUG com.petmate.PetmateApplication - Running with Spring Boot v3.5.5, Spring v6.2.10
+2025-09-16 11:03:26 [restartedMain] INFO  com.petmate.PetmateApplication - No active profile set, falling back to 1 default profile: "default"
+2025-09-16 11:03:26 [restartedMain] INFO  o.s.b.d.restart.ChangeableUrls - The Class-Path manifest attribute in C:\Users\HI-02\.gradle\caches\modules-2\files-2.1\io.github.cdimascio\java-dotenv\5.2.2\f77d54ff193ed4b07415ab8d7b3d0550716aa8c\java-dotenv-5.2.2.jar referenced one or more files that do not exist: file:/C:/Users/HI-02/.gradle/caches/modules-2/files-2.1/io.github.cdimascio/java-dotenv/5.2.2/f77d54ff193ed4b07415ab8d7b3d0550716aa8c/kotlin-stdlib-1.4.0.jar,file:/C:/Users/HI-02/.gradle/caches/modules-2/files-2.1/io.github.cdimascio/java-dotenv/5.2.2/f77d54ff193ed4b07415ab8d7b3d0550716aa8c/kotlin-stdlib-common-1.4.0.jar,file:/C:/Users/HI-02/.gradle/caches/modules-2/files-2.1/io.github.cdimascio/java-dotenv/5.2.2/f77d54ff193ed4b07415ab8d7b3d0550716aa8c/annotations-13.0.jar
+2025-09-16 11:03:26 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2025-09-16 11:03:26 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2025-09-16 11:03:27 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-09-16 11:03:27 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 385 ms. Found 12 JPA repository interfaces.
+2025-09-16 11:03:29 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8090 (http)
+2025-09-16 11:03:29 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-09-16 11:03:29 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.44]
+2025-09-16 11:03:29 [restartedMain] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-09-16 11:03:29 [restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 3279 ms
+2025-09-16 11:03:29 [restartedMain] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-09-16 11:03:29 [restartedMain] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.6.26.Final
+2025-09-16 11:03:29 [restartedMain] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-09-16 11:03:30 [restartedMain] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-09-16 11:03:30 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-09-16 11:03:30 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@d62bf2e
+2025-09-16 11:03:30 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-09-16 11:03:31 [restartedMain] INFO  o.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 8.0.43
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-09-16 11:03:32 [restartedMain] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-09-16 11:03:32 [restartedMain] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-09-16 11:03:33 [restartedMain] INFO  o.s.d.j.r.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-09-16 11:03:35 [restartedMain] INFO  com.petmate.config.WebConfig - CORS applied. origins=[localhost:3000, 127.0.0.1:3000, localhost:3001, https://minjung.kr], allowCredentials=false
+2025-09-16 11:03:35 [restartedMain] INFO  com.petmate.config.WebConfig - Static mapping applied. /files/** -> file:C:/petmate/
+2025-09-16 11:03:35 [restartedMain] WARN  o.s.b.a.t.ThymeleafAutoConfiguration$DefaultTemplateResolverConfiguration - Cannot find template location: classpath:/templates/ (please add some templates, check your Thymeleaf configuration, or set spring.thymeleaf.check-template-location=false)
+2025-09-16 11:03:35 [restartedMain] INFO  o.s.b.d.a.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2025-09-16 11:03:35 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8090 (http) with context path '/'
+2025-09-16 11:03:35 [restartedMain] INFO  com.petmate.PetmateApplication - Started PetmateApplication in 10.667 seconds (process running for 11.509)
+2025-09-16 11:03:36 [restartedMain] DEBUG org.hibernate.SQL - 
+    select
+        count(*) 
+    from
+        danal_codes gce1_0
+2025-09-16 11:03:36 [restartedMain] INFO  com.petmate.config.DataInitializer - Common codes already initialized
+2025-09-16 11:03:40 [http-nio-8090-exec-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-09-16 11:03:40 [http-nio-8090-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-09-16 11:03:40 [http-nio-8090-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 1 ms
+2025-09-16 11:03:40 [http-nio-8090-exec-1] INFO  c.p.security.JwtAuthenticationFilter - [JWT] GET /auth/me - expired access token
+2025-09-16 11:03:42 [http-nio-8090-exec-3] INFO  c.p.domain.user.service.UserService - === applyBasicUser 시작 === email=kimijug97@naver.com
+2025-09-16 11:03:42 [http-nio-8090-exec-3] DEBUG org.hibernate.SQL - 
+    select
+        ue1_0.id,
+        ue1_0.birth_date,
+        ue1_0.care_species,
+        ue1_0.created_at,
+        ue1_0.email,
+        ue1_0.email_verified,
+        ue1_0.gender,
+        ue1_0.main_service,
+        ue1_0.name,
+        ue1_0.nick_name,
+        ue1_0.phone,
+        ue1_0.profile_image,
+        ue1_0.provider,
+        ue1_0.role,
+        ue1_0.status,
+        ue1_0.updated_at 
+    from
+        user ue1_0 
+    where
+        ue1_0.email=?
+2025-09-16 11:03:42 [http-nio-8090-exec-3] INFO  c.p.d.user.service.UserFileService - 실제 프로필 이미지 존재: userId=32, profile=d8f3d945-4652-4197-8b29-aceb8dab2433.png
+2025-09-16 11:03:42 [http-nio-8090-exec-3] INFO  c.p.domain.user.service.UserService - applyBasicUser 완료 - userId=32, role=2
+2025-09-16 11:03:42 [http-nio-8090-exec-3] DEBUG org.hibernate.SQL - 
+    select
+        ue1_0.id,
+        ue1_0.birth_date,
+        ue1_0.care_species,
+        ue1_0.created_at,
+        ue1_0.email,
+        ue1_0.email_verified,
+        ue1_0.gender,
+        ue1_0.main_service,
+        ue1_0.name,
+        ue1_0.nick_name,
+        ue1_0.phone,
+        ue1_0.profile_image,
+        ue1_0.provider,
+        ue1_0.role,
+        ue1_0.status,
+        ue1_0.updated_at 
+    from
+        user ue1_0 
+    where
+        ue1_0.email=?
+2025-09-16 11:03:42 [http-nio-8090-exec-3] DEBUG org.hibernate.SQL - 
+    select
+        pim1_0.uuid,
+        pim1_0.created_at,
+        pim1_0.email,
+        pim1_0.expires_at,
+        pim1_0.real_path 
+    from
+        profile_image_map pim1_0 
+    where
+        pim1_0.email=?
+2025-09-16 11:03:43 [http-nio-8090-exec-4] DEBUG org.hibernate.SQL - 
+    select
+        ue1_0.id,
+        ue1_0.birth_date,
+        ue1_0.care_species,
+        ue1_0.created_at,
+        ue1_0.email,
+        ue1_0.email_verified,
+        ue1_0.gender,
+        ue1_0.main_service,
+        ue1_0.name,
+        ue1_0.nick_name,
+        ue1_0.phone,
+        ue1_0.profile_image,
+        ue1_0.provider,
+        ue1_0.role,
+        ue1_0.status,
+        ue1_0.updated_at 
+    from
+        user ue1_0 
+    where
+        ue1_0.email=?
+2025-09-16 11:04:21 [http-nio-8090-exec-5] DEBUG org.hibernate.SQL - 
+    select
+        ue1_0.id,
+        ue1_0.birth_date,
+        ue1_0.care_species,
+        ue1_0.created_at,
+        ue1_0.email,
+        ue1_0.email_verified,
+        ue1_0.gender,
+        ue1_0.main_service,
+        ue1_0.name,
+        ue1_0.nick_name,
+        ue1_0.phone,
+        ue1_0.profile_image,
+        ue1_0.provider,
+        ue1_0.role,
+        ue1_0.status,
+        ue1_0.updated_at 
+    from
+        user ue1_0 
+    where
+        ue1_0.email=?
+2025-09-16 11:05:29 [http-nio-8090-exec-9] INFO  c.p.security.JwtAuthenticationFilter - [JWT] GET /auth/me - expired access token
+2025-09-16 11:05:32 [http-nio-8090-exec-1] INFO  c.p.domain.user.service.UserService - === applyBasicUser 시작 === email=kimijug97@naver.com
+2025-09-16 11:05:32 [http-nio-8090-exec-1] DEBUG org.hibernate.SQL - 
+    select
+        ue1_0.id,
+        ue1_0.birth_date,
+        ue1_0.care_species,
+        ue1_0.created_at,
+        ue1_0.email,
+        ue1_0.email_verified,
+        ue1_0.gender,
+        ue1_0.main_service,
+        ue1_0.name,
+        ue1_0.nick_name,
+        ue1_0.phone,
+        ue1_0.profile_image,
+        ue1_0.provider,
+        ue1_0.role,
+        ue1_0.status,
+        ue1_0.updated_at 
+    from
+        user ue1_0 
+    where
+        ue1_0.email=?
+2025-09-16 11:05:32 [http-nio-8090-exec-1] INFO  c.p.d.user.service.UserFileService - 실제 프로필 이미지 존재: userId=32, profile=d8f3d945-4652-4197-8b29-aceb8dab2433.png
+2025-09-16 11:05:32 [http-nio-8090-exec-1] INFO  c.p.domain.user.service.UserService - applyBasicUser 완료 - userId=32, role=1
+2025-09-16 11:05:32 [http-nio-8090-exec-1] DEBUG org.hibernate.SQL - 
+    select
+        ue1_0.id,
+        ue1_0.birth_date,
+        ue1_0.care_species,
+        ue1_0.created_at,
+        ue1_0.email,
+        ue1_0.email_verified,
+        ue1_0.gender,
+        ue1_0.main_service,
+        ue1_0.name,
+        ue1_0.nick_name,
+        ue1_0.phone,
+        ue1_0.profile_image,
+        ue1_0.provider,
+        ue1_0.role,
+        ue1_0.status,
+        ue1_0.updated_at 
+    from
+        user ue1_0 
+    where
+        ue1_0.email=?
+2025-09-16 11:05:32 [http-nio-8090-exec-1] DEBUG org.hibernate.SQL - 
+    select
+        pim1_0.uuid,
+        pim1_0.created_at,
+        pim1_0.email,
+        pim1_0.expires_at,
+        pim1_0.real_path 
+    from
+        profile_image_map pim1_0 
+    where
+        pim1_0.email=?
+2025-09-16 11:05:32 [http-nio-8090-exec-2] DEBUG org.hibernate.SQL - 
+    select
+        ue1_0.id,
+        ue1_0.birth_date,
+        ue1_0.care_species,
+        ue1_0.created_at,
+        ue1_0.email,
+        ue1_0.email_verified,
+        ue1_0.gender,
+        ue1_0.main_service,
+        ue1_0.name,
+        ue1_0.nick_name,
+        ue1_0.phone,
+        ue1_0.profile_image,
+        ue1_0.provider,
+        ue1_0.role,
+        ue1_0.status,
+        ue1_0.updated_at 
+    from
+        user ue1_0 
+    where
+        ue1_0.email=?
+2025-09-16 11:05:35 [http-nio-8090-exec-3] DEBUG org.hibernate.SQL - 
+    select
+        ue1_0.id,
+        ue1_0.birth_date,
+        ue1_0.care_species,
+        ue1_0.created_at,
+        ue1_0.email,
+        ue1_0.email_verified,
+        ue1_0.gender,
+        ue1_0.main_service,
+        ue1_0.name,
+        ue1_0.nick_name,
+        ue1_0.phone,
+        ue1_0.profile_image,
+        ue1_0.provider,
+        ue1_0.role,
+        ue1_0.status,
+        ue1_0.updated_at 
+    from
+        user ue1_0 
+    where
+        ue1_0.email=?
+2025-09-16 11:05:37 [http-nio-8090-exec-4] INFO  c.p.domain.user.service.UserService - === 반려인 신청 시작 === email=kimijug97@naver.com
+2025-09-16 11:05:37 [http-nio-8090-exec-4] DEBUG org.hibernate.SQL - 
+    select
+        ue1_0.id,
+        ue1_0.birth_date,
+        ue1_0.care_species,
+        ue1_0.created_at,
+        ue1_0.email,
+        ue1_0.email_verified,
+        ue1_0.gender,
+        ue1_0.main_service,
+        ue1_0.name,
+        ue1_0.nick_name,
+        ue1_0.phone,
+        ue1_0.profile_image,
+        ue1_0.provider,
+        ue1_0.role,
+        ue1_0.status,
+        ue1_0.updated_at 
+    from
+        user ue1_0 
+    where
+        ue1_0.email=?
+2025-09-16 11:05:37 [http-nio-8090-exec-4] INFO  c.p.d.user.service.UserFileService - 실제 프로필 이미지 존재: userId=32, profile=d8f3d945-4652-4197-8b29-aceb8dab2433.png
+2025-09-16 11:05:37 [http-nio-8090-exec-4] INFO  c.p.domain.user.service.UserService - 반려인 신청 완료 - userId=32, role(old->1)=2
+2025-09-16 11:05:37 [http-nio-8090-exec-4] DEBUG org.hibernate.SQL - 
+    update
+        user 
+    set
+        birth_date=?,
+        care_species=?,
+        email=?,
+        email_verified=?,
+        gender=?,
+        main_service=?,
+        name=?,
+        nick_name=?,
+        phone=?,
+        profile_image=?,
+        provider=?,
+        role=?,
+        status=?,
+        updated_at=? 
+    where
+        id=?
+2025-09-16 11:05:37 [http-nio-8090-exec-4] DEBUG org.hibernate.SQL - 
+    select
+        ue1_0.id,
+        ue1_0.birth_date,
+        ue1_0.care_species,
+        ue1_0.created_at,
+        ue1_0.email,
+        ue1_0.email_verified,
+        ue1_0.gender,
+        ue1_0.main_service,
+        ue1_0.name,
+        ue1_0.nick_name,
+        ue1_0.phone,
+        ue1_0.profile_image,
+        ue1_0.provider,
+        ue1_0.role,
+        ue1_0.status,
+        ue1_0.updated_at 
+    from
+        user ue1_0 
+    where
+        ue1_0.email=?
+2025-09-16 11:05:37 [http-nio-8090-exec-5] DEBUG org.hibernate.SQL - 
+    select
+        ue1_0.id,
+        ue1_0.birth_date,
+        ue1_0.care_species,
+        ue1_0.created_at,
+        ue1_0.email,
+        ue1_0.email_verified,
+        ue1_0.gender,
+        ue1_0.main_service,
+        ue1_0.name,
+        ue1_0.nick_name,
+        ue1_0.phone,
+        ue1_0.profile_image,
+        ue1_0.provider,
+        ue1_0.role,
+        ue1_0.status,
+        ue1_0.updated_at 
+    from
+        user ue1_0 
+    where
+        ue1_0.email=?
+2025-09-16 11:10:07 [restartedMain] INFO  com.petmate.PetmateApplication - Starting PetmateApplication using Java 21.0.7 with PID 3276 (C:\lfm01\spring_boot\pjt-sts4\petmate-backend-mainb\petmate-backend\build\classes\java\main started by HI-02 in C:\lfm01\spring_boot\pjt-sts4\petmate-backend-mainb\petmate-backend)
+2025-09-16 11:10:07 [restartedMain] DEBUG com.petmate.PetmateApplication - Running with Spring Boot v3.5.5, Spring v6.2.10
+2025-09-16 11:10:07 [restartedMain] INFO  com.petmate.PetmateApplication - No active profile set, falling back to 1 default profile: "default"
+2025-09-16 11:10:07 [restartedMain] INFO  o.s.b.d.restart.ChangeableUrls - The Class-Path manifest attribute in C:\Users\HI-02\.gradle\caches\modules-2\files-2.1\io.github.cdimascio\java-dotenv\5.2.2\f77d54ff193ed4b07415ab8d7b3d0550716aa8c\java-dotenv-5.2.2.jar referenced one or more files that do not exist: file:/C:/Users/HI-02/.gradle/caches/modules-2/files-2.1/io.github.cdimascio/java-dotenv/5.2.2/f77d54ff193ed4b07415ab8d7b3d0550716aa8c/kotlin-stdlib-1.4.0.jar,file:/C:/Users/HI-02/.gradle/caches/modules-2/files-2.1/io.github.cdimascio/java-dotenv/5.2.2/f77d54ff193ed4b07415ab8d7b3d0550716aa8c/kotlin-stdlib-common-1.4.0.jar,file:/C:/Users/HI-02/.gradle/caches/modules-2/files-2.1/io.github.cdimascio/java-dotenv/5.2.2/f77d54ff193ed4b07415ab8d7b3d0550716aa8c/annotations-13.0.jar
+2025-09-16 11:10:07 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2025-09-16 11:10:07 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2025-09-16 11:10:08 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-09-16 11:10:08 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 194 ms. Found 12 JPA repository interfaces.
+2025-09-16 11:10:10 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8090 (http)
+2025-09-16 11:10:10 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-09-16 11:10:10 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.44]
+2025-09-16 11:10:10 [restartedMain] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-09-16 11:10:10 [restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 2857 ms
+2025-09-16 11:10:10 [restartedMain] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-09-16 11:10:10 [restartedMain] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.6.26.Final
+2025-09-16 11:10:10 [restartedMain] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-09-16 11:10:11 [restartedMain] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-09-16 11:10:11 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-09-16 11:10:11 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@294a97d6
+2025-09-16 11:10:11 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-09-16 11:10:11 [restartedMain] INFO  o.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 8.0.43
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-09-16 11:10:13 [restartedMain] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-09-16 11:10:13 [restartedMain] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-09-16 11:10:13 [restartedMain] INFO  o.s.d.j.r.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-09-16 11:10:15 [restartedMain] INFO  com.petmate.config.WebConfig - CORS applied. origins=[localhost:3000, 127.0.0.1:3000, localhost:3001, https://minjung.kr], allowCredentials=false
+2025-09-16 11:10:16 [restartedMain] INFO  com.petmate.config.WebConfig - Static mapping applied. /files/** -> file:C:/petmate/
+2025-09-16 11:10:16 [restartedMain] WARN  o.s.b.a.t.ThymeleafAutoConfiguration$DefaultTemplateResolverConfiguration - Cannot find template location: classpath:/templates/ (please add some templates, check your Thymeleaf configuration, or set spring.thymeleaf.check-template-location=false)
+2025-09-16 11:10:16 [restartedMain] INFO  o.s.b.d.a.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2025-09-16 11:10:16 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8090 (http) with context path '/'
+2025-09-16 11:10:16 [restartedMain] INFO  com.petmate.PetmateApplication - Started PetmateApplication in 10.326 seconds (process running for 11.082)
+2025-09-16 11:10:17 [restartedMain] DEBUG org.hibernate.SQL - 
+    select
+        count(*) 
+    from
+        danal_codes gce1_0
+2025-09-16 11:10:17 [restartedMain] INFO  com.petmate.config.DataInitializer - Common codes already initialized
+2025-09-16 11:10:24 [http-nio-8090-exec-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-09-16 11:10:24 [http-nio-8090-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-09-16 11:10:24 [http-nio-8090-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 1 ms
+2025-09-16 11:10:24 [http-nio-8090-exec-1] INFO  c.p.security.JwtAuthenticationFilter - [JWT] GET /auth/me - expired access token
+2025-09-16 11:10:27 [http-nio-8090-exec-3] INFO  c.p.domain.user.service.UserService - === applyBasicUser 시작 === email=kimijug97@naver.com
+2025-09-16 11:10:27 [http-nio-8090-exec-3] DEBUG org.hibernate.SQL - 
+    select
+        ue1_0.id,
+        ue1_0.birth_date,
+        ue1_0.care_species,
+        ue1_0.created_at,
+        ue1_0.email,
+        ue1_0.email_verified,
+        ue1_0.gender,
+        ue1_0.main_service,
+        ue1_0.name,
+        ue1_0.nick_name,
+        ue1_0.phone,
+        ue1_0.profile_image,
+        ue1_0.provider,
+        ue1_0.role,
+        ue1_0.status,
+        ue1_0.updated_at 
+    from
+        user ue1_0 
+    where
+        ue1_0.email=?
+2025-09-16 11:10:27 [http-nio-8090-exec-3] INFO  c.p.d.user.service.UserFileService - 실제 프로필 이미지 존재: userId=32, profile=d8f3d945-4652-4197-8b29-aceb8dab2433.png
+2025-09-16 11:10:27 [http-nio-8090-exec-3] INFO  c.p.domain.user.service.UserService - applyBasicUser 완료 - userId=32, role=2
+2025-09-16 11:10:27 [http-nio-8090-exec-3] DEBUG org.hibernate.SQL - 
+    select
+        ue1_0.id,
+        ue1_0.birth_date,
+        ue1_0.care_species,
+        ue1_0.created_at,
+        ue1_0.email,
+        ue1_0.email_verified,
+        ue1_0.gender,
+        ue1_0.main_service,
+        ue1_0.name,
+        ue1_0.nick_name,
+        ue1_0.phone,
+        ue1_0.profile_image,
+        ue1_0.provider,
+        ue1_0.role,
+        ue1_0.status,
+        ue1_0.updated_at 
+    from
+        user ue1_0 
+    where
+        ue1_0.email=?
+2025-09-16 11:10:27 [http-nio-8090-exec-3] DEBUG org.hibernate.SQL - 
+    select
+        pim1_0.uuid,
+        pim1_0.created_at,
+        pim1_0.email,
+        pim1_0.expires_at,
+        pim1_0.real_path 
+    from
+        profile_image_map pim1_0 
+    where
+        pim1_0.email=?
+2025-09-16 11:10:28 [http-nio-8090-exec-4] DEBUG org.hibernate.SQL - 
+    select
+        ue1_0.id,
+        ue1_0.birth_date,
+        ue1_0.care_species,
+        ue1_0.created_at,
+        ue1_0.email,
+        ue1_0.email_verified,
+        ue1_0.gender,
+        ue1_0.main_service,
+        ue1_0.name,
+        ue1_0.nick_name,
+        ue1_0.phone,
+        ue1_0.profile_image,
+        ue1_0.provider,
+        ue1_0.role,
+        ue1_0.status,
+        ue1_0.updated_at 
+    from
+        user ue1_0 
+    where
+        ue1_0.email=?
+2025-09-16 11:10:35 [http-nio-8090-exec-7] DEBUG org.hibernate.SQL - 
+    select
+        ue1_0.id,
+        ue1_0.birth_date,
+        ue1_0.care_species,
+        ue1_0.created_at,
+        ue1_0.email,
+        ue1_0.email_verified,
+        ue1_0.gender,
+        ue1_0.main_service,
+        ue1_0.name,
+        ue1_0.nick_name,
+        ue1_0.phone,
+        ue1_0.profile_image,
+        ue1_0.provider,
+        ue1_0.role,
+        ue1_0.status,
+        ue1_0.updated_at 
+    from
+        user ue1_0 
+    where
+        ue1_0.email=?
+2025-09-16 11:10:47 [http-nio-8090-exec-2] DEBUG org.hibernate.SQL - 
+    select
+        ue1_0.id,
+        ue1_0.birth_date,
+        ue1_0.care_species,
+        ue1_0.created_at,
+        ue1_0.email,
+        ue1_0.email_verified,
+        ue1_0.gender,
+        ue1_0.main_service,
+        ue1_0.name,
+        ue1_0.nick_name,
+        ue1_0.phone,
+        ue1_0.profile_image,
+        ue1_0.provider,
+        ue1_0.role,
+        ue1_0.status,
+        ue1_0.updated_at 
+    from
+        user ue1_0 
+    where
+        ue1_0.email=?
+2025-09-16 11:10:57 [http-nio-8090-exec-6] INFO  c.p.domain.user.service.UserService - === 펫메이트 신청 시작 === email=kimijug97@naver.com
+2025-09-16 11:10:57 [http-nio-8090-exec-6] DEBUG org.hibernate.SQL - 
+    select
+        ue1_0.id,
+        ue1_0.birth_date,
+        ue1_0.care_species,
+        ue1_0.created_at,
+        ue1_0.email,
+        ue1_0.email_verified,
+        ue1_0.gender,
+        ue1_0.main_service,
+        ue1_0.name,
+        ue1_0.nick_name,
+        ue1_0.phone,
+        ue1_0.profile_image,
+        ue1_0.provider,
+        ue1_0.role,
+        ue1_0.status,
+        ue1_0.updated_at 
+    from
+        user ue1_0 
+    where
+        ue1_0.email=?
+2025-09-16 11:10:57 [http-nio-8090-exec-6] INFO  c.p.d.user.service.UserFileService - 실제 프로필 이미지 존재: userId=32, profile=d8f3d945-4652-4197-8b29-aceb8dab2433.png
+2025-09-16 11:10:57 [http-nio-8090-exec-6] INFO  c.p.domain.user.service.UserService - 펫메이트 신청 완료 - userId=32, role(old->2)=4
+2025-09-16 11:10:57 [http-nio-8090-exec-6] DEBUG org.hibernate.SQL - 
+    update
+        user 
+    set
+        birth_date=?,
+        care_species=?,
+        email=?,
+        email_verified=?,
+        gender=?,
+        main_service=?,
+        name=?,
+        nick_name=?,
+        phone=?,
+        profile_image=?,
+        provider=?,
+        role=?,
+        status=?,
+        updated_at=? 
+    where
+        id=?

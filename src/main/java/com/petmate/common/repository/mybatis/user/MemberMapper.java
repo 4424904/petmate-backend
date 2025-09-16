@@ -8,5 +8,5 @@ import org.apache.ibatis.annotations.Param;
 @Mapper
 public interface MemberMapper {
     MemberDto findById(@Param("id") String id);
-    int signup(MemberDto member);
+    void signup(MemberDto member);
 }

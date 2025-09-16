@@ -37,20 +37,17 @@ public class CompanyService {
         log.info("dto.getRepService(): {}", dto.getRepService());
         log.info("dto.getServices(): {}", dto.getServices());
         log.info("dto.getRoadAddr(): {}", dto.getRoadAddr());
-        // 사업자번호 중복 체크
+
         if (dto.getBizRegNo() != null && companyRepository.existsByBizRegNo(dto.getBizRegNo())) {
             throw new IllegalArgumentException("이미 등록된 사업자등록번호입니다.");
         }
 
-        // CodeUtil 활용한 변환
         String type = "PERSONAL".equals(dto.getType()) ? "P" : "B";
 
-        // 상호명 결정 (개인 업체 중복 체크를 위해 미리 계산)
         String companyName = "PERSONAL".equals(dto.getType())
-                ? dto.getRepresentativeName() // 개인: 대표자명 = 개인명
+                ? dto.getRepresentativeName()
                 : dto.getCorporationName();
 
-        // 개인 업체 중복 체크 (한 사람당 하나의 개인 업체만 등록 가능)
         if ("P".equals(type) && companyName != null) {
             boolean existsPersonalCompany = companyRepository.existsByTypeAndNameAndCreatedBy(
                     "P", companyName, userId
@@ -61,7 +58,6 @@ public class CompanyService {
         }
         String repServiceCode = findServiceCodeByName(dto.getRepService());
 
-        // 유효성 검증 (디버깅 추가)
         log.info("검증할 서비스 타입 코드: {}", repServiceCode);
         log.info("SERVICE_TYPE 그룹의 모든 코드: {}", codeUtil.getCodeMap("SERVICE_TYPE"));
 
@@ -72,9 +68,8 @@ public class CompanyService {
             throw new IllegalArgumentException("유효하지 않은 서비스 타입: " + repServiceCode);
         }
 
-        // 대표자명 결정
         String repName = "PERSONAL".equals(dto.getType())
-                ? dto.getRepresentativeName() // 개인: 대표자명 = 개인명
+                ? dto.getRepresentativeName()
                 : dto.getRepresentativeName();
 
         CompanyEntity.CompanyEntityBuilder builder = CompanyEntity.builder()
@@ -93,38 +88,29 @@ public class CompanyService {
                 .createdBy(userId)
                 .descText(dto.getIntroduction())
                 .createdAt(java.time.LocalDateTime.now())
-                .status("P");  // 명시적으로 승인대기 상태 설정
+                .status("P");
 
-        // 개인(일반인) vs 사업자별 추가 정보
         if ("PERSONAL".equals(dto.getType())) {
-            // JWT 토큰 기반 신원 인증을 별도 API로 처리 완료
             log.info("개인 업체 등록: repName={}", dto.getRepresentativeName());
-
             builder.ssnFirst(dto.getSsnFirst());
         } else {
             builder.bizRegNo(dto.getBizRegNo());
         }
 
         CompanyEntity company = builder.build();
-
         CompanyEntity savedCompany = companyRepository.save(company);
 
-        // 업체 이미지 저장 (IMAGE_TYPE: 03 - COMPANY_REG)
         if (dto.getImages() != null && !dto.getImages().isEmpty()) {
             log.info("업체 이미지 저장 시작 - 파일 개수: {}", dto.getImages().size());
             try {
-                List<com.petmate.common.entity.ImageEntity> savedImages = imageService.uploadMultipleImages(
-                        dto.getImages(),        // 업로드할 파일들
-                        "03",                   // IMAGE_TYPE 코드 (COMPANY_REG)
-                        savedCompany.getId().longValue(),   // 업체 ID (Long 타입으로 변환)
-                        true                    // 첫 번째 이미지를 썸네일로 설정
+                imageService.uploadMultipleImages(
+                        dto.getImages(),
+                        "03",
+                        savedCompany.getId().longValue(),
+                        true
                 );
-                log.info("업체 이미지 {} 개 저장 완료! 저장된 이미지 IDs: {}",
-                        savedImages.size(),
-                        savedImages.stream().map(img -> img.getId()).toList());
             } catch (Exception e) {
                 log.error("업체 이미지 저장 중 오류 발생: {}", e.getMessage(), e);
-                // 이미지 저장 실패해도 업체 등록은 완료되도록 처리
             }
         } else {
             log.info("업로드할 이미지가 없습니다.");
@@ -132,7 +118,6 @@ public class CompanyService {
 
         return mapToResponseDto(savedCompany);
     }
-
 
     public CompanyResponseDto getCompanyById(Integer id, Integer userId) {
         CompanyEntity company = companyRepository.findByIdAndCreatedBy(id, userId)
@@ -145,7 +130,6 @@ public class CompanyService {
         CompanyEntity company = companyRepository.findByIdAndCreatedBy(id, userId)
                 .orElseThrow(() -> new IllegalArgumentException("업체를 찾을 수 없습니다."));
 
-        // 업데이트 로직
         if (dto.getName() != null) company.setName(dto.getName());
         if (dto.getTel() != null) company.setTel(dto.getTel());
         if (dto.getDescText() != null) company.setDescText(dto.getDescText());
@@ -161,7 +145,6 @@ public class CompanyService {
             company.setRepService(repServiceCode);
         }
 
-        // 수정일 자동 설정
         company.setUpdatedAt(java.time.LocalDateTime.now());
 
         CompanyEntity savedCompany = companyRepository.save(company);
@@ -180,8 +163,7 @@ public class CompanyService {
         CompanyEntity company = companyRepository.findByIdAndCreatedBy(id, userId)
                 .orElseThrow(() -> new IllegalArgumentException("업체를 찾을 수 없습니다."));
 
-        // 상태 코드 변환 (필요시)
-        String statusCode = switch(status) {
+        String statusCode = switch (status) {
             case "PENDING", "P" -> "P";
             case "APPROVED", "A" -> "A";
             case "REJECTED", "R" -> "R";
@@ -200,28 +182,50 @@ public class CompanyService {
                 .toList();
     }
 
-    /**
-     * 프론트엔드용 공통코드 목록 조회
-     */
-    public Map<String, String> getCompanyTypeMap() {
-        return codeUtil.getCodeMap("COMPANY_TYPE");
+    /** 인근 업체 조회 */
+    public List<CompanyResponseDto> getNearbyCompanies(Double lat, Double lng, Double radiusKm, String serviceType) {
+        if (lat == null || lng == null) return List.of();
+        double r = (radiusKm == null || radiusKm <= 0) ? 5.0 : radiusKm;
+
+        // 저장소에 전용 쿼리가 없다면 전체에서 필터링
+        return companyRepository.findAll().stream()
+                .filter(c -> c.getLatitude() != null && c.getLongitude() != null)
+                .filter(c -> {
+                    if (serviceType == null || serviceType.isBlank()) return true;
+                    String rep = c.getRepService();
+                    String services = c.getServices();
+                    return serviceType.equals(rep) ||
+                            (services != null && services.contains(serviceType));
+                })
+                .filter(c -> haversineKm(
+                        lat, lng,
+                        c.getLatitude().doubleValue(),
+                        c.getLongitude().doubleValue()
+                ) <= r)
+                .map(this::mapToResponseDto)
+                .toList();
     }
 
-    public Map<String, String> getServiceTypeMap() {
-        return codeUtil.getCodeMap("SERVICE_TYPE");
+    /** Haversine 거리(km) */
+    private double haversineKm(double lat1, double lon1, double lat2, double lon2) {
+        final double R = 6371.0088;
+        double dLat = Math.toRadians(lat2 - lat1);
+        double dLon = Math.toRadians(lon2 - lon1);
+        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) *
+                        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return R * c;
     }
 
-    public Map<String, String> getCompanyStatusMap() {
-        return codeUtil.getCodeMap("COMPANY_STATUS");
-    }
+    /** 프론트엔드용 공통코드 */
+    public Map<String, String> getCompanyTypeMap() { return codeUtil.getCodeMap("COMPANY_TYPE"); }
+    public Map<String, String> getServiceTypeMap() { return codeUtil.getCodeMap("SERVICE_TYPE"); }
+    public Map<String, String> getCompanyStatusMap() { return codeUtil.getCodeMap("COMPANY_STATUS"); }
 
     // ================================
-    // Private 메서드들
+    // Private
     // ================================
-
-    /**
-     * Entity → ResponseDto 매핑 (공통코드명 포함)
-     */
     private CompanyResponseDto mapToResponseDto(CompanyEntity entity) {
         return CompanyResponseDto.builder()
                 .id(entity.getId())
@@ -230,7 +234,6 @@ public class CompanyService {
                 .bizRegNo(entity.getBizRegNo())
                 .repName(entity.getRepName())
                 .ssnFirst(entity.getSsnFirst())
-                // 기존 필드들
                 .tel(entity.getTel())
                 .repService(entity.getRepService())
                 .services(entity.getServices())
@@ -240,20 +243,15 @@ public class CompanyService {
                 .detailAddr(entity.getDetailAddr())
                 .postcode(entity.getPostcode())
                 .latitude(entity.getLatitude())
-                .longitude(entity.getLongitude ())
+                .longitude(entity.getLongitude())
                 .createdBy(entity.getCreatedBy())
                 .createdAt(entity.getCreatedAt())
                 .descText(entity.getDescText())
                 .build();
     }
 
-    /**
-     * 서비스명으로 서비스 타입 코드 찾기
-     * 한글 서비스명을 코드로 변환
-     */
     private String findServiceCodeByName(String serviceName) {
-        // 한글 서비스명 또는 코드를 코드로 변환
-        return switch(serviceName) {
+        return switch (serviceName) {
             case "돌봄", "1" -> "1";
             case "산책", "2" -> "2";
             case "미용", "3" -> "3";
@@ -263,9 +261,6 @@ public class CompanyService {
         };
     }
 
-    /**
-     * 문자열을 BigDecimal로 안전하게 변환
-     */
     private BigDecimal parseBigDecimal(String value) {
         try {
             return value != null && !value.trim().isEmpty() ? new BigDecimal(value) : null;
@@ -274,16 +269,10 @@ public class CompanyService {
         }
     }
 
-    /**
-     * 사업자등록번호 중복 체크 (DB 기반)
-     */
     public BusinessInfoResponseDto getBusinessInfo(String businessNumber) {
         log.info("사업자등록번호 중복 체크 시작: 사업자번호={}", businessNumber);
-
         try {
-            // DB에서 해당 사업자등록번호가 이미 등록되어 있는지 확인
             boolean isDuplicate = companyRepository.existsByBizRegNo(businessNumber);
-
             if (isDuplicate) {
                 return BusinessInfoResponseDto.builder()
                         .businessNumber(businessNumber)
@@ -297,7 +286,6 @@ public class CompanyService {
                         .message("등록 가능한 사업자등록번호입니다")
                         .build();
             }
-
         } catch (Exception e) {
             log.error("사업자등록번호 중복 체크 중 오류 발생: ", e);
             return BusinessInfoResponseDto.builder()
@@ -307,5 +295,4 @@ public class CompanyService {
                     .build();
         }
     }
-
 }

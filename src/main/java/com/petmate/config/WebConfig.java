@@ -23,9 +23,9 @@ public class WebConfig implements WebMvcConfigurer {
                 )
                 .allowedMethods("GET","POST","PUT","DELETE","PATCH","OPTIONS")
                 .allowedHeaders("*")
-                .allowCredentials(false)   // JWT는 헤더 전송. 쿠키 불필요.
+                .allowCredentials(true) // ← 반드시 true
                 .maxAge(3600);
-        log.info("CORS applied. origins=[localhost:3000, 127.0.0.1:3000, localhost:3001, https://minjung.kr], allowCredentials=false");
+        log.info("CORS applied. allowCredentials=true");
     }
 
     @Override

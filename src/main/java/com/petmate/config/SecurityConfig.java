@@ -36,10 +36,10 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .cors(c -> {})                      // CORS는 WebConfig에서 처리
+                .cors(c -> {})                           // WebConfig 설정 사용
                 .csrf(c -> c.disable())
-                .formLogin(f -> f.disable())        // 기본 로그인 폼 비활성
-                .httpBasic(b -> b.disable())        // 기본 인증 비활성
+                .formLogin(f -> f.disable())
+                .httpBasic(b -> b.disable())
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .exceptionHandling(e -> e
                         .authenticationEntryPoint((req, res, ex) -> {
@@ -56,11 +56,13 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers(
-                                "/oauth2/**", "/login/**", "/login/oauth2/**",   // OAuth2 진입
-                                "/files/**", "/static/**", "/favicon.ico", "/error",
-                                "/img/**"                                         // 이미지 프록시 공개 시
+                                "/oauth2/**", "/login/**", "/login/oauth2/**",
+                                "/files/**", "/static/**", "/favicon.ico", "/error", "/img/**"
                         ).permitAll()
-                        .requestMatchers("/auth/me").authenticated()          // 프로필 조회는 인증 필요
+                        // ★ 인증 관련 REST 허용
+                        .requestMatchers("/auth/signin", "/auth/signup", "/auth/refresh", "/auth/signout").permitAll()
+                        // 보호 자원
+                        .requestMatchers("/auth/me").authenticated()
                         .requestMatchers(HttpMethod.POST, "/petmate/apply").authenticated()
                         .anyRequest().authenticated()
                 )
