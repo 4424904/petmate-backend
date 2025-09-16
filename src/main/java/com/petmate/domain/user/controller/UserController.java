@@ -26,6 +26,15 @@ public class UserController {
         return ResponseEntity.ok("펫메이트 신청 완료! 사용자 ID: " + userId);
     }
 
+    @PostMapping(value = "/petowner/apply", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> applyPetOwner(
+            @RequestParam("email") @Email String email,
+            @ModelAttribute PetmateApplyRequest req   // DTO 통일 사용
+    ) {
+        Integer userId = userService.applyPetOwner(email, req);
+        return ResponseEntity.ok("반려인 신청 완료! 사용자 ID: " + userId);
+    }
+
     @PostMapping(value = "/apply", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public ResponseEntity<?> applyUser(
             @RequestParam("email") @Email String email,

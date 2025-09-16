@@ -1,12 +1,13 @@
+// src/main/java/com/petmate/config/SecurityConfig.java
 package com.petmate.config;
 
-import org.springframework.http.HttpMethod;
-import com.petmate.security.JwtAuthenticationFilter;
 import com.petmate.security.CustomOAuth2UserService;
+import com.petmate.security.JwtAuthenticationFilter;
 import com.petmate.security.OAuth2SuccessHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -22,7 +23,7 @@ public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtFilter;
     private final CustomOAuth2UserService customOAuth2UserService;
-    private final OAuth2SuccessHandler oAuth2SuccessHandler; // 커스텀 핸들러 주입
+    private final OAuth2SuccessHandler oAuth2SuccessHandler;
 
     @Bean
     public PasswordEncoder passwordEncoder() { return new BCryptPasswordEncoder(); }
@@ -32,27 +33,35 @@ public class SecurityConfig {
         return cfg.getAuthenticationManager();
     }
 
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .cors(c -> {})
+                .cors(c -> {})                      // CORS는 WebConfig에서 처리
                 .csrf(c -> c.disable())
-                // JWT만 쓸 거면 STATELESS, OAuth2 세션 필요하면 IF_REQUIRED 유지
-                .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
+                .formLogin(f -> f.disable())        // 기본 로그인 폼 비활성
+                .httpBasic(b -> b.disable())        // 기본 인증 비활성
+                .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .exceptionHandling(e -> e
+                        .authenticationEntryPoint((req, res, ex) -> {
+                            res.setStatus(401);
+                            res.setContentType("application/json;charset=UTF-8");
+                            res.getWriter().write("{\"error\":\"unauthorized\"}");
+                        })
+                        .accessDeniedHandler((req, res, ex) -> {
+                            res.setStatus(403);
+                            res.setContentType("application/json;charset=UTF-8");
+                            res.getWriter().write("{\"error\":\"forbidden\"}");
+                        })
+                )
                 .authorizeHttpRequests(auth -> auth
-                        // CORS preflight
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        // 정적 리소스(업로드 노출)
-                        .requestMatchers("/files/**", "/static/**", "/favicon.ico", "/error").permitAll()
-                        // 공개 API
                         .requestMatchers(
-                                "/auth/**","/oauth2/**","/login/**","/login/oauth2/**",
-                                "/api/payment/**","/api/**"
+                                "/oauth2/**", "/login/**", "/login/oauth2/**",   // OAuth2 진입
+                                "/files/**", "/static/**", "/favicon.ico", "/error",
+                                "/img/**"                                         // 이미지 프록시 공개 시
                         ).permitAll()
-                        // 펫메이트 신청은 반드시 인증
+                        .requestMatchers("/auth/me").authenticated()          // 프로필 조회는 인증 필요
                         .requestMatchers(HttpMethod.POST, "/petmate/apply").authenticated()
-                        // 나머지는 인증
                         .anyRequest().authenticated()
                 )
                 .oauth2Login(o -> o
@@ -60,6 +69,7 @@ public class SecurityConfig {
                         .successHandler(oAuth2SuccessHandler)
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+
         return http.build();
     }
 }

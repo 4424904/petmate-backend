@@ -13,8 +13,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -34,17 +32,20 @@ public class AuthService {
         if (!passwordEncoder.matches(request.getPw(), member.getPw()))
             throw new RuntimeException("비밀번호가 올바르지 않습니다.");
 
-        // 3) 토큰 발급 (JwtUtil + JwtClaimAccessor)
+        // 3) 토큰 발급 (role은 문자열 코드 "1"/"2"/"3"/"4"/"9")
         String accessToken = jwtUtil.issue(
                 member.getId(),
                 jwtUtil.accessTtlMs(),
                 JwtClaimAccessor.accessClaims(
-                        List.of("USER"),      // 권한
-                        "LOCAL",              // provider
-                        member.getMail(),     // email
-                        null,                 // name  <-- 이 부분 추가
-                        null,                 // nickname
-                        null                  // picture
+                        "LOCAL",                // provider
+                        member.getMail(),       // email
+                        null,                   // name
+                        null,                   // nickname
+                        null,                   // picture
+                        "1",                    // userRole (기본 사용자)
+                        null,                   // birthDate
+                        null,                   // gender
+                        null                    // phone
                 )
         );
 
@@ -80,12 +81,15 @@ public class AuthService {
                 userId,
                 jwtUtil.accessTtlMs(),
                 JwtClaimAccessor.accessClaims(
-                        List.of("USER"),    // roles
-                        "LOCAL",            // provider
-                        null,               // email
-                        null,               // name
-                        null,               // nickname
-                        null                // picture
+                        "LOCAL",    // provider
+                        null,       // email
+                        null,       // name
+                        null,       // nickname
+                        null,       // picture
+                        "1",        // userRole (기본 사용자)
+                        null,       // birthDate
+                        null,       // gender
+                        null        // phone
                 )
         );
 
@@ -107,7 +111,6 @@ public class AuthService {
 
     // 로그아웃
     public void signout(String refreshToken) {
-        // 저장된 리프레시 삭제
         refreshTokenMapper.deleteByToken(refreshToken);
     }
 }

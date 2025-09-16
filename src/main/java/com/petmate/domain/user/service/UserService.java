@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Optional;
 
@@ -24,7 +23,6 @@ public class UserService {
     @Value("${app.public-img-url}")
     private String imageBaseUrl;
 
-
     @Autowired
     private ProfileImageMapRepository imageMapRepo;
 
@@ -32,50 +30,95 @@ public class UserService {
     private final UserFactory userFactory;
     private final UserFileService userFileService;
 
-    /** 펫메이트 신청 (파일 포함) */
+    // =========================
+    // Role constants (String)
+    // 1 USER, 2 PETOWNER, 3 PETMATE, 4 ALL, 9 ADMIN
+    // =========================
+    private static final String ROLE_USER = "1";
+    private static final String ROLE_PETOWNER = "2";
+    private static final String ROLE_PETMATE = "3";
+    private static final String ROLE_ALL = "4";
+
+    // 상태 코드도 문자열 사용 예) "1","2"
+    private static final String STATUS_DEFAULT = "1";
+    private static final String STATUS_PETMATE = "2";
+
+    // =========================
+    // Role merge helpers (String)
+    // =========================
+    private String mergeToPetmate(String current) {
+        String r = (current == null || current.isBlank()) ? ROLE_USER : current;
+        return switch (r) {
+            case ROLE_USER -> ROLE_PETMATE;      // 1 -> 3
+            case ROLE_PETOWNER -> ROLE_ALL;      // 2 -> 4
+            case ROLE_PETMATE, ROLE_ALL -> r;    // 3,4 그대로
+            default -> ROLE_PETMATE;             // 기타 -> 3
+        };
+    }
+
+    private String mergeToPetOwner(String current) {
+        String r = (current == null || current.isBlank()) ? ROLE_USER : current;
+        return switch (r) {
+            case ROLE_USER -> ROLE_PETOWNER;     // 1 -> 2
+            case ROLE_PETMATE -> ROLE_ALL;       // 3 -> 4
+            case ROLE_PETOWNER, ROLE_ALL -> r;   // 2,4 그대로
+            default -> ROLE_PETOWNER;            // 기타 -> 2
+        };
+    }
+
+    /** 펫메이트 신청 */
     @Transactional
     public Integer apply(String email, PetmateApplyRequest req) {
-        log.info("=== 펫메이트 신청 처리 시작 ===");
-        log.info("email: {}, 새 프로필 파일 있음: {}", email, req.getProfile() != null && !req.getProfile().isEmpty());
+        log.info("=== 펫메이트 신청 시작 === email={}", email);
 
-        // 생성 or 조회
-        UserEntity user = userRepository.findByEmail(email).orElseGet(() -> {
-            log.info("새 사용자 생성 (펫메이트 신청): {}", email);
-            return userRepository.save(userFactory.create(email, req.getName(), req.getNickName(),
-                    req.getProvider(), req.getPhone(), "3", "2"));
-        });
+        // 없으면 기본 생성(role=3, status=2)
+        UserEntity user = userRepository.findByEmail(email).orElseGet(() ->
+                userRepository.save(
+                        userFactory.create(
+                                email,
+                                req.getName(),
+                                req.getNickName(),
+                                req.getProvider(),
+                                req.getPhone(),
+                                ROLE_PETMATE,     // role
+                                STATUS_PETMATE    // status
+                        )
+                )
+        );
 
-        log.info("기존 사용자 조회 완료 - userId: {}, 현재 profileImage: {}", user.getId(), user.getProfileImage());
+        // 기본 정보 갱신(역할/상태 비변경)
+        userFactory.update(
+                user,
+                req.getName(),
+                req.getNickName(),
+                req.getPhone(),
+                req.getGender(),
+                req.getAge(),
+                req.getProvider()
+        );
 
-        // 갱신
-        userFactory.update(user, req.getName(), req.getNickName(), req.getPhone(),
-                req.getGender(), req.getAge(), req.getProvider());
+        // 역할 병합
+        String oldRole = user.getRole();
+        String newRole = mergeToPetmate(oldRole);
+        user.setRole(newRole);
+        user.setStatus(STATUS_PETMATE); // 정책에 맞게
 
-        // 🔥 프로필 이미지 처리 개선
+        // 프로필 이미지
         if (req.getProfile() != null && !req.getProfile().isEmpty()) {
-            log.info("새로운 프로필 이미지 파일이 업로드됨 - 기존 이미지 교체");
-            String newUuid = userFileService.storeProfile(user, req.getProfile());
-            log.info("새 프로필 이미지 저장 완료 - 새 UUID: {}", newUuid);
+            userFileService.storeProfile(user, req.getProfile());
         } else {
-            log.info("새 프로필 파일 없음 - 기존 프로필 이미지 유지: {}", user.getProfileImage());
-
-            // 기존 프로필 이미지가 없는 경우에만 기본 이미지 설정
-            if (user.getProfileImage() == null || user.getProfileImage().isBlank()) {
-                log.info("기존 프로필도 없어서 기본 이미지 설정");
-                String defaultUuid = userFileService.storeDefaultProfileIfAbsent(user);
-                log.info("기본 이미지 설정 완료 - UUID: {}", defaultUuid);
-            }
+            userFileService.storeDefaultProfileIfAbsent(user);
         }
 
-        userRepository.save(user);
+        // 자격증 저장
         userFileService.storeCertificates(user, req.getCertificates());
 
-        log.info("펫메이트 신청 처리 완료 - 최종 profileImage: {}", user.getProfileImage());
-        log.info("=== 펫메이트 신청 처리 완료 ===");
-
+        userRepository.save(user);
+        log.info("펫메이트 신청 완료 - userId={}, role(old->{})={}", user.getId(), oldRole, user.getRole());
         return user.getId();
     }
 
+    /** 기본 유저 생성/동기화 (소셜 로그인 시) */
     @Transactional
     public Integer applyBasicUser(String email,
                                   String provider,
@@ -85,70 +128,102 @@ public class UserService {
                                   String gender,
                                   Integer age,
                                   String profileImageUrl) {
+        log.info("=== applyBasicUser 시작 === email={}", email);
 
-        log.info("=== applyBasicUser 시작 ===");
-        log.info("email: {}, provider: {}, name: {}, nickname: {}, profileImageUrl: {}",
-                email, provider, name, nickName, profileImageUrl);
+        // 없으면 USER 생성(role=1, status=1)
+        UserEntity user = userRepository.findByEmail(email).orElseGet(() ->
+                userRepository.save(
+                        userFactory.create(
+                                email,
+                                name,
+                                nickName,
+                                provider,
+                                phone,
+                                ROLE_USER,        // role
+                                STATUS_DEFAULT    // status
+                        )
+                )
+        );
 
-        UserEntity user = userRepository.findByEmail(email).orElseGet(() -> {
-            log.info("새 사용자 생성: {}", email);
-            return userRepository.save(userFactory.create(email, name, nickName, provider, phone, "1", "1"));
-        });
-
-        log.info("사용자 조회/생성 완료 - userId: {}", user.getId());
-
+        // 역할/상태는 되돌리지 않음
         userFactory.update(user, name, nickName, phone, gender, age, provider);
-        log.info("사용자 정보 업데이트 완료");
 
-        // 🔥 여기가 핵심! 프로필 이미지 처리
-        log.info("프로필 이미지 처리 시작 - profileImageUrl: {}", profileImageUrl);
-
+        // 프로필 이미지
         if (profileImageUrl != null && !profileImageUrl.isBlank()) {
-            log.info("OAuth에서 받은 이미지 URL로 저장 시도: {}", profileImageUrl);
-            String savedUuid = userFileService.storeProfileFromUrl(user, profileImageUrl);
-            log.info("이미지 저장 완료 - UUID: {}", savedUuid);
+            userFileService.storeProfileFromUrl(user, profileImageUrl);
         } else {
-            log.info("이미지 URL이 없어서 기본 이미지 저장");
-            String savedUuid = userFileService.storeDefaultProfileIfAbsent(user);
-            log.info("기본 이미지 저장 완료 - UUID: {}", savedUuid);
+            userFileService.storeDefaultProfileIfAbsent(user);
         }
 
         userRepository.save(user);
-        log.info("사용자 저장 완료 - 최종 profileImage: {}", user.getProfileImage());
-        log.info("=== applyBasicUser 완료 ===");
-
+        log.info("applyBasicUser 완료 - userId={}, role={}", user.getId(), user.getRole());
         return user.getId();
     }
 
-
+    /** 프로필 이미지 URL 조회 */
     public String findProfileImageByEmail(String email) {
-        log.info("프로필 이미지 조회: {}", email);
-
-        // 🔥 profile_image_map 테이블에서 직접 조회
         Optional<ProfileImageMap> imageMap = imageMapRepo.findByEmail(email);
-
         if (imageMap.isPresent()) {
-            String uuid = imageMap.get().getUuid();
-            log.info("profile_image_map에서 UUID 조회: {}", uuid);
-            String fullUrl = imageBaseUrl + uuid;
-            log.info("최종 URL: {}", fullUrl);
-            return fullUrl;
+            return imageBaseUrl + imageMap.get().getUuid();
         }
-
-        // 🔥 fallback: user 테이블에서 조회 (기존 로직)
         String uuidPath = userRepository.findByEmail(email)
                 .map(UserEntity::getProfileImage)
                 .orElse(null);
-
-        log.info("user 테이블에서 조회된 UUID: {}", uuidPath);
-
         if (uuidPath == null || uuidPath.isBlank() || "default.png".equals(uuidPath)) {
-            log.info("UUID가 없거나 기본값이므로 기본 경로 반환");
             return imageBaseUrl + "profiles/default.png";
         }
+        return imageBaseUrl + uuidPath;
+    }
 
-        String fullUrl = imageBaseUrl + uuidPath;
-        log.info("최종 URL (fallback): {}", fullUrl);
-        return fullUrl;
+    /** 반려인 신청 */
+    @Transactional
+    public Integer applyPetOwner(String email, PetmateApplyRequest req) {
+        log.info("=== 반려인 신청 시작 === email={}", email);
+
+        // 없으면 반려인 기본 생성(role=2, status=1)
+        UserEntity user = userRepository.findByEmail(email).orElseGet(() ->
+                userRepository.save(
+                        userFactory.create(
+                                email,
+                                req.getName(),
+                                req.getNickName(),
+                                req.getProvider(),
+                                req.getPhone(),
+                                ROLE_PETOWNER,    // role
+                                STATUS_DEFAULT    // status
+                        )
+                )
+        );
+
+        // 기본 정보 갱신
+        userFactory.update(
+                user,
+                req.getName(),
+                req.getNickName(),
+                req.getPhone(),
+                req.getGender(),
+                req.getAge(),
+                req.getProvider()
+        );
+
+        // 역할 병합
+        String oldRole = user.getRole();
+        String newRole = mergeToPetOwner(oldRole);
+        user.setRole(newRole);
+        // 필요 시 반려인 상태 규칙 적용
+        // user.setStatus("1");
+
+        // 프로필 이미지
+        if (req.getProfile() != null && !req.getProfile().isEmpty()) {
+            userFileService.storeProfile(user, req.getProfile());
+        } else {
+            userFileService.storeDefaultProfileIfAbsent(user);
+        }
+
+        // 반려인은 자격증 없음(무시)
+
+        userRepository.save(user);
+        log.info("반려인 신청 완료 - userId={}, role(old->{})={}", user.getId(), oldRole, user.getRole());
+        return user.getId();
     }
 }
