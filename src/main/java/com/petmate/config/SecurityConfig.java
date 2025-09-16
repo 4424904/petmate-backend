@@ -61,6 +61,8 @@ public class SecurityConfig {
                         ).permitAll()
                         // ★ 인증 관련 REST 허용
                         .requestMatchers("/auth/signin", "/auth/signup", "/auth/refresh", "/auth/signout").permitAll()
+                        // ★ 지도 페이지 - 로그인 없이 업체 조회 허용
+                        .requestMatchers(HttpMethod.GET, "/api/company/nearby").permitAll()
                         // 보호 자원
                         .requestMatchers("/auth/me").authenticated()
                         .requestMatchers(HttpMethod.POST, "/petmate/apply").authenticated()
