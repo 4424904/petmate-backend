@@ -62,8 +62,10 @@ public class AddressController {
         log.info("주소 추가 요청 - userId: {}, 주소: {}",
                 userId, addressCreateRequestDto.getAddress());
 
-        log.info("받은 위도/경도 - latitude: {}, longitude: {}", 
+        log.info("받은 위도/경도 - latitude: {}, longitude: {}",
                 addressCreateRequestDto.getLatitude(), addressCreateRequestDto.getLongitude());
+
+        log.info("받은 우편번호 - postcode: {}", addressCreateRequestDto.getPostcode());
 
         try {
             // String userId를 DTO에 설정 (Service에서 Integer로 변환)
