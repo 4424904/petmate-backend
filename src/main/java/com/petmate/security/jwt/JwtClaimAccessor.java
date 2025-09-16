@@ -6,7 +6,7 @@ import java.util.*;
 public final class JwtClaimAccessor {
     private JwtClaimAccessor() {}
 
-    public static final String TYP = "typ";
+    public static final String TYP = "type";
     public static final String ROLE  = "role";      // 단일 role ("1","2","3","4","9")
     public static final String PROV = "prov";
     public static final String EMAIL = "email";

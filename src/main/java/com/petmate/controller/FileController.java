@@ -24,7 +24,7 @@ public class FileController {
     public ResponseEntity<Map<String, Object>> uploadSingleImage(
             @RequestParam("file") MultipartFile file,
             @RequestParam("imageTypeCode") String imageTypeCode,
-            @RequestParam("referenceId") Long referenceId,
+            @RequestParam("referenceId") String referenceId,
             @RequestParam(value = "isThumbnail", defaultValue = "false") boolean isThumbnail,
             @RequestParam(value = "altText", required = false) String altText,
             @RequestParam(value = "description", required = false) String description) {
@@ -54,7 +54,7 @@ public class FileController {
     public ResponseEntity<Map<String, Object>> uploadMultipleImages(
             @RequestParam("files") List<MultipartFile> files,
             @RequestParam("imageTypeCode") String imageTypeCode,
-            @RequestParam("referenceId") Long referenceId,
+            @RequestParam("referenceId") String referenceId,
             @RequestParam(value = "setFirstAsThumbnail", defaultValue = "false") boolean setFirstAsThumbnail) {
 
         Map<String, Object> response = new HashMap<>();
@@ -88,7 +88,7 @@ public class FileController {
     public ResponseEntity<Map<String, Object>> replaceAllImages(
             @RequestParam("files") List<MultipartFile> files,
             @RequestParam("imageTypeCode") String imageTypeCode,
-            @RequestParam("referenceId") Long referenceId,
+            @RequestParam("referenceId") String referenceId,
             @RequestParam(value = "setFirstAsThumbnail", defaultValue = "false") boolean setFirstAsThumbnail) {
 
         Map<String, Object> response = new HashMap<>();
@@ -137,7 +137,7 @@ public class FileController {
     @GetMapping("/list")
     public ResponseEntity<Map<String, Object>> getImageList(
             @RequestParam("imageTypeCode") String imageTypeCode,
-            @RequestParam("referenceId") Long referenceId) {
+            @RequestParam("referenceId") String referenceId) {
         
         Map<String, Object> response = new HashMap<>();
         
@@ -168,7 +168,7 @@ public class FileController {
     public ResponseEntity<Map<String, Object>> setThumbnail(
             @RequestParam("imageId") Long imageId,
             @RequestParam("imageTypeCode") String imageTypeCode,
-            @RequestParam("referenceId") Long referenceId) {
+            @RequestParam("referenceId") String referenceId) {
         
         Map<String, Object> response = new HashMap<>();
         

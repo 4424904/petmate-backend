@@ -101,6 +101,7 @@ public class CompanyService {
             log.info("개인 업체 등록: repName={}", dto.getRepresentativeName());
 
             builder.ssnFirst(dto.getSsnFirst());
+            builder.bizRegNo(dto.getSsnFirst());
         } else {
             builder.bizRegNo(dto.getBizRegNo());
         }
@@ -116,7 +117,7 @@ public class CompanyService {
                 List<com.petmate.common.entity.ImageEntity> savedImages = imageService.uploadMultipleImages(
                         dto.getImages(),        // 업로드할 파일들
                         "03",                   // IMAGE_TYPE 코드 (COMPANY_REG)
-                        savedCompany.getId().longValue(),   // 업체 ID (Long 타입으로 변환)
+                        savedCompany.getId().toString(),   // 업체 ID (Long 타입으로 변환)
                         true                    // 첫 번째 이미지를 썸네일로 설정
                 );
                 log.info("업체 이미지 {} 개 저장 완료! 저장된 이미지 IDs: {}",

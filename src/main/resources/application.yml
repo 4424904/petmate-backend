@@ -66,8 +66,8 @@ mybatis:
 jwt:
   secret: djdjdjeueueushshshznmqasdklheqweqwasdasxzc
   issuer: petmate
-  expiration: 600000
-  refresh-expiration: 604800000
+  expiration: 3600000         # 1시간 (60분 * 60초 * 1000ms)
+  refresh-expiration: 2592000000  # 30일 (30일 * 24시간 * 60분 * 60초 * 1000ms)
 
 logging:
   level:

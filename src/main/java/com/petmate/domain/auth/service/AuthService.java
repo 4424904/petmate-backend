@@ -2,10 +2,8 @@
 package com.petmate.domain.auth.service;
 
 import com.petmate.common.repository.mybatis.token.RefreshTokenMapper;
-import com.petmate.common.repository.mybatis.user.MemberMapper;
 import com.petmate.domain.auth.dto.request.LoginRequestDto;
 import com.petmate.domain.auth.dto.request.SignupRequestDto;
-import com.petmate.domain.auth.dto.response.MemberDto;
 import com.petmate.domain.auth.dto.response.TokenResponseDto;
 import com.petmate.domain.auth.dto.response.UserInfoResponseDto;
 import com.petmate.domain.user.entity.UserEntity;
@@ -14,22 +12,26 @@ import com.petmate.security.jwt.JwtClaimAccessor;
 import com.petmate.security.jwt.JwtUtil;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Map;
+
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AuthService {
 
     @Value("${app.public-img-url}")
     private String imgBase; // 예: http://localhost:8090/img/
-    // MyBatis: ID/PW 로그인·리프레시 용
-    private final MemberMapper memberMapper;
+
+    // RefreshToken 관리 (추후 UserEntity 기반으로 변경 예정)
     private final RefreshTokenMapper refreshTokenMapper;
 
-    // JPA: /auth/me 최신값 조회 용
+    // 메인 사용자 데이터 저장소
     private final UserRepository userRepository;
 
     private final JwtUtil jwtUtil;
@@ -44,74 +46,67 @@ public class AuthService {
         if (file.startsWith("img/")) file = file.substring(4);
         return base + file;
     }
-    /** 로그인 */
+    /** 로그인 - 소셜 로그인으로만 처리됨 */
     public TokenResponseDto signin(LoginRequestDto request) {
-        MemberDto member = memberMapper.findById(request.getId());
-        if (member == null) throw new RuntimeException("존재하지 않는 아이디입니다.");
-        if (!passwordEncoder.matches(request.getPw(), member.getPw()))
-            throw new RuntimeException("비밀번호가 올바르지 않습니다.");
-
-        // MEMBER 테이블에 ROLE 컬럼 없음 → 기본값 고정
-        String role = "1";
-
-        String accessToken = jwtUtil.issue(
-                member.getId(),
-                jwtUtil.accessTtlMs(),
-                JwtClaimAccessor.accessClaims(
-                        "LOCAL",
-                        nz(member.getMail(), null),
-                        null, null, null,
-                        role,
-                        null, null, null
-                )
-        );
-        String refreshToken = jwtUtil.issue(
-                member.getId(),
-                jwtUtil.refreshTtlMs(),
-                JwtClaimAccessor.refreshClaims()
-        );
-
-        refreshTokenMapper.saveToken(member.getNo(), refreshToken);
-        return new TokenResponseDto(accessToken, refreshToken);
+        // 소셜 로그인을 통해서만 로그인이 처리되므로 이 메서드는 사용하지 않음
+        log.warn("⚠️ 일반 로그인 시도 - 소셜 로그인을 이용해주세요");
+        throw new RuntimeException("소셜 로그인을 이용해주세요.");
     }
 
     /** RefreshToken으로 AccessToken 재발급 */
     public TokenResponseDto refreshAccessToken(String refreshToken) {
-        if (jwtUtil.isExpired(refreshToken))
+        log.info("🔄 Refresh Token 처리 시작");
+        if (jwtUtil.isExpired(refreshToken)) {
+            log.error("❌ RefreshToken 만료됨");
             throw new RuntimeException("RefreshToken이 만료되었습니다. 다시 로그인하세요.");
+        }
         Claims claims = jwtUtil.parse(refreshToken);
-        if (!"refresh".equals(JwtClaimAccessor.type(claims)))
+        String tokenType = JwtClaimAccessor.type(claims);
+        log.info("🔍 토큰 타입 확인: 예상='refresh', 실제='{}'", tokenType);
+        if (!"refresh".equals(tokenType)) {
+            log.error("❌ 잘못된 토큰 타입: {}", tokenType);
             throw new RuntimeException("유효하지 않은 토큰 유형입니다.");
+        }
 
         String userId = claims.getSubject();
-        MemberDto member = memberMapper.findById(userId);
-        if (member == null) throw new RuntimeException("사용자를 찾을 수 없습니다.");
+        log.info("🔍 사용자 ID: {}", userId);
 
-        String role = "1"; // 같은 이유로 고정
+        // refresh token에서 email 가져와서 사용자 조회
+        Object emailClaim = claims.get("email");
+        if (emailClaim == null) {
+            throw new RuntimeException("Refresh token에 email 정보가 없습니다.");
+        }
+
+        String email = String.valueOf(emailClaim);
+        log.info("📧 Refresh Token Email: {}", email);
+
+        UserEntity user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다: " + email));
 
         String newAccessToken = jwtUtil.issue(
                 userId,
                 jwtUtil.accessTtlMs(),
                 JwtClaimAccessor.accessClaims(
-                        "LOCAL",
-                        nz(member.getMail(), null),
-                        null, null, null,
-                        role,
-                        null, null, null
+                        user.getProvider(),
+                        user.getEmail(),
+                        user.getName(),
+                        user.getNickName(),
+                        toImgUrl(user.getProfileImage()),
+                        user.getRole() != null ? user.getRole() : "1",
+                        user.getBirthDate() != null ? user.getBirthDate().toString() : null,
+                        user.getGender(),
+                        user.getPhone()
                 )
         );
+        log.info("✅ AccessToken 재발급 완료 - 사용자: {}", email);
         return new TokenResponseDto(newAccessToken);
     }
 
-    /** 회원가입 */
+    /** 회원가입 - 소셜 로그인으로만 처리됨 */
     public void signup(SignupRequestDto request) {
-        String encodedPw = passwordEncoder.encode(request.getPw());
-        MemberDto member = MemberDto.builder()
-                .id(request.getId())
-                .pw(encodedPw)
-                .mail(request.getMail())
-                .build();
-        memberMapper.signup(member);
+        // 소셜 로그인을 통해서만 회원가입이 처리되므로 이 메서드는 사용하지 않음
+        log.warn("⚠️ 일반 회원가입 시도 - 소셜 로그인을 이용해주세요");
+        throw new RuntimeException("소셜 로그인을 이용해주세요.");
     }
 
     /** 로그아웃 */

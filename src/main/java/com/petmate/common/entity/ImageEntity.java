@@ -32,7 +32,7 @@ public class ImageEntity extends BaseEntity {
 
     @Column(name = "REFERENCE_ID", nullable = false)
     @Comment("참조 대상 ID")
-    private Long referenceId; // 참조 대상의 ID (사용자 ID, 펫 ID, 업체 ID 등)
+    private String referenceId; // 참조 대상의 ID (사용자 ID, 펫 ID, 업체 ID 등)
 
     @Column(name = "ORIGINAL_NAME", nullable = false, length = 255)
     @Comment("원본 파일명")

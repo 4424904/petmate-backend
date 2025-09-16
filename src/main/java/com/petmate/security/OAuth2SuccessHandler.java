@@ -22,6 +22,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 import java.util.Map;
+import jakarta.servlet.http.Cookie;
 
 @Component
 @RequiredArgsConstructor
@@ -56,6 +57,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         UserEntity ue = userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalStateException("가입 직후 사용자 조회 실패: " + email));
 
+        // Access Token 발급
         String access = jwtUtil.issue(
                 String.valueOf(ue.getId()),
                 jwtUtil.accessTtlMs(),
@@ -71,6 +73,26 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
                         ue.getPhone()
                 )
         );
+
+        // Refresh Token 발급
+        String refresh = jwtUtil.issue(
+                String.valueOf(ue.getId()),
+                jwtUtil.refreshTtlMs(),
+                Map.of("type", "refresh", "email", email)
+        );
+
+        // Refresh Token을 HTTP-only 쿠키로 설정 (수동 헤더 방식)
+        String cookieValue = String.format(
+                "refreshToken=%s; HttpOnly; Path=/; Max-Age=%d; SameSite=Lax",
+                refresh,
+                (int) (jwtUtil.refreshTtlMs() / 1000)
+        );
+        res.addHeader("Set-Cookie", cookieValue);
+
+        log.info("Refresh Token 쿠키 수동 설정: HttpOnly=true, Path=/, MaxAge={} 초, SameSite=Lax",
+                (int) (jwtUtil.refreshTtlMs() / 1000));
+
+        log.info("OAuth2 로그인 성공 - 사용자: {}, Refresh Token 쿠키 설정 완료", email);
 
         String next = req.getParameter("next");
         String path = (next != null && next.startsWith("/")) ? next : "/home";
