@@ -308,4 +308,59 @@ public class CompanyService {
         }
     }
 
+    public List<CompanyResponseDto> getNearbyCompanies(
+            Double userLat,
+            Double userLng,
+            Double radiusKm,
+            String serviceType
+    ) {
+
+        // 승인된 업체만 조회
+        List<CompanyEntity> approvedCompanies = companyRepository.findByStatusOrderByCreatedAtDesc("A");
+        log.info("승인된 업체 총 {}개", approvedCompanies.size());
+
+        return approvedCompanies.stream()
+                .filter(company -> company.getLatitude() != null && company.getLongitude() != null) // 좌표 있는 업체만 조회
+                .filter(company -> {
+                    // 하버사인 거리 계산
+                    double distance = calculateDistance(
+                            userLat,
+                            userLng,
+                            company.getLatitude().doubleValue(),
+                            company.getLongitude().doubleValue()
+                    );
+
+                    log.info("업체 '{}': 좌표({}, {}), 거리={}km, 반경내={}",
+                            company.getName(),
+                            company.getLatitude(),
+                            company.getLongitude(),
+                            distance,
+                            distance <= radiusKm);
+
+                    return distance <= radiusKm;
+                })
+                .filter(company -> serviceType == null || serviceType.isEmpty() || company.getRepService().equals(serviceType))
+                .map(this::mapToResponseDto)
+                .toList();
+
+    }
+
+
+    private double calculateDistance(double lat1, double lng1, double lat2, double lng2) {
+
+        final int R = 6371; // 지구 반지름
+
+        double latDistance = Math.toRadians(lat2 - lat1);
+        double lngDistance = Math.toRadians(lng2 - lng1);
+
+        double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
+                + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
+                * Math.sin(lngDistance / 2) * Math.sin(lngDistance / 2);
+
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+
+        return R*c; // 거리(km)
+
+    }
+
 }
