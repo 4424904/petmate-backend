@@ -31,7 +31,6 @@ public class CompanyController {
             @ModelAttribute CompanyRegisterRequestDto requestDto,
             @AuthenticationPrincipal String userId) {
 
-        userId = "11";
         log.info("=== 컨트롤러 진입 ===");
         log.info("업체 등록 요청 - userId: {}, companyType: {}", userId, requestDto.getType());
 
@@ -60,7 +59,6 @@ public class CompanyController {
     public ResponseEntity<List<CompanyResponseDto>> getMyCompanies(
             @AuthenticationPrincipal String userId) {
 
-        userId = "11";
         log.info("내 업체 목록 조회 요청 - userId: {}", userId);
 
         List<CompanyResponseDto> companies = companyService.getMyCompanies(Integer.parseInt(userId));
@@ -73,7 +71,6 @@ public class CompanyController {
             @PathVariable Integer id,
             @AuthenticationPrincipal String userId) {
 
-        userId = "11";
         log.info("업체 상세 조회 요청 - companyId: {}, userId: {}", id, userId);
 
         CompanyResponseDto company = companyService.getCompanyById(id, Integer.parseInt(userId));
@@ -87,7 +84,6 @@ public class CompanyController {
             @ModelAttribute CompanyUpdateRequestDto requestDto,
             @AuthenticationPrincipal String userId) {
 
-        userId = "11";
         log.info("업체 수정 요청 - companyId: {}, userId: {}", id, userId);
 
         CompanyResponseDto company = companyService.updateCompany(id, requestDto, Integer.parseInt(userId));
@@ -100,7 +96,6 @@ public class CompanyController {
             @PathVariable Integer id,
             @AuthenticationPrincipal String userId) {
 
-        userId = "11";
         log.info("업체 삭제 요청 - companyId: {}, userId: {}", id, userId);
 
         companyService.deleteCompany(id, Integer.parseInt(userId));
@@ -114,7 +109,6 @@ public class CompanyController {
             @RequestBody Map<String, String> request,
             @AuthenticationPrincipal String userId) {
 
-        userId = "11";
         String status = request.get("status");
         log.info("업체 상태 변경 요청 - companyId: {}, status: {}, userId: {}", id, status, userId);
 
