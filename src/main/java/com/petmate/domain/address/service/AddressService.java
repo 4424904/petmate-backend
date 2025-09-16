@@ -43,9 +43,11 @@ public class AddressService {
     // jwt String userId를 integer ownerId로 변환
     private Integer convertUserIdToOwnerId(String jwtUserId) {
         try{
-            // "google_12345" 형태에서 숫자 부분 추출하여 해시값으로 변환
-            int hashCode = jwtUserId.hashCode();
-            return Math.abs(hashCode); // 음수를 양수로 변환
+            log.info("convertUserIdToOwnerId 입력값: '{}'", jwtUserId);
+            // User DB의 id를 그대로 ownerId로 사용
+            Integer result = Integer.parseInt(jwtUserId);
+            log.info("convertUserIdToOwnerId 결과값: {}", result);
+            return result;
         } catch (Exception e) {
             log.error("JWT userId를 Integer로 변환 실패: {}", jwtUserId);
             throw new RuntimeException("유효하지 않은 사용자 아이디입니다");

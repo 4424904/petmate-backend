@@ -1580,3 +1580,1125 @@
         updated_at=? 
     where
         id=?
+2025-09-16 11:16:14 [restartedMain] INFO  com.petmate.PetmateApplication - Starting PetmateApplication using Java 21.0.7 with PID 12760 (C:\lfm01\spring_boot\pjt-sts4\petmate-backend-mainb\petmate-backend\build\classes\java\main started by HI-02 in C:\lfm01\spring_boot\pjt-sts4\petmate-backend-mainb\petmate-backend)
+2025-09-16 11:16:14 [restartedMain] DEBUG com.petmate.PetmateApplication - Running with Spring Boot v3.5.5, Spring v6.2.10
+2025-09-16 11:16:14 [restartedMain] INFO  com.petmate.PetmateApplication - No active profile set, falling back to 1 default profile: "default"
+2025-09-16 11:16:14 [restartedMain] INFO  o.s.b.d.restart.ChangeableUrls - The Class-Path manifest attribute in C:\Users\HI-02\.gradle\caches\modules-2\files-2.1\io.github.cdimascio\java-dotenv\5.2.2\f77d54ff193ed4b07415ab8d7b3d0550716aa8c\java-dotenv-5.2.2.jar referenced one or more files that do not exist: file:/C:/Users/HI-02/.gradle/caches/modules-2/files-2.1/io.github.cdimascio/java-dotenv/5.2.2/f77d54ff193ed4b07415ab8d7b3d0550716aa8c/kotlin-stdlib-1.4.0.jar,file:/C:/Users/HI-02/.gradle/caches/modules-2/files-2.1/io.github.cdimascio/java-dotenv/5.2.2/f77d54ff193ed4b07415ab8d7b3d0550716aa8c/kotlin-stdlib-common-1.4.0.jar,file:/C:/Users/HI-02/.gradle/caches/modules-2/files-2.1/io.github.cdimascio/java-dotenv/5.2.2/f77d54ff193ed4b07415ab8d7b3d0550716aa8c/annotations-13.0.jar
+2025-09-16 11:16:14 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2025-09-16 11:16:14 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2025-09-16 11:16:15 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-09-16 11:16:15 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 227 ms. Found 12 JPA repository interfaces.
+2025-09-16 11:16:17 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8090 (http)
+2025-09-16 11:16:17 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-09-16 11:16:17 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.44]
+2025-09-16 11:16:17 [restartedMain] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-09-16 11:16:17 [restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 3054 ms
+2025-09-16 11:16:17 [restartedMain] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-09-16 11:16:17 [restartedMain] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.6.26.Final
+2025-09-16 11:16:17 [restartedMain] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-09-16 11:16:18 [restartedMain] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-09-16 11:16:18 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-09-16 11:16:18 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@40bd5356
+2025-09-16 11:16:18 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-09-16 11:16:18 [restartedMain] INFO  o.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 8.0.43
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-09-16 11:16:20 [restartedMain] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-09-16 11:16:20 [restartedMain] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-09-16 11:16:20 [restartedMain] INFO  o.s.d.j.r.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-09-16 11:16:22 [restartedMain] INFO  com.petmate.config.WebConfig - CORS applied. allowCredentials=true
+2025-09-16 11:16:23 [restartedMain] INFO  com.petmate.config.WebConfig - Static mapping applied. /files/** -> file:C:/petmate/
+2025-09-16 11:16:23 [restartedMain] WARN  o.s.b.a.t.ThymeleafAutoConfiguration$DefaultTemplateResolverConfiguration - Cannot find template location: classpath:/templates/ (please add some templates, check your Thymeleaf configuration, or set spring.thymeleaf.check-template-location=false)
+2025-09-16 11:16:23 [restartedMain] INFO  o.s.b.d.a.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2025-09-16 11:16:23 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8090 (http) with context path '/'
+2025-09-16 11:16:23 [restartedMain] INFO  com.petmate.PetmateApplication - Started PetmateApplication in 10.332 seconds (process running for 11.085)
+2025-09-16 11:16:23 [restartedMain] DEBUG org.hibernate.SQL - 
+    select
+        count(*) 
+    from
+        danal_codes gce1_0
+2025-09-16 11:16:23 [restartedMain] INFO  com.petmate.config.DataInitializer - Common codes already initialized
+2025-09-16 11:16:31 [http-nio-8090-exec-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-09-16 11:16:31 [http-nio-8090-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-09-16 11:16:31 [http-nio-8090-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 1 ms
+2025-09-16 11:16:32 [http-nio-8090-exec-2] INFO  c.p.security.JwtAuthenticationFilter - [JWT] GET /auth/me - expired access token
+2025-09-16 11:16:47 [http-nio-8090-exec-5] INFO  c.p.domain.user.service.UserService - === applyBasicUser 시작 === email=kimijug97@naver.com
+2025-09-16 11:16:47 [http-nio-8090-exec-5] DEBUG org.hibernate.SQL - 
+    select
+        ue1_0.id,
+        ue1_0.birth_date,
+        ue1_0.care_species,
+        ue1_0.created_at,
+        ue1_0.email,
+        ue1_0.email_verified,
+        ue1_0.gender,
+        ue1_0.main_service,
+        ue1_0.name,
+        ue1_0.nick_name,
+        ue1_0.phone,
+        ue1_0.profile_image,
+        ue1_0.provider,
+        ue1_0.role,
+        ue1_0.status,
+        ue1_0.updated_at 
+    from
+        user ue1_0 
+    where
+        ue1_0.email=?
+2025-09-16 11:16:47 [http-nio-8090-exec-5] INFO  c.p.d.user.service.UserFileService - 실제 프로필 이미지 존재: userId=32, profile=d8f3d945-4652-4197-8b29-aceb8dab2433.png
+2025-09-16 11:16:47 [http-nio-8090-exec-5] INFO  c.p.domain.user.service.UserService - applyBasicUser 완료 - userId=32, role=4
+2025-09-16 11:16:47 [http-nio-8090-exec-5] DEBUG org.hibernate.SQL - 
+    select
+        ue1_0.id,
+        ue1_0.birth_date,
+        ue1_0.care_species,
+        ue1_0.created_at,
+        ue1_0.email,
+        ue1_0.email_verified,
+        ue1_0.gender,
+        ue1_0.main_service,
+        ue1_0.name,
+        ue1_0.nick_name,
+        ue1_0.phone,
+        ue1_0.profile_image,
+        ue1_0.provider,
+        ue1_0.role,
+        ue1_0.status,
+        ue1_0.updated_at 
+    from
+        user ue1_0 
+    where
+        ue1_0.email=?
+2025-09-16 11:16:47 [http-nio-8090-exec-5] DEBUG org.hibernate.SQL - 
+    select
+        pim1_0.uuid,
+        pim1_0.created_at,
+        pim1_0.email,
+        pim1_0.expires_at,
+        pim1_0.real_path 
+    from
+        profile_image_map pim1_0 
+    where
+        pim1_0.email=?
+2025-09-16 11:16:47 [http-nio-8090-exec-6] DEBUG org.hibernate.SQL - 
+    select
+        ue1_0.id,
+        ue1_0.birth_date,
+        ue1_0.care_species,
+        ue1_0.created_at,
+        ue1_0.email,
+        ue1_0.email_verified,
+        ue1_0.gender,
+        ue1_0.main_service,
+        ue1_0.name,
+        ue1_0.nick_name,
+        ue1_0.phone,
+        ue1_0.profile_image,
+        ue1_0.provider,
+        ue1_0.role,
+        ue1_0.status,
+        ue1_0.updated_at 
+    from
+        user ue1_0 
+    where
+        ue1_0.email=?
+2025-09-16 11:19:38 [http-nio-8090-exec-1] INFO  c.p.security.JwtAuthenticationFilter - [JWT] POST /auth/signout - expired access token
+2025-09-16 11:19:41 [http-nio-8090-exec-3] INFO  c.p.domain.user.service.UserService - === applyBasicUser 시작 === email=kimijug97@naver.com
+2025-09-16 11:19:41 [http-nio-8090-exec-3] DEBUG org.hibernate.SQL - 
+    select
+        ue1_0.id,
+        ue1_0.birth_date,
+        ue1_0.care_species,
+        ue1_0.created_at,
+        ue1_0.email,
+        ue1_0.email_verified,
+        ue1_0.gender,
+        ue1_0.main_service,
+        ue1_0.name,
+        ue1_0.nick_name,
+        ue1_0.phone,
+        ue1_0.profile_image,
+        ue1_0.provider,
+        ue1_0.role,
+        ue1_0.status,
+        ue1_0.updated_at 
+    from
+        user ue1_0 
+    where
+        ue1_0.email=?
+2025-09-16 11:19:41 [http-nio-8090-exec-3] INFO  c.p.d.user.service.UserFileService - 실제 프로필 이미지 존재: userId=32, profile=d8f3d945-4652-4197-8b29-aceb8dab2433.png
+2025-09-16 11:19:41 [http-nio-8090-exec-3] INFO  c.p.domain.user.service.UserService - applyBasicUser 완료 - userId=32, role=4
+2025-09-16 11:19:41 [http-nio-8090-exec-3] DEBUG org.hibernate.SQL - 
+    select
+        ue1_0.id,
+        ue1_0.birth_date,
+        ue1_0.care_species,
+        ue1_0.created_at,
+        ue1_0.email,
+        ue1_0.email_verified,
+        ue1_0.gender,
+        ue1_0.main_service,
+        ue1_0.name,
+        ue1_0.nick_name,
+        ue1_0.phone,
+        ue1_0.profile_image,
+        ue1_0.provider,
+        ue1_0.role,
+        ue1_0.status,
+        ue1_0.updated_at 
+    from
+        user ue1_0 
+    where
+        ue1_0.email=?
+2025-09-16 11:19:41 [http-nio-8090-exec-3] DEBUG org.hibernate.SQL - 
+    select
+        pim1_0.uuid,
+        pim1_0.created_at,
+        pim1_0.email,
+        pim1_0.expires_at,
+        pim1_0.real_path 
+    from
+        profile_image_map pim1_0 
+    where
+        pim1_0.email=?
+2025-09-16 11:19:42 [http-nio-8090-exec-4] DEBUG org.hibernate.SQL - 
+    select
+        ue1_0.id,
+        ue1_0.birth_date,
+        ue1_0.care_species,
+        ue1_0.created_at,
+        ue1_0.email,
+        ue1_0.email_verified,
+        ue1_0.gender,
+        ue1_0.main_service,
+        ue1_0.name,
+        ue1_0.nick_name,
+        ue1_0.phone,
+        ue1_0.profile_image,
+        ue1_0.provider,
+        ue1_0.role,
+        ue1_0.status,
+        ue1_0.updated_at 
+    from
+        user ue1_0 
+    where
+        ue1_0.email=?
+2025-09-16 11:20:16 [http-nio-8090-exec-7] INFO  c.p.domain.user.service.UserService - === applyBasicUser 시작 === email=kimijug97@naver.com
+2025-09-16 11:20:16 [http-nio-8090-exec-7] DEBUG org.hibernate.SQL - 
+    select
+        ue1_0.id,
+        ue1_0.birth_date,
+        ue1_0.care_species,
+        ue1_0.created_at,
+        ue1_0.email,
+        ue1_0.email_verified,
+        ue1_0.gender,
+        ue1_0.main_service,
+        ue1_0.name,
+        ue1_0.nick_name,
+        ue1_0.phone,
+        ue1_0.profile_image,
+        ue1_0.provider,
+        ue1_0.role,
+        ue1_0.status,
+        ue1_0.updated_at 
+    from
+        user ue1_0 
+    where
+        ue1_0.email=?
+2025-09-16 11:20:16 [http-nio-8090-exec-7] DEBUG org.hibernate.SQL - 
+    insert 
+    into
+        user
+        (birth_date, care_species, created_at, email, email_verified, gender, main_service, name, nick_name, phone, profile_image, provider, role, status, updated_at) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2025-09-16 11:20:16 [http-nio-8090-exec-7] INFO  c.p.d.user.service.UserFileService - 기본 프로필 이미지 저장 시작: userId=33, 현재값=null
+2025-09-16 11:20:16 [http-nio-8090-exec-7] INFO  c.p.d.user.service.UserFileService - 기본 이미지 리소스 읽기 완료: 46374 bytes
+2025-09-16 11:20:16 [http-nio-8090-exec-7] INFO  c.p.d.user.service.UserFileService - 기본 프로필 저장 경로: C:\petmate\33\profile\1bac345a-725b-46ed-ac9d-993b74d263fe.png
+2025-09-16 11:20:16 [http-nio-8090-exec-7] INFO  c.p.d.user.service.UserFileService - 기본 프로필 이미지 저장 완료: C:\petmate\33\profile\1bac345a-725b-46ed-ac9d-993b74d263fe.png
+2025-09-16 11:20:16 [http-nio-8090-exec-7] DEBUG org.hibernate.SQL - 
+    select
+        pim1_0.uuid,
+        pim1_0.created_at,
+        pim1_0.email,
+        pim1_0.expires_at,
+        pim1_0.real_path 
+    from
+        profile_image_map pim1_0 
+    where
+        pim1_0.email=?
+2025-09-16 11:20:16 [http-nio-8090-exec-7] INFO  c.p.d.user.service.UserFileService - UUID 변경으로 인한 재생성: email=kimijug97@naver.com, 기존UUID=d8f3d945-4652-4197-8b29-aceb8dab2433.png -> 새UUID=1bac345a-725b-46ed-ac9d-993b74d263fe.png
+2025-09-16 11:20:16 [http-nio-8090-exec-7] DEBUG org.hibernate.SQL - 
+    delete 
+    from
+        profile_image_map 
+    where
+        uuid=?
+2025-09-16 11:20:16 [http-nio-8090-exec-7] DEBUG org.hibernate.SQL - 
+    select
+        pim1_0.uuid,
+        pim1_0.created_at,
+        pim1_0.email,
+        pim1_0.expires_at,
+        pim1_0.real_path 
+    from
+        profile_image_map pim1_0 
+    where
+        pim1_0.uuid=?
+2025-09-16 11:20:16 [http-nio-8090-exec-7] INFO  c.p.d.user.service.UserFileService - ImageMap 처리 완료: email=kimijug97@naver.com, UUID=1bac345a-725b-46ed-ac9d-993b74d263fe.png, path=C:\petmate\33\profile\1bac345a-725b-46ed-ac9d-993b74d263fe.png
+2025-09-16 11:20:16 [http-nio-8090-exec-7] INFO  c.p.domain.user.service.UserService - applyBasicUser 완료 - userId=33, role=1
+2025-09-16 11:20:16 [http-nio-8090-exec-7] DEBUG org.hibernate.SQL - 
+    insert 
+    into
+        profile_image_map
+        (email, expires_at, real_path, uuid) 
+    values
+        (?, ?, ?, ?)
+2025-09-16 11:20:16 [http-nio-8090-exec-7] DEBUG org.hibernate.SQL - 
+    update
+        user 
+    set
+        birth_date=?,
+        care_species=?,
+        email=?,
+        email_verified=?,
+        gender=?,
+        main_service=?,
+        name=?,
+        nick_name=?,
+        phone=?,
+        profile_image=?,
+        provider=?,
+        role=?,
+        status=?,
+        updated_at=? 
+    where
+        id=?
+2025-09-16 11:20:16 [http-nio-8090-exec-7] DEBUG org.hibernate.SQL - 
+    select
+        ue1_0.id,
+        ue1_0.birth_date,
+        ue1_0.care_species,
+        ue1_0.created_at,
+        ue1_0.email,
+        ue1_0.email_verified,
+        ue1_0.gender,
+        ue1_0.main_service,
+        ue1_0.name,
+        ue1_0.nick_name,
+        ue1_0.phone,
+        ue1_0.profile_image,
+        ue1_0.provider,
+        ue1_0.role,
+        ue1_0.status,
+        ue1_0.updated_at 
+    from
+        user ue1_0 
+    where
+        ue1_0.email=?
+2025-09-16 11:20:16 [http-nio-8090-exec-7] DEBUG org.hibernate.SQL - 
+    select
+        pim1_0.uuid,
+        pim1_0.created_at,
+        pim1_0.email,
+        pim1_0.expires_at,
+        pim1_0.real_path 
+    from
+        profile_image_map pim1_0 
+    where
+        pim1_0.email=?
+2025-09-16 11:20:17 [http-nio-8090-exec-8] DEBUG org.hibernate.SQL - 
+    select
+        ue1_0.id,
+        ue1_0.birth_date,
+        ue1_0.care_species,
+        ue1_0.created_at,
+        ue1_0.email,
+        ue1_0.email_verified,
+        ue1_0.gender,
+        ue1_0.main_service,
+        ue1_0.name,
+        ue1_0.nick_name,
+        ue1_0.phone,
+        ue1_0.profile_image,
+        ue1_0.provider,
+        ue1_0.role,
+        ue1_0.status,
+        ue1_0.updated_at 
+    from
+        user ue1_0 
+    where
+        ue1_0.email=?
+2025-09-16 11:20:17 [http-nio-8090-exec-9] INFO  c.p.d.i.c.ImageProxyController - 이미지 요청: uuid=1bac345a-725b-46ed-ac9d-993b74d263fe.png
+2025-09-16 11:20:17 [http-nio-8090-exec-9] INFO  c.p.d.i.service.ProfileImageService - UUID로 경로 조회 시작: 1bac345a-725b-46ed-ac9d-993b74d263fe.png
+2025-09-16 11:20:17 [http-nio-8090-exec-9] DEBUG org.hibernate.SQL - 
+    select
+        pim1_0.uuid,
+        pim1_0.created_at,
+        pim1_0.email,
+        pim1_0.expires_at,
+        pim1_0.real_path 
+    from
+        profile_image_map pim1_0 
+    where
+        pim1_0.uuid=?
+2025-09-16 11:20:17 [http-nio-8090-exec-9] INFO  c.p.d.i.service.ProfileImageService - 매핑 찾음: uuid=1bac345a-725b-46ed-ac9d-993b74d263fe.png -> path=C:\petmate\33\profile\1bac345a-725b-46ed-ac9d-993b74d263fe.png
+2025-09-16 11:20:17 [http-nio-8090-exec-9] INFO  c.p.d.i.c.ImageProxyController - 매핑된 경로: C:\petmate\33\profile\1bac345a-725b-46ed-ac9d-993b74d263fe.png
+2025-09-16 11:20:17 [http-nio-8090-exec-9] INFO  c.p.d.i.c.ImageProxyController - 파일 존재 여부: true, 경로: C:\petmate\33\profile\1bac345a-725b-46ed-ac9d-993b74d263fe.png
+2025-09-16 11:20:17 [http-nio-8090-exec-9] INFO  c.p.d.i.c.ImageProxyController - MIME 타입: image/png
+2025-09-16 11:20:19 [http-nio-8090-exec-10] DEBUG org.hibernate.SQL - 
+    select
+        ue1_0.id,
+        ue1_0.birth_date,
+        ue1_0.care_species,
+        ue1_0.created_at,
+        ue1_0.email,
+        ue1_0.email_verified,
+        ue1_0.gender,
+        ue1_0.main_service,
+        ue1_0.name,
+        ue1_0.nick_name,
+        ue1_0.phone,
+        ue1_0.profile_image,
+        ue1_0.provider,
+        ue1_0.role,
+        ue1_0.status,
+        ue1_0.updated_at 
+    from
+        user ue1_0 
+    where
+        ue1_0.email=?
+2025-09-16 11:20:22 [http-nio-8090-exec-2] INFO  c.p.domain.user.service.UserService - === 반려인 신청 시작 === email=kimijug97@naver.com
+2025-09-16 11:20:22 [http-nio-8090-exec-2] DEBUG org.hibernate.SQL - 
+    select
+        ue1_0.id,
+        ue1_0.birth_date,
+        ue1_0.care_species,
+        ue1_0.created_at,
+        ue1_0.email,
+        ue1_0.email_verified,
+        ue1_0.gender,
+        ue1_0.main_service,
+        ue1_0.name,
+        ue1_0.nick_name,
+        ue1_0.phone,
+        ue1_0.profile_image,
+        ue1_0.provider,
+        ue1_0.role,
+        ue1_0.status,
+        ue1_0.updated_at 
+    from
+        user ue1_0 
+    where
+        ue1_0.email=?
+2025-09-16 11:20:22 [http-nio-8090-exec-2] INFO  c.p.d.user.service.UserFileService - 실제 프로필 이미지 존재: userId=33, profile=1bac345a-725b-46ed-ac9d-993b74d263fe.png
+2025-09-16 11:20:22 [http-nio-8090-exec-2] INFO  c.p.domain.user.service.UserService - 반려인 신청 완료 - userId=33, role(old->1)=2
+2025-09-16 11:20:22 [http-nio-8090-exec-2] DEBUG org.hibernate.SQL - 
+    update
+        user 
+    set
+        birth_date=?,
+        care_species=?,
+        email=?,
+        email_verified=?,
+        gender=?,
+        main_service=?,
+        name=?,
+        nick_name=?,
+        phone=?,
+        profile_image=?,
+        provider=?,
+        role=?,
+        status=?,
+        updated_at=? 
+    where
+        id=?
+2025-09-16 11:20:22 [http-nio-8090-exec-3] DEBUG org.hibernate.SQL - 
+    select
+        ue1_0.id,
+        ue1_0.birth_date,
+        ue1_0.care_species,
+        ue1_0.created_at,
+        ue1_0.email,
+        ue1_0.email_verified,
+        ue1_0.gender,
+        ue1_0.main_service,
+        ue1_0.name,
+        ue1_0.nick_name,
+        ue1_0.phone,
+        ue1_0.profile_image,
+        ue1_0.provider,
+        ue1_0.role,
+        ue1_0.status,
+        ue1_0.updated_at 
+    from
+        user ue1_0 
+    where
+        ue1_0.email=?
+2025-09-16 11:20:22 [http-nio-8090-exec-4] DEBUG org.hibernate.SQL - 
+    select
+        ue1_0.id,
+        ue1_0.birth_date,
+        ue1_0.care_species,
+        ue1_0.created_at,
+        ue1_0.email,
+        ue1_0.email_verified,
+        ue1_0.gender,
+        ue1_0.main_service,
+        ue1_0.name,
+        ue1_0.nick_name,
+        ue1_0.phone,
+        ue1_0.profile_image,
+        ue1_0.provider,
+        ue1_0.role,
+        ue1_0.status,
+        ue1_0.updated_at 
+    from
+        user ue1_0 
+    where
+        ue1_0.email=?
+2025-09-16 11:20:25 [http-nio-8090-exec-7] DEBUG org.hibernate.SQL - 
+    select
+        ue1_0.id,
+        ue1_0.birth_date,
+        ue1_0.care_species,
+        ue1_0.created_at,
+        ue1_0.email,
+        ue1_0.email_verified,
+        ue1_0.gender,
+        ue1_0.main_service,
+        ue1_0.name,
+        ue1_0.nick_name,
+        ue1_0.phone,
+        ue1_0.profile_image,
+        ue1_0.provider,
+        ue1_0.role,
+        ue1_0.status,
+        ue1_0.updated_at 
+    from
+        user ue1_0 
+    where
+        ue1_0.email=?
+2025-09-16 11:22:24 [http-nio-8090-exec-4] INFO  c.p.security.JwtAuthenticationFilter - [JWT] GET /auth/me - expired access token
+2025-09-16 11:22:44 [http-nio-8090-exec-7] INFO  c.p.domain.user.service.UserService - === applyBasicUser 시작 === email=kimijug97@naver.com
+2025-09-16 11:22:44 [http-nio-8090-exec-7] DEBUG org.hibernate.SQL - 
+    select
+        ue1_0.id,
+        ue1_0.birth_date,
+        ue1_0.care_species,
+        ue1_0.created_at,
+        ue1_0.email,
+        ue1_0.email_verified,
+        ue1_0.gender,
+        ue1_0.main_service,
+        ue1_0.name,
+        ue1_0.nick_name,
+        ue1_0.phone,
+        ue1_0.profile_image,
+        ue1_0.provider,
+        ue1_0.role,
+        ue1_0.status,
+        ue1_0.updated_at 
+    from
+        user ue1_0 
+    where
+        ue1_0.email=?
+2025-09-16 11:22:44 [http-nio-8090-exec-7] INFO  c.p.d.user.service.UserFileService - 실제 프로필 이미지 존재: userId=33, profile=1bac345a-725b-46ed-ac9d-993b74d263fe.png
+2025-09-16 11:22:44 [http-nio-8090-exec-7] INFO  c.p.domain.user.service.UserService - applyBasicUser 완료 - userId=33, role=2
+2025-09-16 11:22:44 [http-nio-8090-exec-7] DEBUG org.hibernate.SQL - 
+    select
+        ue1_0.id,
+        ue1_0.birth_date,
+        ue1_0.care_species,
+        ue1_0.created_at,
+        ue1_0.email,
+        ue1_0.email_verified,
+        ue1_0.gender,
+        ue1_0.main_service,
+        ue1_0.name,
+        ue1_0.nick_name,
+        ue1_0.phone,
+        ue1_0.profile_image,
+        ue1_0.provider,
+        ue1_0.role,
+        ue1_0.status,
+        ue1_0.updated_at 
+    from
+        user ue1_0 
+    where
+        ue1_0.email=?
+2025-09-16 11:22:44 [http-nio-8090-exec-7] DEBUG org.hibernate.SQL - 
+    select
+        pim1_0.uuid,
+        pim1_0.created_at,
+        pim1_0.email,
+        pim1_0.expires_at,
+        pim1_0.real_path 
+    from
+        profile_image_map pim1_0 
+    where
+        pim1_0.email=?
+2025-09-16 11:22:44 [http-nio-8090-exec-8] DEBUG org.hibernate.SQL - 
+    select
+        ue1_0.id,
+        ue1_0.birth_date,
+        ue1_0.care_species,
+        ue1_0.created_at,
+        ue1_0.email,
+        ue1_0.email_verified,
+        ue1_0.gender,
+        ue1_0.main_service,
+        ue1_0.name,
+        ue1_0.nick_name,
+        ue1_0.phone,
+        ue1_0.profile_image,
+        ue1_0.provider,
+        ue1_0.role,
+        ue1_0.status,
+        ue1_0.updated_at 
+    from
+        user ue1_0 
+    where
+        ue1_0.email=?
+2025-09-16 11:22:46 [http-nio-8090-exec-9] DEBUG org.hibernate.SQL - 
+    select
+        ue1_0.id,
+        ue1_0.birth_date,
+        ue1_0.care_species,
+        ue1_0.created_at,
+        ue1_0.email,
+        ue1_0.email_verified,
+        ue1_0.gender,
+        ue1_0.main_service,
+        ue1_0.name,
+        ue1_0.nick_name,
+        ue1_0.phone,
+        ue1_0.profile_image,
+        ue1_0.provider,
+        ue1_0.role,
+        ue1_0.status,
+        ue1_0.updated_at 
+    from
+        user ue1_0 
+    where
+        ue1_0.email=?
+2025-09-16 11:22:55 [http-nio-8090-exec-2] INFO  c.p.domain.user.service.UserService - === 펫메이트 신청 시작 === email=kimijug97@naver.com
+2025-09-16 11:22:55 [http-nio-8090-exec-2] DEBUG org.hibernate.SQL - 
+    select
+        ue1_0.id,
+        ue1_0.birth_date,
+        ue1_0.care_species,
+        ue1_0.created_at,
+        ue1_0.email,
+        ue1_0.email_verified,
+        ue1_0.gender,
+        ue1_0.main_service,
+        ue1_0.name,
+        ue1_0.nick_name,
+        ue1_0.phone,
+        ue1_0.profile_image,
+        ue1_0.provider,
+        ue1_0.role,
+        ue1_0.status,
+        ue1_0.updated_at 
+    from
+        user ue1_0 
+    where
+        ue1_0.email=?
+2025-09-16 11:22:55 [http-nio-8090-exec-2] INFO  c.p.d.user.service.UserFileService - 실제 프로필 이미지 존재: userId=33, profile=1bac345a-725b-46ed-ac9d-993b74d263fe.png
+2025-09-16 11:22:55 [http-nio-8090-exec-2] INFO  c.p.domain.user.service.UserService - 펫메이트 신청 완료 - userId=33, role(old->2)=4
+2025-09-16 11:22:55 [http-nio-8090-exec-2] DEBUG org.hibernate.SQL - 
+    update
+        user 
+    set
+        birth_date=?,
+        care_species=?,
+        email=?,
+        email_verified=?,
+        gender=?,
+        main_service=?,
+        name=?,
+        nick_name=?,
+        phone=?,
+        profile_image=?,
+        provider=?,
+        role=?,
+        status=?,
+        updated_at=? 
+    where
+        id=?
+2025-09-16 11:23:05 [http-nio-8090-exec-4] DEBUG org.hibernate.SQL - 
+    select
+        ue1_0.id,
+        ue1_0.birth_date,
+        ue1_0.care_species,
+        ue1_0.created_at,
+        ue1_0.email,
+        ue1_0.email_verified,
+        ue1_0.gender,
+        ue1_0.main_service,
+        ue1_0.name,
+        ue1_0.nick_name,
+        ue1_0.phone,
+        ue1_0.profile_image,
+        ue1_0.provider,
+        ue1_0.role,
+        ue1_0.status,
+        ue1_0.updated_at 
+    from
+        user ue1_0 
+    where
+        ue1_0.email=?
+2025-09-16 11:23:57 [http-nio-8090-exec-10] INFO  c.p.security.JwtAuthenticationFilter - [JWT] GET /auth/me - expired access token
+2025-09-16 11:23:57 [http-nio-8090-exec-4] INFO  c.p.security.JwtAuthenticationFilter - [JWT] GET /auth/me - expired access token
+2025-09-16 11:29:23 [http-nio-8090-exec-10] INFO  c.p.domain.user.service.UserService - === applyBasicUser 시작 === email=kimijug97@naver.com
+2025-09-16 11:29:23 [http-nio-8090-exec-10] DEBUG org.hibernate.SQL - 
+    select
+        ue1_0.id,
+        ue1_0.birth_date,
+        ue1_0.care_species,
+        ue1_0.created_at,
+        ue1_0.email,
+        ue1_0.email_verified,
+        ue1_0.gender,
+        ue1_0.main_service,
+        ue1_0.name,
+        ue1_0.nick_name,
+        ue1_0.phone,
+        ue1_0.profile_image,
+        ue1_0.provider,
+        ue1_0.role,
+        ue1_0.status,
+        ue1_0.updated_at 
+    from
+        user ue1_0 
+    where
+        ue1_0.email=?
+2025-09-16 11:29:23 [http-nio-8090-exec-10] DEBUG org.hibernate.SQL - 
+    insert 
+    into
+        user
+        (birth_date, care_species, created_at, email, email_verified, gender, main_service, name, nick_name, phone, profile_image, provider, role, status, updated_at) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2025-09-16 11:29:23 [http-nio-8090-exec-10] INFO  c.p.d.user.service.UserFileService - 기본 프로필 이미지 저장 시작: userId=34, 현재값=null
+2025-09-16 11:29:23 [http-nio-8090-exec-10] INFO  c.p.d.user.service.UserFileService - 기본 이미지 리소스 읽기 완료: 46374 bytes
+2025-09-16 11:29:23 [http-nio-8090-exec-10] INFO  c.p.d.user.service.UserFileService - 기본 프로필 저장 경로: C:\petmate\34\profile\e414e9f2-58d4-4629-9b88-952585649cd4.png
+2025-09-16 11:29:23 [http-nio-8090-exec-10] INFO  c.p.d.user.service.UserFileService - 기본 프로필 이미지 저장 완료: C:\petmate\34\profile\e414e9f2-58d4-4629-9b88-952585649cd4.png
+2025-09-16 11:29:23 [http-nio-8090-exec-10] DEBUG org.hibernate.SQL - 
+    select
+        pim1_0.uuid,
+        pim1_0.created_at,
+        pim1_0.email,
+        pim1_0.expires_at,
+        pim1_0.real_path 
+    from
+        profile_image_map pim1_0 
+    where
+        pim1_0.email=?
+2025-09-16 11:29:23 [http-nio-8090-exec-10] INFO  c.p.d.user.service.UserFileService - UUID 변경으로 인한 재생성: email=kimijug97@naver.com, 기존UUID=1bac345a-725b-46ed-ac9d-993b74d263fe.png -> 새UUID=e414e9f2-58d4-4629-9b88-952585649cd4.png
+2025-09-16 11:29:23 [http-nio-8090-exec-10] DEBUG org.hibernate.SQL - 
+    delete 
+    from
+        profile_image_map 
+    where
+        uuid=?
+2025-09-16 11:29:23 [http-nio-8090-exec-10] DEBUG org.hibernate.SQL - 
+    select
+        pim1_0.uuid,
+        pim1_0.created_at,
+        pim1_0.email,
+        pim1_0.expires_at,
+        pim1_0.real_path 
+    from
+        profile_image_map pim1_0 
+    where
+        pim1_0.uuid=?
+2025-09-16 11:29:23 [http-nio-8090-exec-10] INFO  c.p.d.user.service.UserFileService - ImageMap 처리 완료: email=kimijug97@naver.com, UUID=e414e9f2-58d4-4629-9b88-952585649cd4.png, path=C:\petmate\34\profile\e414e9f2-58d4-4629-9b88-952585649cd4.png
+2025-09-16 11:29:23 [http-nio-8090-exec-10] INFO  c.p.domain.user.service.UserService - applyBasicUser 완료 - userId=34, role=1
+2025-09-16 11:29:23 [http-nio-8090-exec-10] DEBUG org.hibernate.SQL - 
+    insert 
+    into
+        profile_image_map
+        (email, expires_at, real_path, uuid) 
+    values
+        (?, ?, ?, ?)
+2025-09-16 11:29:23 [http-nio-8090-exec-10] DEBUG org.hibernate.SQL - 
+    update
+        user 
+    set
+        birth_date=?,
+        care_species=?,
+        email=?,
+        email_verified=?,
+        gender=?,
+        main_service=?,
+        name=?,
+        nick_name=?,
+        phone=?,
+        profile_image=?,
+        provider=?,
+        role=?,
+        status=?,
+        updated_at=? 
+    where
+        id=?
+2025-09-16 11:29:23 [http-nio-8090-exec-10] DEBUG org.hibernate.SQL - 
+    select
+        ue1_0.id,
+        ue1_0.birth_date,
+        ue1_0.care_species,
+        ue1_0.created_at,
+        ue1_0.email,
+        ue1_0.email_verified,
+        ue1_0.gender,
+        ue1_0.main_service,
+        ue1_0.name,
+        ue1_0.nick_name,
+        ue1_0.phone,
+        ue1_0.profile_image,
+        ue1_0.provider,
+        ue1_0.role,
+        ue1_0.status,
+        ue1_0.updated_at 
+    from
+        user ue1_0 
+    where
+        ue1_0.email=?
+2025-09-16 11:29:23 [http-nio-8090-exec-10] DEBUG org.hibernate.SQL - 
+    select
+        pim1_0.uuid,
+        pim1_0.created_at,
+        pim1_0.email,
+        pim1_0.expires_at,
+        pim1_0.real_path 
+    from
+        profile_image_map pim1_0 
+    where
+        pim1_0.email=?
+2025-09-16 11:29:23 [http-nio-8090-exec-1] DEBUG org.hibernate.SQL - 
+    select
+        ue1_0.id,
+        ue1_0.birth_date,
+        ue1_0.care_species,
+        ue1_0.created_at,
+        ue1_0.email,
+        ue1_0.email_verified,
+        ue1_0.gender,
+        ue1_0.main_service,
+        ue1_0.name,
+        ue1_0.nick_name,
+        ue1_0.phone,
+        ue1_0.profile_image,
+        ue1_0.provider,
+        ue1_0.role,
+        ue1_0.status,
+        ue1_0.updated_at 
+    from
+        user ue1_0 
+    where
+        ue1_0.email=?
+2025-09-16 11:29:24 [http-nio-8090-exec-3] INFO  c.p.d.i.c.ImageProxyController - 이미지 요청: uuid=e414e9f2-58d4-4629-9b88-952585649cd4.png
+2025-09-16 11:29:24 [http-nio-8090-exec-3] INFO  c.p.d.i.service.ProfileImageService - UUID로 경로 조회 시작: e414e9f2-58d4-4629-9b88-952585649cd4.png
+2025-09-16 11:29:24 [http-nio-8090-exec-3] DEBUG org.hibernate.SQL - 
+    select
+        pim1_0.uuid,
+        pim1_0.created_at,
+        pim1_0.email,
+        pim1_0.expires_at,
+        pim1_0.real_path 
+    from
+        profile_image_map pim1_0 
+    where
+        pim1_0.uuid=?
+2025-09-16 11:29:24 [http-nio-8090-exec-3] INFO  c.p.d.i.service.ProfileImageService - 매핑 찾음: uuid=e414e9f2-58d4-4629-9b88-952585649cd4.png -> path=C:\petmate\34\profile\e414e9f2-58d4-4629-9b88-952585649cd4.png
+2025-09-16 11:29:24 [http-nio-8090-exec-3] INFO  c.p.d.i.c.ImageProxyController - 매핑된 경로: C:\petmate\34\profile\e414e9f2-58d4-4629-9b88-952585649cd4.png
+2025-09-16 11:29:24 [http-nio-8090-exec-3] INFO  c.p.d.i.c.ImageProxyController - 파일 존재 여부: true, 경로: C:\petmate\34\profile\e414e9f2-58d4-4629-9b88-952585649cd4.png
+2025-09-16 11:29:24 [http-nio-8090-exec-3] INFO  c.p.d.i.c.ImageProxyController - MIME 타입: image/png
+2025-09-16 11:29:31 [http-nio-8090-exec-2] DEBUG org.hibernate.SQL - 
+    select
+        ue1_0.id,
+        ue1_0.birth_date,
+        ue1_0.care_species,
+        ue1_0.created_at,
+        ue1_0.email,
+        ue1_0.email_verified,
+        ue1_0.gender,
+        ue1_0.main_service,
+        ue1_0.name,
+        ue1_0.nick_name,
+        ue1_0.phone,
+        ue1_0.profile_image,
+        ue1_0.provider,
+        ue1_0.role,
+        ue1_0.status,
+        ue1_0.updated_at 
+    from
+        user ue1_0 
+    where
+        ue1_0.email=?
+2025-09-16 11:29:39 [http-nio-8090-exec-4] INFO  c.p.domain.user.service.UserService - === 반려인 신청 시작 === email=kimijug97@naver.com
+2025-09-16 11:29:39 [http-nio-8090-exec-4] DEBUG org.hibernate.SQL - 
+    select
+        ue1_0.id,
+        ue1_0.birth_date,
+        ue1_0.care_species,
+        ue1_0.created_at,
+        ue1_0.email,
+        ue1_0.email_verified,
+        ue1_0.gender,
+        ue1_0.main_service,
+        ue1_0.name,
+        ue1_0.nick_name,
+        ue1_0.phone,
+        ue1_0.profile_image,
+        ue1_0.provider,
+        ue1_0.role,
+        ue1_0.status,
+        ue1_0.updated_at 
+    from
+        user ue1_0 
+    where
+        ue1_0.email=?
+2025-09-16 11:29:39 [http-nio-8090-exec-4] INFO  c.p.d.user.service.UserFileService - 실제 프로필 이미지 존재: userId=34, profile=e414e9f2-58d4-4629-9b88-952585649cd4.png
+2025-09-16 11:29:39 [http-nio-8090-exec-4] INFO  c.p.domain.user.service.UserService - 반려인 신청 완료 - userId=34, role(old->1)=2
+2025-09-16 11:29:39 [http-nio-8090-exec-4] DEBUG org.hibernate.SQL - 
+    update
+        user 
+    set
+        birth_date=?,
+        care_species=?,
+        email=?,
+        email_verified=?,
+        gender=?,
+        main_service=?,
+        name=?,
+        nick_name=?,
+        phone=?,
+        profile_image=?,
+        provider=?,
+        role=?,
+        status=?,
+        updated_at=? 
+    where
+        id=?
+2025-09-16 11:29:39 [http-nio-8090-exec-5] DEBUG org.hibernate.SQL - 
+    select
+        ue1_0.id,
+        ue1_0.birth_date,
+        ue1_0.care_species,
+        ue1_0.created_at,
+        ue1_0.email,
+        ue1_0.email_verified,
+        ue1_0.gender,
+        ue1_0.main_service,
+        ue1_0.name,
+        ue1_0.nick_name,
+        ue1_0.phone,
+        ue1_0.profile_image,
+        ue1_0.provider,
+        ue1_0.role,
+        ue1_0.status,
+        ue1_0.updated_at 
+    from
+        user ue1_0 
+    where
+        ue1_0.email=?
+2025-09-16 11:29:39 [http-nio-8090-exec-7] DEBUG org.hibernate.SQL - 
+    select
+        ue1_0.id,
+        ue1_0.birth_date,
+        ue1_0.care_species,
+        ue1_0.created_at,
+        ue1_0.email,
+        ue1_0.email_verified,
+        ue1_0.gender,
+        ue1_0.main_service,
+        ue1_0.name,
+        ue1_0.nick_name,
+        ue1_0.phone,
+        ue1_0.profile_image,
+        ue1_0.provider,
+        ue1_0.role,
+        ue1_0.status,
+        ue1_0.updated_at 
+    from
+        user ue1_0 
+    where
+        ue1_0.email=?
+2025-09-16 11:31:21 [http-nio-8090-exec-9] INFO  c.p.security.JwtAuthenticationFilter - [JWT] GET /auth/me - expired access token
+2025-09-16 11:32:51 [http-nio-8090-exec-5] INFO  c.p.domain.user.service.UserService - === applyBasicUser 시작 === email=kimijug97@naver.com
+2025-09-16 11:32:51 [http-nio-8090-exec-5] DEBUG org.hibernate.SQL - 
+    select
+        ue1_0.id,
+        ue1_0.birth_date,
+        ue1_0.care_species,
+        ue1_0.created_at,
+        ue1_0.email,
+        ue1_0.email_verified,
+        ue1_0.gender,
+        ue1_0.main_service,
+        ue1_0.name,
+        ue1_0.nick_name,
+        ue1_0.phone,
+        ue1_0.profile_image,
+        ue1_0.provider,
+        ue1_0.role,
+        ue1_0.status,
+        ue1_0.updated_at 
+    from
+        user ue1_0 
+    where
+        ue1_0.email=?
+2025-09-16 11:32:51 [http-nio-8090-exec-5] INFO  c.p.d.user.service.UserFileService - 실제 프로필 이미지 존재: userId=34, profile=e414e9f2-58d4-4629-9b88-952585649cd4.png
+2025-09-16 11:32:51 [http-nio-8090-exec-5] INFO  c.p.domain.user.service.UserService - applyBasicUser 완료 - userId=34, role=2
+2025-09-16 11:32:51 [http-nio-8090-exec-5] DEBUG org.hibernate.SQL - 
+    select
+        ue1_0.id,
+        ue1_0.birth_date,
+        ue1_0.care_species,
+        ue1_0.created_at,
+        ue1_0.email,
+        ue1_0.email_verified,
+        ue1_0.gender,
+        ue1_0.main_service,
+        ue1_0.name,
+        ue1_0.nick_name,
+        ue1_0.phone,
+        ue1_0.profile_image,
+        ue1_0.provider,
+        ue1_0.role,
+        ue1_0.status,
+        ue1_0.updated_at 
+    from
+        user ue1_0 
+    where
+        ue1_0.email=?
+2025-09-16 11:32:51 [http-nio-8090-exec-5] DEBUG org.hibernate.SQL - 
+    select
+        pim1_0.uuid,
+        pim1_0.created_at,
+        pim1_0.email,
+        pim1_0.expires_at,
+        pim1_0.real_path 
+    from
+        profile_image_map pim1_0 
+    where
+        pim1_0.email=?
+2025-09-16 11:32:51 [http-nio-8090-exec-7] DEBUG org.hibernate.SQL - 
+    select
+        ue1_0.id,
+        ue1_0.birth_date,
+        ue1_0.care_species,
+        ue1_0.created_at,
+        ue1_0.email,
+        ue1_0.email_verified,
+        ue1_0.gender,
+        ue1_0.main_service,
+        ue1_0.name,
+        ue1_0.nick_name,
+        ue1_0.phone,
+        ue1_0.profile_image,
+        ue1_0.provider,
+        ue1_0.role,
+        ue1_0.status,
+        ue1_0.updated_at 
+    from
+        user ue1_0 
+    where
+        ue1_0.email=?
+2025-09-16 11:32:53 [http-nio-8090-exec-1] DEBUG org.hibernate.SQL - 
+    select
+        ue1_0.id,
+        ue1_0.birth_date,
+        ue1_0.care_species,
+        ue1_0.created_at,
+        ue1_0.email,
+        ue1_0.email_verified,
+        ue1_0.gender,
+        ue1_0.main_service,
+        ue1_0.name,
+        ue1_0.nick_name,
+        ue1_0.phone,
+        ue1_0.profile_image,
+        ue1_0.provider,
+        ue1_0.role,
+        ue1_0.status,
+        ue1_0.updated_at 
+    from
+        user ue1_0 
+    where
+        ue1_0.email=?
+2025-09-16 11:32:59 [http-nio-8090-exec-2] INFO  c.p.domain.user.service.UserService - === 펫메이트 신청 시작 === email=kimijug97@naver.com
+2025-09-16 11:32:59 [http-nio-8090-exec-2] DEBUG org.hibernate.SQL - 
+    select
+        ue1_0.id,
+        ue1_0.birth_date,
+        ue1_0.care_species,
+        ue1_0.created_at,
+        ue1_0.email,
+        ue1_0.email_verified,
+        ue1_0.gender,
+        ue1_0.main_service,
+        ue1_0.name,
+        ue1_0.nick_name,
+        ue1_0.phone,
+        ue1_0.profile_image,
+        ue1_0.provider,
+        ue1_0.role,
+        ue1_0.status,
+        ue1_0.updated_at 
+    from
+        user ue1_0 
+    where
+        ue1_0.email=?
+2025-09-16 11:32:59 [http-nio-8090-exec-2] INFO  c.p.d.user.service.UserFileService - 실제 프로필 이미지 존재: userId=34, profile=e414e9f2-58d4-4629-9b88-952585649cd4.png
+2025-09-16 11:32:59 [http-nio-8090-exec-2] INFO  c.p.domain.user.service.UserService - 펫메이트 신청 완료 - userId=34, role(old->2)=4
+2025-09-16 11:32:59 [http-nio-8090-exec-2] DEBUG org.hibernate.SQL - 
+    update
+        user 
+    set
+        birth_date=?,
+        care_species=?,
+        email=?,
+        email_verified=?,
+        gender=?,
+        main_service=?,
+        name=?,
+        nick_name=?,
+        phone=?,
+        profile_image=?,
+        provider=?,
+        role=?,
+        status=?,
+        updated_at=? 
+    where
+        id=?
+2025-09-16 11:32:59 [http-nio-8090-exec-2] DEBUG org.hibernate.SQL - 
+    select
+        ue1_0.id,
+        ue1_0.birth_date,
+        ue1_0.care_species,
+        ue1_0.created_at,
+        ue1_0.email,
+        ue1_0.email_verified,
+        ue1_0.gender,
+        ue1_0.main_service,
+        ue1_0.name,
+        ue1_0.nick_name,
+        ue1_0.phone,
+        ue1_0.profile_image,
+        ue1_0.provider,
+        ue1_0.role,
+        ue1_0.status,
+        ue1_0.updated_at 
+    from
+        user ue1_0 
+    where
+        ue1_0.email=?

@@ -225,12 +225,12 @@ public class CompanyController {
 
     @GetMapping("/nearby")
     public ResponseEntity<List<CompanyResponseDto>> getNearbyCompanies(
-            @RequestParam Double lat,
-            @RequestParam Double lng,
+            @RequestParam Double latitude,
+            @RequestParam Double longitude,
             @RequestParam(defaultValue = "5.0") Double radius,
             @RequestParam(required = false) String serviceType
     ) {
-        List<CompanyResponseDto> companies = companyService.getNearbyCompanies(lat, lng, radius, serviceType);
+        List<CompanyResponseDto> companies = companyService.getNearbyCompanies(latitude, longitude, radius, serviceType);
 
         return ResponseEntity.ok(companies);
     }
