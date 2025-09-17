@@ -1,7 +1,8 @@
 package com.petmate.domain.product.service;
 
+import com.petmate.domain.company.dto.response.CompanyResponseDto;
+import com.petmate.domain.company.service.CompanyService;
 import com.petmate.domain.product.dto.request.ProductCreateRequest;
-import com.petmate.domain.product.dto.request.ProductRequestDto;
 import com.petmate.domain.product.dto.request.ProductSearchRequest;
 import com.petmate.domain.product.dto.request.ProductUpdateRequest;
 import com.petmate.domain.product.dto.response.ProductResponseDto;
@@ -13,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,11 +29,27 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final ProductMapper productMapper;
     private final AvailabilitySlotService slotService;
+    private final CompanyService companyService;
 
-    // 전체상품조회
+    // 전체상품조회(사용자별)
     @Transactional(readOnly = true)
-    public List<ProductResponseDto> getAllProducts() {
-        List<ProductEntity> products = productRepository.findAll();
+    public List<ProductResponseDto> getAllProducts(String userId) {
+        // 사용자가 등록한 업체 ID 목록 조회
+        List<CompanyResponseDto> myCompanies = companyService.getMyCompanies(Integer.parseInt(userId));
+
+        // CompanyResponseDto -> ID 가져오기
+        List<Integer> myCompanyIds = myCompanies.stream()
+                .map(CompanyResponseDto::getId)
+                .toList();
+
+        // 해당 업체 상품 조회
+        List<ProductEntity> products;
+        if(myCompanyIds.isEmpty()) {
+            products = new ArrayList<>();
+        } else {
+            products = productRepository.findByCompanyIdIn(myCompanyIds);
+        }
+
         return products.stream()
                 .map(ProductResponseDto::from)
                 .collect(Collectors.toList());

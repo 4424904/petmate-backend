@@ -44,11 +44,13 @@ public class AvailabilitySlotEntity {
 
     // 남은 자리 계산
     public Integer getAvailableCapacity() {
+
         return capacity - booked;
     }
 
     // 예약 가능 여부
     public boolean isBookable() {
+
         return booked < capacity;
     }
 

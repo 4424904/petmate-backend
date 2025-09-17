@@ -1,5 +1,7 @@
 package com.petmate.domain.product.controller;
 
+import com.petmate.domain.company.dto.response.CompanyResponseDto;
+import com.petmate.domain.company.service.CompanyService;
 import com.petmate.domain.product.dto.request.ProductCreateRequest;
 import com.petmate.domain.product.dto.request.ProductRequestDto;
 import com.petmate.domain.product.dto.request.ProductSearchRequest;
@@ -11,6 +13,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
@@ -26,12 +29,34 @@ import java.util.stream.Collectors;
 public class ProductController {
 
     private final ProductService productService;
+    private final CompanyService companyService;
 
     @GetMapping
-    public ResponseEntity<List<ProductResponseDto>> getAllProducts() {
-        List<ProductResponseDto> responses = productService.getAllProducts();
+    public ResponseEntity<List<ProductResponseDto>> getAllProducts(@AuthenticationPrincipal String userId) {
+        List<ProductResponseDto> responses = productService.getAllProducts(userId);
         return ResponseEntity.ok(responses);
     }
+
+    // 내 업체 목록 조회(상품 등록시 사용)
+    @GetMapping("/companies")
+    public ResponseEntity<List<Map<String, Object>>> getMyCompaniesForProduct(
+            @AuthenticationPrincipal String userId) {
+
+        List<CompanyResponseDto> companies = companyService.getMyCompanies(Integer.parseInt(userId));
+
+        List<Map<String, Object>> response = companies.stream()
+                .map(company -> {
+                    Map<String, Object> companyMap = new HashMap<>();
+                    companyMap.put("id", company.getId());
+                    companyMap.put("name", company.getName());
+                    return companyMap;
+                })
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(response);
+
+    }
+
 
     // 상품 생성
     @PostMapping

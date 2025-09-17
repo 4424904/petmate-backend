@@ -13,8 +13,8 @@ import java.math.BigDecimal;
 public class AddressUpdateRequestDto {
 
     @NotBlank(message = "주소 유형은 필수입니다")
-    @Pattern(regexp = "^(home|office|etc)$", message="유효하지 않은 주소 유형입니다.")
-    private String type; // home, office, etc
+    @Pattern(regexp = "^(집|회사|기타)$", message="유효하지 않은 주소 유형입니다.")
+    private String type;
 
     @NotBlank(message = "도로명 주소는 필수입니다")
     private String address; // 도로명 주소

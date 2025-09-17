@@ -4,6 +4,7 @@ import com.petmate.domain.product.entity.ProductEntity;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -60,4 +61,5 @@ public class ProductResponseDto {
             default: return serviceType;
         }
     }
+
 }

@@ -29,14 +29,14 @@ public class ImageService {
     /**
      * 단일 이미지 업로드
      */
-    public ImageEntity uploadSingleImage(MultipartFile file, String imageTypeCode, Long referenceId, boolean isThumbnail) throws IOException {
+    public ImageEntity uploadSingleImage(MultipartFile file, String imageTypeCode, String referenceId, boolean isThumbnail) throws IOException {
         return uploadSingleImage(file, imageTypeCode, referenceId, isThumbnail, null, null);
     }
 
     /**
      * 단일 이미지 업로드 (설명 포함)
      */
-    public ImageEntity uploadSingleImage(MultipartFile file, String imageTypeCode, Long referenceId, 
+    public ImageEntity uploadSingleImage(MultipartFile file, String imageTypeCode, String referenceId, 
                                        boolean isThumbnail, String altText, String description) throws IOException {
         
         validateBasicParams(imageTypeCode, referenceId);
@@ -76,14 +76,14 @@ public class ImageService {
     /**
      * 다중 이미지 업로드
      */
-    public List<ImageEntity> uploadMultipleImages(List<MultipartFile> files, String imageTypeCode, Long referenceId) throws IOException {
+    public List<ImageEntity> uploadMultipleImages(List<MultipartFile> files, String imageTypeCode, String referenceId) throws IOException {
         return uploadMultipleImages(files, imageTypeCode, referenceId, false);
     }
 
     /**
      * 다중 이미지 업로드 (첫 번째 이미지를 썸네일로 설정 옵션)
      */
-    public List<ImageEntity> uploadMultipleImages(List<MultipartFile> files, String imageTypeCode, Long referenceId,
+    public List<ImageEntity> uploadMultipleImages(List<MultipartFile> files, String imageTypeCode, String referenceId,
                                                 boolean setFirstAsThumbnail) throws IOException {
 
         validateBasicParams(imageTypeCode, referenceId);
@@ -130,7 +130,7 @@ public class ImageService {
     /**
      * 기존 이미지들을 모두 삭제하고 새로운 이미지들로 교체
      */
-    public List<ImageEntity> replaceAllImages(List<MultipartFile> files, String imageTypeCode, Long referenceId,
+    public List<ImageEntity> replaceAllImages(List<MultipartFile> files, String imageTypeCode, String referenceId,
                                             boolean setFirstAsThumbnail) throws IOException {
 
         validateBasicParams(imageTypeCode, referenceId);
@@ -172,7 +172,7 @@ public class ImageService {
      * 참조 대상의 이미지 목록 조회
      */
     @Transactional(readOnly = true)
-    public List<ImageEntity> getImagesByReference(String imageTypeCode, Long referenceId) {
+    public List<ImageEntity> getImagesByReference(String imageTypeCode, String referenceId) {
         return imageRepository.findActiveImagesByReference(imageTypeCode, referenceId);
     }
 
@@ -180,7 +180,7 @@ public class ImageService {
      * 썸네일 이미지 조회
      */
     @Transactional(readOnly = true)
-    public Optional<ImageEntity> getThumbnailByReference(String imageTypeCode, Long referenceId) {
+    public Optional<ImageEntity> getThumbnailByReference(String imageTypeCode, String referenceId) {
         return imageRepository.findThumbnailByReference(imageTypeCode, referenceId);
     }
 
@@ -188,7 +188,7 @@ public class ImageService {
      * 첫 번째 이미지 조회 (썸네일이 없을 때 대체용)
      */
     @Transactional(readOnly = true)
-    public Optional<ImageEntity> getFirstImageByReference(String imageTypeCode, Long referenceId) {
+    public Optional<ImageEntity> getFirstImageByReference(String imageTypeCode, String referenceId) {
         return imageRepository.findFirstImageByReference(imageTypeCode, referenceId);
     }
 
@@ -209,7 +209,7 @@ public class ImageService {
     /**
      * 참조 대상의 모든 이미지 삭제
      */
-    public void deleteAllImagesByReference(String imageTypeCode, Long referenceId) {
+    public void deleteAllImagesByReference(String imageTypeCode, String referenceId) {
         List<ImageEntity> images = getImagesByReference(imageTypeCode, referenceId);
         
         // 파일 시스템에서 실제 파일들 삭제
@@ -224,7 +224,7 @@ public class ImageService {
     /**
      * 썸네일 설정
      */
-    public void setThumbnail(Long imageId, String imageTypeCode, Long referenceId) {
+    public void setThumbnail(Long imageId, String imageTypeCode, String referenceId) {
         // 기존 썸네일 해제
         imageRepository.clearAllThumbnails(imageTypeCode, referenceId);
         // 새로운 썸네일 설정
@@ -235,7 +235,7 @@ public class ImageService {
      * 이미지 개수 조회
      */
     @Transactional(readOnly = true)
-    public long getImageCount(String imageTypeCode, Long referenceId) {
+    public long getImageCount(String imageTypeCode, String referenceId) {
         return imageRepository.countActiveImagesByReference(imageTypeCode, referenceId);
     }
 
@@ -243,7 +243,7 @@ public class ImageService {
      * 여러 참조 ID들의 썸네일 이미지들 조회 (배치 조회용)
      */
     @Transactional(readOnly = true)
-    public List<ImageEntity> getThumbnailsByReferenceIds(String imageTypeCode, List<Long> referenceIds) {
+    public List<ImageEntity> getThumbnailsByReferenceIds(String imageTypeCode, List<String> referenceIds) {
         return imageRepository.findThumbnailsByReferenceIds(imageTypeCode, referenceIds);
     }
 
@@ -252,11 +252,11 @@ public class ImageService {
     /**
      * 기본 파라미터 검증
      */
-    private void validateBasicParams(String imageTypeCode, Long referenceId) {
+        private void validateBasicParams(String imageTypeCode, String referenceId) {
         if (imageTypeCode == null || imageTypeCode.trim().isEmpty()) {
             throw new IllegalArgumentException("이미지 타입 코드는 필수입니다.");
         }
-        if (referenceId == null || referenceId <= 0) {
+        if (referenceId == null || referenceId.trim().isEmpty()) {
             throw new IllegalArgumentException("참조 ID는 필수이며 0보다 커야 합니다.");
         }
     }

@@ -9,11 +9,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/address")
@@ -26,26 +25,15 @@ import java.util.Optional;
 public class AddressController {
 
     private final AddressService addressService;
-//    private final CodeService codeService; // codeservice 구현 후 주석 해제
 
-    // 주소 라벨 코드 목록 조회
-    /* codeservice 구현 후 주석 해제
-    @GetMapping("/labels")
-    public ResponseEntity<List<CodeDto>> getAddressLabels() {
-        log.info("주소 라벨 코드 목록 조회 요청");
-        List<CodeDto> labels = codeService.getAddressLabels();
-        return ResponseEntity.ok(labels);
-    }
-     */
 
     // 주소 목록 조회
-    @GetMapping("/{id}")
-    public ResponseEntity<List<AddressResponseDto>> getAddresses() {
+    @GetMapping
+    public ResponseEntity<List<AddressResponseDto>> getAddresses(
+            @AuthenticationPrincipal String userId
+    ) {
 
-        String userId = SecurityContextHolder.getContext().getAuthentication().getName();
-        String email = "N/A";
-
-        log.info("사용자 주소 목록 조회 요청 - userId: {}, email: {}", userId, email);
+        log.info("사용자 주소 목록 조회 요청 - userId: {}", userId);
 
         try {
             List<AddressResponseDto> addresses =
@@ -67,16 +55,17 @@ public class AddressController {
     // 주소 추가
     @PostMapping
     public ResponseEntity<AddressResponseDto> createAddress(
+            @AuthenticationPrincipal String userId,
             @Valid @RequestBody AddressCreateRequestDto addressCreateRequestDto
     ) {
 
-        String userId = SecurityContextHolder.getContext().getAuthentication().getName();
-        String email = "N/A";
+        log.info("주소 추가 요청 - userId: {}, 주소: {}",
+                userId, addressCreateRequestDto.getAddress());
 
-        log.info("주소 추가 요청 - userId: {}, email: {}, 주소: {}",
-                userId, email, addressCreateRequestDto.getAddress());
-        log.info("받은 위도/경도 - latitude: {}, longitude: {}", 
+        log.info("받은 위도/경도 - latitude: {}, longitude: {}",
                 addressCreateRequestDto.getLatitude(), addressCreateRequestDto.getLongitude());
+
+        log.info("받은 우편번호 - postcode: {}", addressCreateRequestDto.getPostcode());
 
         try {
             // String userId를 DTO에 설정 (Service에서 Integer로 변환)
@@ -89,7 +78,7 @@ public class AddressController {
                     userId, createdAddress.getId());
 
             return
-                    ResponseEntity.status(HttpStatus.CREATED).body(createdAddress);
+                    ResponseEntity.ok(createdAddress);
 
         } catch (RuntimeException e) {
             log.error("주소 추가 실패 - userId: {}, 오류: {}",
@@ -103,15 +92,12 @@ public class AddressController {
     // 주소 수정
     @PutMapping("/{id}")
     public ResponseEntity<AddressResponseDto> updateAddress(
+            @AuthenticationPrincipal String userId,
             @PathVariable Integer id,
             @Valid @RequestBody AddressUpdateRequestDto addressUpdateRequestDto
     ) {
 
-        String userId = SecurityContextHolder.getContext().getAuthentication().getName();
-        String email = "N/A";
-
-        log.info("주소 수정 요청 - userId: {}, email: {}, 주소 ID: {}",
-                userId, email, id);
+        log.info("주소 수정 요청 - userId: {}, 주소 ID: {}", userId, id);
 
         try {
             // String userId를 DTO에 설정 (Service에서 Integer로 변환)
@@ -120,8 +106,7 @@ public class AddressController {
             AddressResponseDto updatedAddress =
                     addressService.updateAddress(id, addressUpdateRequestDto);
 
-            log.info("주소 수정 완료 - userId: {}, 주소 ID: {}",
-                    userId, id);
+            log.info("주소 수정 완료 - userId: {}, 주소 ID: {}", userId, id);
 
             return ResponseEntity.ok(updatedAddress);
 
@@ -136,22 +121,18 @@ public class AddressController {
     // 주소 삭제
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteAddress(
+            @AuthenticationPrincipal String userId,
             @PathVariable Integer id
     ) {
 
-        String userId = SecurityContextHolder.getContext().getAuthentication().getName();
-        String email = "N/A";
-
-        log.info("주소 삭제 요청 - userId: {}, email: {}, 주소 ID: {}",
-                userId, email, id);
+        log.info("주소 삭제 요청 - userId: {}, 주소 ID: {}", userId, id);
 
         try {
             addressService.deleteAddress(id, userId);
 
-            log.info("주소 삭제 완료 - userId: {}, 주소 ID: {}",
-                    userId, id);
+            log.info("주소 삭제 완료 - userId: {}, 주소 ID: {}", userId, id);
 
-            return ResponseEntity.noContent().build();
+            return ResponseEntity.ok().build();
 
         } catch (RuntimeException e) {
             log.error("주소 삭제 실패 - userId: {}, 주소 ID: {}, 오류: {}",
@@ -164,19 +145,16 @@ public class AddressController {
     // 기본 주소 설정
     @PutMapping("/{id}/default")
     public ResponseEntity<Void> setDefaultAddress(
+            @AuthenticationPrincipal String userId,
             @PathVariable Integer id
     ) {
-        String userId = SecurityContextHolder.getContext().getAuthentication().getName();
-        String email = "N/A";
 
-        log.info("기본 주소 설정 요청 - userId: {}, email: {}, 주소 ID: {}",
-                userId, email, id);
+        log.info("기본 주소 설정 요청 - userId: {}, 주소 ID: {}", userId, id);
 
         try {
             addressService.setDefaultAddress(id, userId);
 
-            log.info("기본 주소 설정 완료 - userId: {}, 주소 ID: {}",
-                    userId, id);
+            log.info("기본 주소 설정 완료 - userId: {}, 주소 ID: {}", userId, id);
 
             return ResponseEntity.ok().build();
 
