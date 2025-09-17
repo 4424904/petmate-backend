@@ -71,6 +71,29 @@ public class ProfileImageService {
     }
 
     /**
+     * 펫 이미지 UUID → 실제 로컬 경로 매핑
+     * ex) uuid=abc.png → C:/petmate/{userId}/pet/abc.png
+     */
+    public String resolvePetImagePath(Long userId, String uuid) {
+        if (uuid == null || uuid.isBlank()) {
+            log.warn("잘못된 uuid 요청: {}", uuid);
+            return null;
+        }
+
+        // 저장 규칙에 맞게 경로 생성
+        String baseDir = "C:/petmate/" + userId + "/pet/";
+        String realPath = baseDir + uuid;
+
+        if (Files.exists(Paths.get(realPath))) {
+            log.info("펫 이미지 경로 확인됨: {}", realPath);
+            return realPath;
+        } else {
+            log.warn("펫 이미지 없음: {}", realPath);
+            return null;
+        }
+    }
+
+    /**
      * URL에서 파일 확장자 추출 (없으면 png 기본값)
      */
     private String guessExt(String url) {

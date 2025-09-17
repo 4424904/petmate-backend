@@ -70,4 +70,29 @@ public class ImageProxyController {
                 .cacheControl(CacheControl.maxAge(java.time.Duration.ofDays(30)).cachePublic())
                 .body(resource);
     }
+
+    @GetMapping("/pet/{userId}/{uuid:.+}")
+    public ResponseEntity<Resource> servePetImage(
+            @PathVariable Long userId,
+            @PathVariable String uuid) {
+
+        String path = imageService.resolvePetImagePath(userId, uuid); // ✅ userId 추가
+        if (path == null) return ResponseEntity.notFound().build();
+
+        File file = new File(path);
+        Resource resource = new FileSystemResource(file);
+
+        MediaType contentType = MediaType.IMAGE_PNG;
+        try {
+            String mime = Files.probeContentType(file.toPath());
+            if (mime != null) contentType = MediaType.parseMediaType(mime);
+        } catch (Exception ignored) {}
+
+        return ResponseEntity.ok()
+                .contentType(contentType)
+                .cacheControl(CacheControl.maxAge(java.time.Duration.ofDays(30)).cachePublic())
+                .body(resource);
+    }
+
+
 }

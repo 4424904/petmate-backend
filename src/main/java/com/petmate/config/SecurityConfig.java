@@ -36,7 +36,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .cors(c -> {})                           // WebConfig 설정 사용
+                .cors(c -> {})
                 .csrf(c -> c.disable())
                 .formLogin(f -> f.disable())
                 .httpBasic(b -> b.disable())
@@ -55,15 +55,32 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .requestMatchers(
-                                "/oauth2/**", "/login/**", "/login/oauth2/**",
+
+                        // 정적 리소스(읽기만 허용)
+                        .requestMatchers(HttpMethod.GET,
                                 "/files/**", "/static/**", "/favicon.ico", "/error", "/img/**"
                         ).permitAll()
-                        // ★ 인증 관련 REST 허용
+
+                        // 인증 관련
                         .requestMatchers("/auth/signin", "/auth/signup", "/auth/refresh", "/auth/signout").permitAll()
+
+                        // 공개 API
+                        .requestMatchers(HttpMethod.GET, "/pet/breeds", "/pet/breeds/**").permitAll()
+
+                        // 파일 업로드(인증 필요)
+                        .requestMatchers(HttpMethod.POST, "/upload/pet").authenticated()
+
                         // 보호 자원
                         .requestMatchers("/auth/me").authenticated()
-                        .requestMatchers(HttpMethod.POST, "/petmate/apply").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/pet/apply").authenticated()
+
+                        // 내 반려동물 조회
+                        .requestMatchers(HttpMethod.GET, "/pet/my", "/pet/my/**").authenticated()
+
+                        // 수정/삭제는 /pet/{petId}
+                        .requestMatchers(HttpMethod.PUT, "/pet/**").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/pet/**").authenticated()
+
                         .anyRequest().authenticated()
                 )
                 .oauth2Login(o -> o

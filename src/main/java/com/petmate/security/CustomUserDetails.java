@@ -15,7 +15,7 @@ import java.util.List;
 @Getter
 public class CustomUserDetails implements UserDetails {
 
-    private final Integer id;
+    private final Long id;
     private final String email;
     private final String password; // 소셜 로그인만 쓰면 null 가능
     private final String role;

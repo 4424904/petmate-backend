@@ -22,7 +22,7 @@ public class UserController {
             @RequestParam("email") @Email String email,
             @ModelAttribute PetmateApplyRequest req
     ) {
-        Integer userId = userService.apply(email, req);
+        Long userId = userService.apply(email, req);
         return ResponseEntity.ok("펫메이트 신청 완료! 사용자 ID: " + userId);
     }
 
@@ -31,7 +31,7 @@ public class UserController {
             @RequestParam("email") @Email String email,
             @ModelAttribute PetmateApplyRequest req   // DTO 통일 사용
     ) {
-        Integer userId = userService.applyPetOwner(email, req);
+        Long userId = userService.applyPetOwner(email, req);
         return ResponseEntity.ok("반려인 신청 완료! 사용자 ID: " + userId);
     }
 
@@ -46,7 +46,7 @@ public class UserController {
             @RequestParam(value = "age", required = false) Integer age,
             @RequestParam(value = "profileImageUrl", required = false) String profileImageUrl // ✅ 추가
     ) {
-        Integer userId = userService.applyBasicUser(email, provider, name, nickName, phone, gender, age, profileImageUrl);
+        Long userId = userService.applyBasicUser(email, provider, name, nickName, phone, gender, age, profileImageUrl);
         return ResponseEntity.ok("유저 등록 완료! 사용자 ID: " + userId);
     }
 

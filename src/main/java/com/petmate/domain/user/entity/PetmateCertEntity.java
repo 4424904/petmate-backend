@@ -12,7 +12,7 @@ public class PetmateCertEntity extends BaseEntity {
     private Long id;
 
     @Column(name="USER_ID", nullable=false)
-    private Integer userId;
+    private Long userId;
 
     @Column(name="UUID_NAME", length=100, nullable=false)
     private String uuidName;  // 🔹 예: abcd-1234.png

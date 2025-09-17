@@ -7,6 +7,5 @@ import org.apache.ibatis.annotations.Param;
 
 @Mapper
 public interface MemberMapper {
-    MemberDto findById(@Param("id") String id);
     void signup(MemberDto member);
 }

@@ -89,7 +89,7 @@ logging:
 app:
   upload:
     dir: C:/petmate
-  public-img-url: http://localhost:8090/img/
+  public-img-url: "http://localhost:8090/img/"
   encryption:
     secret-key: PetMateSecretKey123456789012
   nts:

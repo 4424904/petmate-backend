@@ -68,7 +68,7 @@ public class UserService {
 
     /** 펫메이트 신청 */
     @Transactional
-    public Integer apply(String email, PetmateApplyRequest req) {
+    public Long apply(String email, PetmateApplyRequest req) {
         log.info("=== 펫메이트 신청 시작 === email={}", email);
 
         // 없으면 기본 생성(role=3, status=2)
@@ -120,7 +120,7 @@ public class UserService {
 
     /** 기본 유저 생성/동기화 (소셜 로그인 시) */
     @Transactional
-    public Integer applyBasicUser(String email,
+    public Long applyBasicUser(String email,
                                   String provider,
                                   String name,
                                   String nickName,
@@ -177,7 +177,7 @@ public class UserService {
 
     /** 반려인 신청 */
     @Transactional
-    public Integer applyPetOwner(String email, PetmateApplyRequest req) {
+    public Long applyPetOwner(String email, PetmateApplyRequest req) {
         log.info("=== 반려인 신청 시작 === email={}", email);
 
         // 없으면 반려인 기본 생성(role=2, status=1)

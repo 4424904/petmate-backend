@@ -1,11 +1,11 @@
-// com/petmate/security/JwtAuthenticationFilter.java
+// src/main/java/com/petmate/security/JwtAuthenticationFilter.java
 package com.petmate.security;
 
 import com.petmate.security.jwt.JwtClaimAccessor;
 import com.petmate.security.jwt.JwtUtil;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,13 +24,29 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
+// src/main/java/com/petmate/security/JwtAuthenticationFilter.java
+// ... import 동일
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
+
+    private boolean isPublicPath(String uri) {
+        // 딱 필요한 공개 경로만 허용
+        return uri.equals("/auth/signin")
+                || uri.equals("/auth/signup")
+                || uri.equals("/auth/refresh")
+                || uri.equals("/auth/signout")
+                || uri.startsWith("/oauth2/")
+                || uri.startsWith("/login/")
+                || uri.startsWith("/files/")
+                || uri.startsWith("/static/")
+                || uri.startsWith("/img/")
+                || uri.equals("/favicon.ico")
+                || uri.equals("/error");
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -40,75 +56,84 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         final String uri = request.getRequestURI();
         final String method = request.getMethod();
 
-        // CORS preflight는 통과
         if (HttpMethod.OPTIONS.matches(method)) {
+            System.out.println("[JWT-DBG] OPTIONS " + uri + " -> pass");
+            chain.doFilter(request, response);
+            return;
+        }
+
+        if (isPublicPath(uri)) {
+            System.out.println("[JWT-DBG] public path " + uri + " -> pass");
             chain.doFilter(request, response);
             return;
         }
 
         final String authHeader = request.getHeader("Authorization");
+        System.out.println("[JWT-DBG] " + method + " " + uri + " Authorization=" + authHeader);
+
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            System.out.println("[JWT-DBG] no Bearer header -> pass");
             chain.doFilter(request, response);
             return;
         }
 
         final String token = authHeader.substring(7);
+        System.out.println("[JWT-DBG] token(first20)=" + token.substring(0, Math.min(20, token.length())) + "...");
 
         try {
-            // 1) 만료 먼저 체크(여기서 만료 예외가 나면 잡아서 조용히 통과)
             try {
                 if (jwtUtil.isExpired(token)) {
-                    log.info("[JWT] {} {} - expired access token", method, uri);
-                    chain.doFilter(request, response); // 인증 없이 진행 → 최종 401은 EntryPoint가 처리
+                    System.out.println("[JWT-DBG] expired token -> pass");
+                    chain.doFilter(request, response);
                     return;
                 }
             } catch (ExpiredJwtException ex) {
-                log.info("[JWT] {} {} - expired access token (parser)", method, uri);
+                System.out.println("[JWT-DBG] expired (parser) -> pass");
                 chain.doFilter(request, response);
                 return;
             }
 
-            // 2) 유효 토큰만 파싱
-            Claims claims = jwtUtil.parse(token);
-
-            // 3) 이미 인증 있으면 스킵
             if (SecurityContextHolder.getContext().getAuthentication() != null) {
+                System.out.println("[JWT-DBG] already authenticated -> pass");
                 chain.doFilter(request, response);
                 return;
             }
 
-            // 4) 타입 확인
+            Claims claims = jwtUtil.parse(token);
+            System.out.println("[JWT-DBG] claims=" + claims);
+
             String type = JwtClaimAccessor.type(claims);
+            System.out.println("[JWT-DBG] token type=" + type);
             if (!"access".equals(type)) {
-                log.info("[JWT] {} {} - non-access token", method, uri);
+                System.out.println("[JWT-DBG] non-access token -> pass");
                 chain.doFilter(request, response);
                 return;
             }
 
-            // 5) 권한 매핑
+            String email = JwtClaimAccessor.email(claims);
+            String principalValue = (email != null && !email.isBlank()) ? email : claims.getSubject();
             String roleCode = JwtClaimAccessor.role(claims);
+            System.out.println("[JWT-DBG] principal=" + principalValue + " role=" + roleCode);
+
             List<GrantedAuthority> authorities = new ArrayList<>();
             switch (roleCode) {
                 case "2" -> authorities.add(new SimpleGrantedAuthority("ROLE_PETOWNER"));
                 case "3" -> authorities.add(new SimpleGrantedAuthority("ROLE_PETMATE"));
-                case "4" -> {
-                    authorities.add(new SimpleGrantedAuthority("ROLE_PETOWNER"));
-                    authorities.add(new SimpleGrantedAuthority("ROLE_PETMATE"));
-                }
+                case "4" -> { authorities.add(new SimpleGrantedAuthority("ROLE_PETOWNER"));
+                    authorities.add(new SimpleGrantedAuthority("ROLE_PETMATE")); }
                 case "9" -> authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
                 default -> authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
             }
 
-            UsernamePasswordAuthenticationToken auth =
-                    new UsernamePasswordAuthenticationToken(claims.getSubject(), null, authorities);
+            var auth = new UsernamePasswordAuthenticationToken(principalValue, null, authorities);
             auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
             SecurityContextHolder.getContext().setAuthentication(auth);
+            System.out.println("[JWT-DBG] authenticated principal set");
 
-        } catch (JwtException ex) { // 서명 오류/변조 등
-            log.info("[JWT] {} {} - invalid token: {}", method, uri, ex.getClass().getSimpleName());
-            // 인증 없이 통과 → 최종 401은 EntryPoint/권한체크가 응답
-        } catch (Exception ex) { // 기타 예외도 조용히
-            log.info("[JWT] {} {} - token handling error", method, uri);
+        } catch (JwtException ex) {
+            System.out.println("[JWT-DBG] invalid token ex=" + ex.getClass().getSimpleName());
+        } catch (Exception ex) {
+            System.out.println("[JWT-DBG] token handling error=" + ex.getMessage());
         }
 
         chain.doFilter(request, response);

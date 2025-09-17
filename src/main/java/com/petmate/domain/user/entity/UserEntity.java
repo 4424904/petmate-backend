@@ -34,7 +34,7 @@ public class UserEntity extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID")
-    private int id; // 사용자 ID (Primary Key)
+    private Long id;   // 기존 int → Long
     
     @Column(name = "EMAIL", nullable = false, unique = true, columnDefinition = "VARCHAR(255) COMMENT '이메일 (고유값)'")
     private String email;
