@@ -94,3 +94,5 @@ app:
     secret-key: PetMateSecretKey123456789012
   nts:
     service-key: e6szMk7BwlyW91nmIcFPASpeypEm9M%2FZ50I99%2Ff9%2FPQLgbrANut%2BSa9oMD%2Fx9j1V5lS38o%2FrWlHp%2BAq1%2BmoUVQ%3D%3D
+  session:
+    inactive-timeout-minutes: 30  # 30분 비활성 시 자동 로그아웃

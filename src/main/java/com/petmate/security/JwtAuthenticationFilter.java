@@ -3,6 +3,7 @@ package com.petmate.security;
 
 import com.petmate.security.jwt.JwtClaimAccessor;
 import com.petmate.security.jwt.JwtUtil;
+import com.petmate.domain.auth.service.SessionManagementService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
@@ -32,6 +33,7 @@ import java.util.List;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
+    private final SessionManagementService sessionManagementService;
 
     private boolean isPublicPath(String uri) {
         // 딱 필요한 공개 경로만 허용
@@ -111,7 +113,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
 
             String email = JwtClaimAccessor.email(claims);
-            String principalValue = (email != null && !email.isBlank()) ? email : claims.getSubject();
+            String principalValue = claims.getSubject();
+            // if (principalValue == null || principalValue.isBlank()) {
+            //     principalValue = (email != null && !email.isBlank()) ? email : null;
+            // }
             String roleCode = JwtClaimAccessor.role(claims);
             System.out.println("[JWT-DBG] principal=" + principalValue + " role=" + roleCode);
 
@@ -129,6 +134,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
             SecurityContextHolder.getContext().setAuthentication(auth);
             System.out.println("[JWT-DBG] authenticated principal set");
+
+            // 세션 활성화 (30분 타이머 리셋)
+            try {
+                Long userId = Long.parseLong(claims.getSubject());
+                sessionManagementService.updateSessionActivityByUserId(userId);
+                System.out.println("[JWT-DBG] session activity updated for userId: " + userId);
+            } catch (Exception ex) {
+                System.out.println("[JWT-DBG] session activity update failed: " + ex.getMessage());
+            }
 
         } catch (JwtException ex) {
             System.out.println("[JWT-DBG] invalid token ex=" + ex.getClass().getSimpleName());

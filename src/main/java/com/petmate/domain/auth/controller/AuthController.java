@@ -4,6 +4,7 @@ package com.petmate.domain.auth.controller;
 import com.petmate.domain.auth.dto.response.TokenResponseDto;
 import com.petmate.domain.auth.dto.response.UserInfoResponseDto;
 import com.petmate.domain.auth.service.AuthService;
+import com.petmate.domain.auth.service.RefreshTokenCleanupService;
 import com.petmate.security.jwt.JwtClaimAccessor;
 import com.petmate.security.jwt.JwtUtil;
 import io.jsonwebtoken.Claims;
@@ -25,6 +26,7 @@ public class AuthController {
 
     private final AuthService authService;
     private final JwtUtil jwtUtil;
+    private final RefreshTokenCleanupService cleanupService;
 
     private boolean isLocal(HttpServletRequest req) {
         String host = req.getServerName();
@@ -120,5 +122,46 @@ public class AuthController {
         UserInfoResponseDto dto = authService.getUserInfoByEmail(email);
         if (dto == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         return ResponseEntity.ok(dto);
+    }
+
+    /** 모든 기기에서 로그아웃 (관리자 또는 사용자용) */
+    @PostMapping("/signout-all")
+    public ResponseEntity<String> signoutAllDevices(
+            @RequestHeader(value = HttpHeaders.AUTHORIZATION, required = false) String authHeader,
+            HttpServletRequest req
+    ) {
+        String token = null;
+        if (authHeader != null && authHeader.startsWith("Bearer ")) token = authHeader.substring(7);
+        if (token == null || jwtUtil.isExpired(token)) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+
+        Claims claims = jwtUtil.parse(token);
+        if (!"access".equals(JwtClaimAccessor.type(claims))) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+
+        String email = JwtClaimAccessor.email(claims);
+        if (email == null || email.isBlank()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+
+        authService.signoutAllDevices(email);
+
+        // 현재 쿠키도 제거
+        boolean local = isLocal(req);
+        ResponseCookie clearRefresh = ResponseCookie.from("refreshToken", "")
+                .httpOnly(true)
+                .secure(!local)
+                .sameSite(local ? "Lax" : "None")
+                .path("/")
+                .maxAge(0)
+                .build();
+
+        log.info("[AUTH] signout-all ok for email={}", email);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, clearRefresh.toString())
+                .body("모든 기기에서 로그아웃 성공");
+    }
+
+    /** 만료된 RefreshToken 수동 정리 (관리자용) */
+    @PostMapping("/admin/cleanup-tokens")
+    public ResponseEntity<String> cleanupExpiredTokens() {
+        int deletedCount = cleanupService.manualCleanup();
+        return ResponseEntity.ok("정리 완료: " + deletedCount + "개의 만료된 토큰을 삭제했습니다.");
     }
 }

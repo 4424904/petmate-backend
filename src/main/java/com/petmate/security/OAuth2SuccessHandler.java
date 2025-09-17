@@ -1,6 +1,8 @@
 // com/petmate/security/OAuth2SuccessHandler.java
 package com.petmate.security;
 
+import com.petmate.domain.auth.entity.RefreshTokenEntity;
+import com.petmate.domain.auth.repository.RefreshTokenRepository;
 import com.petmate.domain.user.entity.UserEntity;
 import com.petmate.domain.user.repository.jpa.UserRepository;
 import com.petmate.domain.user.service.UserService;
@@ -22,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
 import java.util.Locale;
 import java.util.Map;
 
@@ -36,6 +39,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
     private final JwtUtil jwtUtil;
     private final UserService userService;
     private final UserRepository userRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     private boolean isLocal(HttpServletRequest req) {
         String h = req.getServerName();
@@ -92,6 +96,10 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
                 jwtUtil.refreshTtlMs(),
                 JwtClaimAccessor.refreshClaims()
         );
+
+        // RefreshToken DB 저장
+        saveRefreshToken(ue, refresh);
+
         boolean local = isLocal(req);
         ResponseCookie cookie = buildRefreshCookie(refresh, local);
         res.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
@@ -111,5 +119,27 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         if (v == null) return def;
         String s = String.valueOf(v);
         return (s.isBlank() || "null".equalsIgnoreCase(s)) ? def : s;
+    }
+
+    /** RefreshToken 저장 */
+    private void saveRefreshToken(UserEntity user, String token) {
+        // 기존 토큰 개수 제한 (예: 최대 5개)
+        long tokenCount = refreshTokenRepository.countByUser(user);
+        if (tokenCount >= 5) {
+            // 가장 오래된 토큰 삭제
+            var oldTokens = refreshTokenRepository.findByUserOrderByCreatedAtDesc(user);
+            if (!oldTokens.isEmpty()) {
+                refreshTokenRepository.delete(oldTokens.get(oldTokens.size() - 1));
+            }
+        }
+
+        LocalDateTime expiresAt = LocalDateTime.now().plusSeconds(jwtUtil.refreshTtlMs() / 1000);
+        RefreshTokenEntity tokenEntity = RefreshTokenEntity.builder()
+                .user(user)
+                .token(token)
+                .expiresAt(expiresAt)
+                .build();
+
+        refreshTokenRepository.save(tokenEntity);
     }
 }

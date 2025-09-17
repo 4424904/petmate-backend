@@ -5,6 +5,8 @@ import com.petmate.domain.auth.dto.request.LoginRequestDto;
 import com.petmate.domain.auth.dto.request.SignupRequestDto;
 import com.petmate.domain.auth.dto.response.TokenResponseDto;
 import com.petmate.domain.auth.dto.response.UserInfoResponseDto;
+import com.petmate.domain.auth.entity.RefreshTokenEntity;
+import com.petmate.domain.auth.repository.RefreshTokenRepository;
 import com.petmate.domain.user.entity.UserEntity;
 import com.petmate.domain.user.repository.jpa.UserRepository;
 import com.petmate.security.jwt.JwtClaimAccessor;
@@ -16,6 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
@@ -26,6 +29,7 @@ public class AuthService {
     private String imgBase; // 예: http://localhost:8090/img/
 
     private final UserRepository userRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
     private final JwtUtil jwtUtil;
     private final PasswordEncoder passwordEncoder;
 
@@ -70,13 +74,27 @@ public class AuthService {
                 JwtClaimAccessor.refreshClaims()
         );
 
+        // RefreshToken DB 저장
+        saveRefreshToken(user, refreshToken);
+
         return new TokenResponseDto(accessToken, refreshToken);
     }
 
 
-    /** RefreshToken으로 AccessToken 재발급 (stateless) */
+    /** RefreshToken으로 AccessToken 재발급 */
+    @Transactional
     public TokenResponseDto refreshAccessToken(String refreshToken) {
+        // DB에서 RefreshToken 검증
+        RefreshTokenEntity tokenEntity = refreshTokenRepository.findByToken(refreshToken)
+                .orElseThrow(() -> new RuntimeException("유효하지 않은 RefreshToken입니다."));
+
+        if (tokenEntity.isExpired()) {
+            refreshTokenRepository.delete(tokenEntity);
+            throw new RuntimeException("RefreshToken이 만료되었습니다. 다시 로그인하세요.");
+        }
+
         if (jwtUtil.isExpired(refreshToken)) {
+            refreshTokenRepository.delete(tokenEntity);
             throw new RuntimeException("RefreshToken이 만료되었습니다. 다시 로그인하세요.");
         }
         Claims claims = jwtUtil.parse(refreshToken);
@@ -84,8 +102,9 @@ public class AuthService {
             throw new RuntimeException("유효하지 않은 토큰 유형입니다.");
         }
 
-        Long uid = Long.parseLong(claims.getSubject());
-        UserEntity user = userRepository.findById(uid)
+        // User 정보를 직접 조회 (Lazy Loading 문제 해결)
+        Long userId = Long.parseLong(claims.getSubject());
+        UserEntity user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
 
         String role = user.getRole() != null ? user.getRole() : "1";
@@ -129,10 +148,47 @@ public class AuthService {
     }
 
 
-    /** 로그아웃 (stateless: 서버 저장 refresh 미사용이므로 noop) */
+    /** 로그아웃 - RefreshToken DB에서 삭제 */
     public void signout(String refreshToken) {
-        // 서버 저장소를 쓰지 않으므로 특별히 삭제할 것은 없음.
-        // 블랙리스트 등 상태 저장이 필요하면 여기서 구현.
+        if (refreshToken != null && !refreshToken.isBlank()) {
+            refreshTokenRepository.deleteByToken(refreshToken);
+        }
+    }
+
+    /** 사용자의 모든 RefreshToken 삭제 (전체 로그아웃) */
+    @Transactional
+    public void signoutAllDevices(String email) {
+        UserEntity user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다: " + email));
+        refreshTokenRepository.deleteByUser(user);
+    }
+
+    /** RefreshToken 저장 */
+    private void saveRefreshToken(UserEntity user, String token) {
+        // 기존 토큰 개수 제한 (예: 최대 5개)
+        long tokenCount = refreshTokenRepository.countByUser(user);
+        if (tokenCount >= 5) {
+            // 가장 오래된 토큰 삭제
+            var oldTokens = refreshTokenRepository.findByUserOrderByCreatedAtDesc(user);
+            if (!oldTokens.isEmpty()) {
+                refreshTokenRepository.delete(oldTokens.get(oldTokens.size() - 1));
+            }
+        }
+
+        LocalDateTime expiresAt = LocalDateTime.now().plusSeconds(jwtUtil.refreshTtlMs() / 1000);
+        RefreshTokenEntity tokenEntity = RefreshTokenEntity.builder()
+                .user(user)
+                .token(token)
+                .expiresAt(expiresAt)
+                .build();
+
+        refreshTokenRepository.save(tokenEntity);
+    }
+
+    /** 만료된 RefreshToken 정리 */
+    @Transactional
+    public int cleanupExpiredTokens() {
+        return refreshTokenRepository.deleteExpiredTokens(LocalDateTime.now());
     }
 
     @Transactional(readOnly = true)
