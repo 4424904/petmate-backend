@@ -17,6 +17,18 @@ public class UserController {
     private final UserService userService;
 
     /** 펫메이트 등록 (프로필/자격증 파일 포함) */
+    /** 통합 프로필 등록/수정 (반려인/펫메이트) */
+    @PostMapping(value = "/profile/apply", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> applyProfile(
+            @RequestParam("email") @Email String email,
+            @RequestParam("targetRole") String targetRole, // "2"=반려인, "3"=펫메이트, "4"=둘다
+            @ModelAttribute PetmateApplyRequest req
+    ) {
+        Long userId = userService.applyProfile(email, targetRole, req);
+        return ResponseEntity.ok("프로필 등록/수정 완료! 사용자 ID: " + userId + ", 역할: " + targetRole);
+    }
+
+    /** 기존 엔드포인트 유지 (호환성) */
     @PostMapping(value = "/petmate/apply", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> applyPetMate(
             @RequestParam("email") @Email String email,

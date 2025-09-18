@@ -2,6 +2,7 @@ package com.petmate.domain.user.service;
 
 import com.petmate.domain.img.entity.ProfileImageMap;
 import com.petmate.domain.img.repository.ProfileImageMapRepository;
+import com.petmate.common.service.ImageService;
 import com.petmate.domain.user.dto.request.PetmateApplyRequest;
 import com.petmate.domain.user.entity.UserEntity;
 import com.petmate.domain.user.factory.UserFactory;
@@ -29,6 +30,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final UserFactory userFactory;
     private final UserFileService userFileService;
+    private final ImageService imageService;
 
     // =========================
     // Role constants (String)
@@ -118,6 +120,54 @@ public class UserService {
         return user.getId();
     }
 
+    /** 통합 프로필 등록/수정 */
+    @Transactional
+    public Long applyProfile(String email, String targetRole, PetmateApplyRequest req) {
+        log.info("=== applyProfile 시작 === email={}, targetRole={}", email, targetRole);
+
+        UserEntity user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다: " + email));
+
+        // 기본 정보 업데이트
+        userFactory.update(user, req.getName(), req.getNickName(), req.getPhone(),
+                          req.getGender(), req.getAge(), req.getProvider());
+
+        // 역할 설정
+        String currentRole = user.getRole();
+        String newRole = calculateNewRole(currentRole, targetRole);
+        user.setRole(newRole);
+
+        // 상태 업데이트
+        if ("3".equals(targetRole) || "4".equals(targetRole)) {
+            user.setStatus(STATUS_PETMATE);
+        } else {
+            user.setStatus(STATUS_DEFAULT);
+        }
+
+        // 프로필 이미지는 ImageUploadViewer에서 별도 처리됨
+        // (ImageService로 통일됨)
+
+        // 자격증 (펫메이트만)
+        // if ("3".equals(targetRole) || "4".equals(targetRole)) {
+        //     userFileService.storeCertificates(user, req.getCertificates());
+        // }
+
+        userRepository.save(user);
+        log.info("프로필 등록/수정 완료 - userId={}, role({}->{})", user.getId(), currentRole, newRole);
+        return user.getId();
+    }
+
+    /** 역할 계산 로직 */
+    private String calculateNewRole(String currentRole, String targetRole) {
+        if ("4".equals(targetRole)) return "4"; // 명시적으로 둘다 요청
+
+        if ("2".equals(currentRole) && "3".equals(targetRole)) return "4"; // 반려인 -> 펫메이트
+        if ("3".equals(currentRole) && "2".equals(targetRole)) return "4"; // 펫메이트 -> 반려인
+        if ("4".equals(currentRole)) return "4"; // 이미 둘다면 유지
+
+        return targetRole; // 그 외에는 타겟 역할로
+    }
+
     /** 기본 유저 생성/동기화 (소셜 로그인 시) */
     @Transactional
     public Long applyBasicUser(String email,
@@ -148,16 +198,38 @@ public class UserService {
         // 역할/상태는 되돌리지 않음
         userFactory.update(user, name, nickName, phone, gender, age, provider);
 
-        // 프로필 이미지
-        if (profileImageUrl != null && !profileImageUrl.isBlank()) {
-            userFileService.storeProfileFromUrl(user, profileImageUrl);
-        } else {
-            userFileService.storeDefaultProfileIfAbsent(user);
-        }
+        // 프로필 이미지 처리 (ImageService 사용 - 01, 06 둘 다 자동 저장)
+        ensureSocialProfileImages(user.getEmail(), profileImageUrl);
 
         userRepository.save(user);
         log.info("applyBasicUser 완료 - userId={}, role={}", user.getId(), user.getRole());
         return user.getId();
+    }
+
+    /**
+     * 소셜 프로필 이미지 자동 저장 (01: 반려인, 06: 펫메이트 둘 다)
+     * 묻지도 따지지도 말고 둘 다 체크해서 없으면 저장!
+     */
+    private void ensureSocialProfileImages(String email, String socialImageUrl) {
+        if (socialImageUrl == null || socialImageUrl.isBlank() || !socialImageUrl.startsWith("http")) {
+            log.info("소셜 이미지 URL이 없음 - 자동 저장 스킵: email={}", email);
+            return;
+        }
+
+        try {
+            // 01 (반려인 프로필) 체크 & 자동 저장
+            log.info("반려인 프로필 이미지(01) 체크 및 저장: email={}", email);
+            imageService.getOrCreateSocialProfileImage("01", email, socialImageUrl);
+
+            // 06 (펫메이트 프로필) 체크 & 자동 저장
+            log.info("펫메이트 프로필 이미지(06) 체크 및 저장: email={}", email);
+            imageService.getOrCreateSocialProfileImage("06", email, socialImageUrl);
+
+            log.info("소셜 프로필 이미지 자동 저장 완료: email={}, url={}", email, socialImageUrl);
+        } catch (Exception e) {
+            log.error("소셜 프로필 이미지 자동 저장 실패: email={}, url={}", email, socialImageUrl, e);
+            // 실패해도 사용자 가입은 계속 진행
+        }
     }
 
     /** 프로필 이미지 URL 조회 */

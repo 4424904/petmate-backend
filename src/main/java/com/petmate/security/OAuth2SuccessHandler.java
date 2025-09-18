@@ -71,9 +71,10 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         String email    = str(a.get("email"), provider.toLowerCase(Locale.ROOT) + "_" + rawId + "@oauth.local");
         String name     = str(a.get("name"), null);
         String nickname = str(a.get("nickname"), null);
+        String picture  = str(a.get("picture"), null); // 소셜 프로필 이미지 URL 추가
 
         Long userId = userService.applyBasicUser(
-                email, provider, name, nickname, null, null, null, null
+                email, provider, name, nickname, null, null, null, picture
         );
         UserEntity ue = userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalStateException("가입 직후 사용자 조회 실패: " + email));

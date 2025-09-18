@@ -7,6 +7,7 @@ import com.petmate.common.util.CodeUtil;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -90,7 +91,36 @@ public class FileUtil {
         
         return uploadedFiles;
     }
-    
+
+    /**
+     * InputStream에서 이미지 업로드 (URL 다운로드용)
+     */
+    public String uploadImageFromInputStream(InputStream inputStream, String imageTypeCode, String fileExtension) throws IOException {
+        if (inputStream == null) {
+            throw new IllegalArgumentException("InputStream이 null입니다.");
+        }
+
+        // 확장자 검증
+        if (fileExtension == null || fileExtension.isBlank()) {
+            fileExtension = "jpg";
+        }
+        String extension = fileExtension.toLowerCase();
+        if (!ALLOWED_EXTENSIONS.contains(extension)) {
+            throw new IllegalArgumentException("지원하지 않는 이미지 형식입니다. (지원 형식: " + String.join(", ", ALLOWED_EXTENSIONS) + ")");
+        }
+
+        String uploadPath = createUploadDirectory(imageTypeCode);
+        String fileName = generateUniqueFileNameWithExtension(extension);
+        String filePath = uploadPath + fileName;
+
+        // InputStream을 파일로 저장
+        Path path = Paths.get(filePath);
+        Files.copy(inputStream, path);
+
+        String relativePath = getRelativePath(imageTypeCode) + fileName;
+        return relativePath;
+    }
+
     private void validateImageFile(MultipartFile file) {
         if (file.getSize() > MAX_FILE_SIZE) {
             throw new IllegalArgumentException("파일 크기가 10MB를 초과합니다.");
@@ -150,8 +180,18 @@ public class FileUtil {
         String extension = getFileExtension(originalFilename);
         String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
         String uuid = UUID.randomUUID().toString().substring(0, 8);
-        
+
         return timestamp + "_" + uuid + "." + extension;
+    }
+
+    /**
+     * 확장자로 고유한 파일명 생성 (URL 다운로드용)
+     */
+    private String generateUniqueFileNameWithExtension(String extension) {
+        String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
+        String uuid = UUID.randomUUID().toString().substring(0, 8);
+
+        return "social_" + timestamp + "_" + uuid + "." + extension;
     }
     
     private String getFileExtension(String filename) {
