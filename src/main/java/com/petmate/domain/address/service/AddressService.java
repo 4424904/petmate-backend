@@ -11,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.awt.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -75,8 +74,7 @@ public class AddressService {
         }
     }
 
-
-    // jwt String userId를 integer ownerId로 변환
+    // jwt String userId를 Integer ownerId로 변환
     private Integer convertUserIdToOwnerId(String jwtUserId) {
         if (jwtUserId == null || jwtUserId.trim().isEmpty()) {
             log.error("JWT userId가 null이거나 빈 값입니다");
@@ -154,7 +152,6 @@ public class AddressService {
             throw e;
         }
     }
-
 
     // 주소 수정
     @Transactional
@@ -259,7 +256,6 @@ public class AddressService {
         }
     }
 
-
     // Entity -> ResponseDto 변환
     private AddressResponseDto convertToResponseDto(AddressEntity addressEntity) {
 
@@ -278,5 +274,23 @@ public class AddressService {
                 .build();
     }
 
+    // 사용자 주소 목록 조회
+    @Transactional(readOnly = true)
+    public AddressEntity getUserAddressesByDefault(String jwtUserId) {
+        log.info("사용자 기본주소 조회 시작 - userId: {}", jwtUserId);
 
+        try {
+            Integer ownerId = convertUserIdToOwnerId(jwtUserId);
+
+            // 기본주소 가져오기
+            AddressEntity addresses = addressRepository.findByIsDefaultAndOwnerId(1, ownerId);
+
+            log.info("사용자 기본주소 조회 완료 - ownerId: {}", ownerId);
+
+            return addresses;
+        } catch (Exception e) {
+            log.error("사용자 기본주소 조회 중 오류 발생 - userId: {}, 오류: {}", jwtUserId, e.getMessage());
+            throw e;
+        }
+    }
 }

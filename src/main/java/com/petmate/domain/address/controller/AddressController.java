@@ -3,13 +3,14 @@ package com.petmate.domain.address.controller;
 import com.petmate.domain.address.dto.request.AddressCreateRequestDto;
 import com.petmate.domain.address.dto.request.AddressUpdateRequestDto;
 import com.petmate.domain.address.dto.response.AddressResponseDto;
+import com.petmate.domain.address.entity.AddressEntity;
 import com.petmate.domain.address.service.AddressService;
+import com.petmate.security.CustomUserDetails;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,146 +27,107 @@ public class AddressController {
 
     private final AddressService addressService;
 
+    // 현재 로그인된 사용자 ID 추출
+    private String getUserId(Authentication authentication) {
+        if (authentication == null) return null;
+
+        Object principal = authentication.getPrincipal();
+
+        if (principal instanceof CustomUserDetails customUser) {
+            return String.valueOf(customUser.getId()); // DB의 user PK(ID) 반환
+        } else if (principal instanceof org.springframework.security.core.userdetails.User user) {
+            return user.getUsername(); // 일반 Spring UserDetails
+        } else if (principal instanceof String str) {
+            return str; // 혹시 문자열로만 들어온 경우
+        }
+
+        return null;
+    }
 
     // 주소 목록 조회
     @GetMapping
-    public ResponseEntity<List<AddressResponseDto>> getAddresses(
-            @AuthenticationPrincipal String userId
-    ) {
-
+    public ResponseEntity<List<AddressResponseDto>> getAddresses(Authentication authentication) {
+        String userId = getUserId(authentication);
         log.info("사용자 주소 목록 조회 요청 - userId: {}", userId);
 
-        try {
-            List<AddressResponseDto> addresses =
-                    addressService.getUserAddresses(userId);
+        List<AddressResponseDto> addresses = addressService.getUserAddresses(userId);
+        log.info("사용자 주소 목록 조회 완료 - userId: {}, 주소 개수: {}", userId, addresses.size());
 
-            log.info("사용자 주소 목록 조회 완료 - userId: {}, 주소 개수: {}",
-                    userId, addresses.size());
-
-            return ResponseEntity.ok(addresses);
-
-        } catch (RuntimeException e) {
-            log.error("사용자 주소 목록 조회 실패 - userId: {}, 오류: {}",
-                    userId, e.getMessage());
-            throw e;
-        }
+        return ResponseEntity.ok(addresses);
     }
-
 
     // 주소 추가
     @PostMapping
     public ResponseEntity<AddressResponseDto> createAddress(
-            @AuthenticationPrincipal String userId,
+            Authentication authentication,
             @Valid @RequestBody AddressCreateRequestDto addressCreateRequestDto
     ) {
+        String userId = getUserId(authentication);
+        log.info("주소 추가 요청 - userId: {}, 주소: {}", userId, addressCreateRequestDto.getAddress());
 
-        log.info("주소 추가 요청 - userId: {}, 주소: {}",
-                userId, addressCreateRequestDto.getAddress());
+        addressCreateRequestDto.setOwnerId(userId);
+        AddressResponseDto createdAddress = addressService.createAddress(addressCreateRequestDto);
 
-        log.info("받은 위도/경도 - latitude: {}, longitude: {}",
-                addressCreateRequestDto.getLatitude(), addressCreateRequestDto.getLongitude());
-
-        log.info("받은 우편번호 - postcode: {}", addressCreateRequestDto.getPostcode());
-
-        try {
-            // String userId를 DTO에 설정 (Service에서 Integer로 변환)
-            addressCreateRequestDto.setOwnerId(userId);
-
-            AddressResponseDto createdAddress =
-                    addressService.createAddress(addressCreateRequestDto);
-
-            log.info("주소 추가 완료 - userId: {}, 주소 ID: {}",
-                    userId, createdAddress.getId());
-
-            return
-                    ResponseEntity.ok(createdAddress);
-
-        } catch (RuntimeException e) {
-            log.error("주소 추가 실패 - userId: {}, 오류: {}",
-                    userId, e.getMessage());
-            throw e;
-        }
-
-
+        log.info("주소 추가 완료 - userId: {}, 주소 ID: {}", userId, createdAddress.getId());
+        return ResponseEntity.ok(createdAddress);
     }
 
     // 주소 수정
     @PutMapping("/{id}")
     public ResponseEntity<AddressResponseDto> updateAddress(
-            @AuthenticationPrincipal String userId,
-            @PathVariable Integer id,
+            Authentication authentication,
+            @PathVariable Integer id, // Integer 유지
             @Valid @RequestBody AddressUpdateRequestDto addressUpdateRequestDto
     ) {
-
+        String userId = getUserId(authentication);
         log.info("주소 수정 요청 - userId: {}, 주소 ID: {}", userId, id);
 
-        try {
-            // String userId를 DTO에 설정 (Service에서 Integer로 변환)
-            addressUpdateRequestDto.setOwnerId(userId);
+        addressUpdateRequestDto.setOwnerId(userId);
+        AddressResponseDto updatedAddress = addressService.updateAddress(id, addressUpdateRequestDto);
 
-            AddressResponseDto updatedAddress =
-                    addressService.updateAddress(id, addressUpdateRequestDto);
-
-            log.info("주소 수정 완료 - userId: {}, 주소 ID: {}", userId, id);
-
-            return ResponseEntity.ok(updatedAddress);
-
-        } catch (RuntimeException e) {
-            log.error("주소 수정 실패 - userId: {}, 주소 ID: {}, 오류: {}",
-                    userId, id, e.getMessage());
-            throw e;
-        }
-
+        log.info("주소 수정 완료 - userId: {}, 주소 ID: {}", userId, id);
+        return ResponseEntity.ok(updatedAddress);
     }
 
     // 주소 삭제
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteAddress(
-            @AuthenticationPrincipal String userId,
-            @PathVariable Integer id
+            Authentication authentication,
+            @PathVariable Integer id // Integer 유지
     ) {
-
+        String userId = getUserId(authentication);
         log.info("주소 삭제 요청 - userId: {}, 주소 ID: {}", userId, id);
 
-        try {
-            addressService.deleteAddress(id, userId);
+        addressService.deleteAddress(id, userId);
+        log.info("주소 삭제 완료 - userId: {}, 주소 ID: {}", userId, id);
 
-            log.info("주소 삭제 완료 - userId: {}, 주소 ID: {}", userId, id);
-
-            return ResponseEntity.ok().build();
-
-        } catch (RuntimeException e) {
-            log.error("주소 삭제 실패 - userId: {}, 주소 ID: {}, 오류: {}",
-                    userId, id, e.getMessage());
-            throw e;
-        }
-
+        return ResponseEntity.ok().build();
     }
 
     // 기본 주소 설정
     @PutMapping("/{id}/default")
     public ResponseEntity<Void> setDefaultAddress(
-            @AuthenticationPrincipal String userId,
-            @PathVariable Integer id
+            Authentication authentication,
+            @PathVariable Integer id // Integer 유지
     ) {
-
+        String userId = getUserId(authentication);
         log.info("기본 주소 설정 요청 - userId: {}, 주소 ID: {}", userId, id);
 
-        try {
-            addressService.setDefaultAddress(id, userId);
+        addressService.setDefaultAddress(id, userId);
+        log.info("기본 주소 설정 완료 - userId: {}, 주소 ID: {}", userId, id);
 
-            log.info("기본 주소 설정 완료 - userId: {}, 주소 ID: {}", userId, id);
-
-            return ResponseEntity.ok().build();
-
-        } catch (RuntimeException e) {
-            log.error("기본 주소 설정 실패 - userId: {}, 주소 ID: {}, 오류: {}",
-            userId, id, e.getMessage());
-            throw e;
-        }
-
+        return ResponseEntity.ok().build();
     }
 
+    // 주소 목록 조회
+    @GetMapping("/{id}")
+    public ResponseEntity<AddressEntity> getUserAddressesByDefault(Authentication authentication) {
+        String userId = getUserId(authentication);
+        log.info("사용자 기본주소 조회 요청 - userId: {}", userId);
 
+        AddressEntity addresses = addressService.getUserAddressesByDefault(userId);
+        log.info("사용자 기본주소 조회 완료 - userId: {}", userId);
 
+        return ResponseEntity.ok(addresses);
+    }
 }

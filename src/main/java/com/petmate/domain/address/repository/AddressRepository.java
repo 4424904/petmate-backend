@@ -12,10 +12,10 @@ import java.util.Optional;
 public interface AddressRepository extends JpaRepository<AddressEntity, Integer> {
 
     // 사용자의 주소 목록 조회 (생성일 순)
-    List<AddressEntity> findByOwnerIdOrderByCreatedAtDesc(Integer ownerId); // string -> integer
+    List<AddressEntity> findByOwnerIdOrderByCreatedAtDesc(Integer ownerId);
 
     // 사용자의 기본 주소 조회
-    Optional<AddressEntity> findByOwnerIdAndIsDefault(Integer ownerId, Integer isDefault); // string -> integer
+    Optional<AddressEntity> findByOwnerIdAndIsDefault(Integer ownerId, Integer isDefault);
 
     // 사용자의 기본 주소 조회(기본값)
     default Optional<AddressEntity> findDefaultAddressByOwnerId(Integer ownerId) {
@@ -23,15 +23,15 @@ public interface AddressRepository extends JpaRepository<AddressEntity, Integer>
     }
 
     // 사용자의 주소 개수 조회
-    Long countByOwnerId(Integer ownerId); // string -> integer
+    Long countByOwnerId(Integer ownerId);
 
     // 사용자의 특정 라벨 주소 조회
-    List<AddressEntity> findByOwnerIdAndLabel(Integer ownerId, String label); // ownerId만 integer
+    List<AddressEntity> findByOwnerIdAndLabel(Integer ownerId, String label);
 
     // 기존 기본 주소를 일반 주소로 변경
     @Modifying
     @Query(value = "UPDATE address SET IS_DEFAULT = 0 WHERE OWNER_ID = :ownerId AND IS_DEFAULT = 1", nativeQuery = true)
-    void resetDefaultAddress(@Param("ownerId") Integer ownerId); // string -> integer
+    void resetDefaultAddress(@Param("ownerId") Integer ownerId);
 
     // 특정 주소를 기본 주소로 설정
     @Modifying
@@ -39,7 +39,9 @@ public interface AddressRepository extends JpaRepository<AddressEntity, Integer>
     void setDefaultAddress(@Param("addressId") Integer addressId, @Param("ownerId") Integer ownerId);
 
     // 사용자별 주소 존재 여부 확인
-    boolean existsByIdAndOwnerId(Integer id, Integer ownerId); // string -> integer
+    boolean existsByIdAndOwnerId(Integer id, Integer ownerId);
 
+    // 사용자별 주소 존재 여부 확인
+    AddressEntity findByIsDefaultAndOwnerId(Integer isDefault, Integer ownerId);
 
 }
