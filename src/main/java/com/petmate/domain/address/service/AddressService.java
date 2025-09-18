@@ -6,6 +6,7 @@ import com.petmate.domain.address.dto.request.AddressUpdateRequestDto;
 import com.petmate.domain.address.dto.response.AddressResponseDto;
 import com.petmate.domain.address.entity.AddressEntity;
 import com.petmate.domain.address.repository.AddressRepository;
+import com.petmate.common.util.DistanceCalculatorUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -292,5 +293,45 @@ public class AddressService {
             log.error("사용자 기본주소 조회 중 오류 발생 - userId: {}, 오류: {}", jwtUserId, e.getMessage());
             throw e;
         }
+    }
+
+    // 사용자가 등록한 주소와 현재 위치의 거리 계산
+    public List<AddressResponseDto> getAddressesWithDistance(Integer userId, Double userLat, Double userLng) {
+        log.info("거리 계산 요청 - userId: {}, userLat: {}, userLng: {}", userId, userLat, userLng);
+
+        List<AddressEntity> addresses = addressRepository.findByOwnerIdOrderByCreatedAtDesc(userId);
+        log.info("조회된 주소 개수: {}", addresses.size());
+
+        return addresses.stream()
+                .map(address -> {
+                    AddressResponseDto addressResponseDto = convertToResponseDto(address);
+
+                    log.info("주소 처리 중 - ID: {}, 주소: {}, 좌표: lat={}, lng={}",
+                            address.getId(), address.getRoadAddr(),
+                            address.getLatitude(), address.getLongitude());
+
+                    // 현재 위치와 주소 위치가 있는 경우 거리 계산
+                    if(userLat != null && userLng != null && address.getLatitude() != null && address.getLongitude() != null) {
+                        log.info("거리 계산 조건 만족 - 계산 시작");
+
+                        double distance = DistanceCalculatorUtil.calculateDistance(
+                                userLat,
+                                userLng,
+                                address.getLatitude().doubleValue(),
+                                address.getLongitude().doubleValue()
+                        );
+
+                        log.info("계산된 거리: {}km", distance);
+                        addressResponseDto.setDistanceKm(distance);
+
+                    } else {
+                        log.warn("거리 계산 조건 불만족 - userLat: {}, userLng: {}, addrLat: {}, addrLng: {}",
+                                userLat, userLng, address.getLatitude(), address.getLongitude());
+                    }
+
+                    log.info("최종 응답 DTO - distanceKm: {}", addressResponseDto.getDistanceKm());
+                    return addressResponseDto;
+                })
+                .toList();
     }
 }

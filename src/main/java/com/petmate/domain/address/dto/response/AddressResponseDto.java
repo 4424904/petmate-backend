@@ -23,5 +23,7 @@ public class AddressResponseDto {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
+    private Double distanceKm; // 현재 위치로부터의 거리(km)
+
 
 }

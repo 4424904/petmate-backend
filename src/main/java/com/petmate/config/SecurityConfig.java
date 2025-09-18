@@ -66,6 +66,7 @@ public class SecurityConfig {
 
                         // 공개 API
                         .requestMatchers(HttpMethod.GET, "/pet/breeds", "/pet/breeds/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/company/nearby").permitAll()
 
                         // 파일 업로드(인증 필요)
                         .requestMatchers(HttpMethod.POST, "/upload/pet").authenticated()

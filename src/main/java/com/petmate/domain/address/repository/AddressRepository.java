@@ -41,7 +41,7 @@ public interface AddressRepository extends JpaRepository<AddressEntity, Integer>
     // 사용자별 주소 존재 여부 확인
     boolean existsByIdAndOwnerId(Integer id, Integer ownerId);
 
-    // 사용자별 주소 존재 여부 확인
+    // 사용자별 기본주소 존재 여부 확인
     AddressEntity findByIsDefaultAndOwnerId(Integer isDefault, Integer ownerId);
 
 }
