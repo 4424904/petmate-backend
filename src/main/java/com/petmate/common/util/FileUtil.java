@@ -201,6 +201,7 @@ public class FileUtil {
         }
         return filename.substring(lastDotIndex + 1);
     }
+
     
     public boolean deleteFile(String filePath) {
         try {

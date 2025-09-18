@@ -37,6 +37,7 @@ public class FileController {
             response.put("message", "이미지 업로드 성공");
             response.put("imageId", savedImage.getId());
             response.put("filePath", savedImage.getFilePath());
+            response.put("imageUrl", imageService.getImageUrl(savedImage)); // S3 URL 추가
             response.put("originalName", savedImage.getOriginalName());
             return ResponseEntity.ok(response);
         } catch (IllegalArgumentException e) {
@@ -67,6 +68,7 @@ public class FileController {
                 Map<String, Object> imageInfo = new HashMap<>();
                 imageInfo.put("imageId", image.getId());
                 imageInfo.put("filePath", image.getFilePath());
+                imageInfo.put("imageUrl", imageService.getImageUrl(image)); // S3 URL 추가
                 imageInfo.put("originalName", image.getOriginalName());
                 imageInfo.put("isThumbnail", "Y".equals(image.getIsThumbnail()));
                 return imageInfo;
@@ -101,6 +103,7 @@ public class FileController {
                 Map<String, Object> imageInfo = new HashMap<>();
                 imageInfo.put("imageId", image.getId());
                 imageInfo.put("filePath", image.getFilePath());
+                imageInfo.put("imageUrl", imageService.getImageUrl(image)); // S3 URL 추가
                 imageInfo.put("originalName", image.getOriginalName());
                 imageInfo.put("isThumbnail", "Y".equals(image.getIsThumbnail()));
                 return imageInfo;
@@ -148,6 +151,7 @@ public class FileController {
                 Map<String, Object> imageInfo = new HashMap<>();
                 imageInfo.put("imageId", image.getId());
                 imageInfo.put("filePath", image.getFilePath());
+                imageInfo.put("imageUrl", imageService.getImageUrl(image)); // S3 URL 추가
                 imageInfo.put("originalName", image.getOriginalName());
                 imageInfo.put("isThumbnail", "Y".equals(image.getIsThumbnail()));
                 imageInfo.put("displayOrder", image.getDisplayOrder());

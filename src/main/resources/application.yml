@@ -96,3 +96,10 @@ app:
     service-key: e6szMk7BwlyW91nmIcFPASpeypEm9M%2FZ50I99%2Ff9%2FPQLgbrANut%2BSa9oMD%2Fx9j1V5lS38o%2FrWlHp%2BAq1%2BmoUVQ%3D%3D
   session:
     inactive-timeout-minutes: 30  # 30분 비활성 시 자동 로그아웃
+
+aws:
+  s3:
+    bucket: ${AWS_S3_BUCKET}
+    access-key: ${AWS_S3_ACCESS_KEY}
+    secret-key: ${AWS_S3_SECRET_KEY}
+    region: ${AWS_S3_REGION}

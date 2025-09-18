@@ -2,9 +2,10 @@ package com.petmate.common.service;
 
 import com.petmate.common.entity.ImageEntity;
 import com.petmate.common.repository.ImageRepository;
-import com.petmate.common.util.FileUtil;
+import com.petmate.common.util.S3FileService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -26,7 +27,10 @@ import java.util.Optional;
 public class ImageService {
 
     private final ImageRepository imageRepository;
-    private final FileUtil fileUtil;
+    private final S3FileService s3FileService;
+
+    @Value("${aws.s3.bucket}")
+    private String bucketName;
 
     /**
      * 단일 이미지 업로드
@@ -43,8 +47,8 @@ public class ImageService {
         
         validateBasicParams(imageTypeCode, referenceId);
         
-        // 파일 업로드
-        String uploadedFilePath = fileUtil.uploadSingleImage(file, imageTypeCode);
+        // S3에 파일 업로드
+        String s3Key = s3FileService.uploadSingleImage(file, imageTypeCode);
         
         // 표시 순서 계산
         Integer maxOrder = imageRepository.findMaxDisplayOrderByReference(imageTypeCode, referenceId);
@@ -55,13 +59,13 @@ public class ImageService {
             imageRepository.clearAllThumbnails(imageTypeCode, referenceId);
         }
         
-        // 이미지 엔티티 생성
+        // 이미지 엔티티 생성 (S3)
         ImageEntity imageEntity = ImageEntity.builder()
                 .referenceType(imageTypeCode)
                 .referenceId(referenceId)
                 .originalName(file.getOriginalFilename())
-                .storedName(extractStoredName(uploadedFilePath))
-                .filePath(uploadedFilePath)
+                .storedName(s3Key)  // S3에서는 key가 stored name
+                .filePath(s3Key)    // S3에서는 key가 file path
                 .fileSize(file.getSize())
                 .fileExtension(getFileExtension(file.getOriginalFilename()))
                 .mimeType(file.getContentType())
@@ -90,8 +94,8 @@ public class ImageService {
 
         validateBasicParams(imageTypeCode, referenceId);
 
-        // 파일 업로드
-        List<String> uploadedFilePaths = fileUtil.uploadMultipleImages(files, imageTypeCode);
+        // S3에 파일 업로드
+        List<String> s3Keys = s3FileService.uploadMultipleImages(files, imageTypeCode);
 
         // 현재 최대 표시 순서 조회
         Integer maxOrder = imageRepository.findMaxDisplayOrderByReference(imageTypeCode, referenceId);
@@ -106,15 +110,15 @@ public class ImageService {
 
         for (int i = 0; i < files.size(); i++) {
             MultipartFile file = files.get(i);
-            String uploadedPath = uploadedFilePaths.get(i);
+            String s3Key = s3Keys.get(i);
             boolean isThumbnail = setFirstAsThumbnail && i == 0;
 
             ImageEntity imageEntity = ImageEntity.builder()
                     .referenceType(imageTypeCode)
                     .referenceId(referenceId)
                     .originalName(file.getOriginalFilename())
-                    .storedName(extractStoredName(uploadedPath))
-                    .filePath(uploadedPath)
+                    .storedName(s3Key)  // S3에서는 key가 stored name
+                    .filePath(s3Key)    // S3에서는 key가 file path
                     .fileSize(file.getSize())
                     .fileExtension(getFileExtension(file.getOriginalFilename()))
                     .mimeType(file.getContentType())
@@ -140,22 +144,22 @@ public class ImageService {
         // 1. 기존 이미지들 모두 삭제
         deleteAllImagesByReference(imageTypeCode, referenceId);
 
-        // 2. 새로운 이미지들 업로드
-        List<String> uploadedFilePaths = fileUtil.uploadMultipleImages(files, imageTypeCode);
+        // 2. S3에 새로운 이미지들 업로드
+        List<String> s3Keys = s3FileService.uploadMultipleImages(files, imageTypeCode);
 
         List<ImageEntity> savedImages = new ArrayList<>();
 
         for (int i = 0; i < files.size(); i++) {
             MultipartFile file = files.get(i);
-            String uploadedPath = uploadedFilePaths.get(i);
+            String s3Key = s3Keys.get(i);
             boolean isThumbnail = setFirstAsThumbnail && i == 0;
 
             ImageEntity imageEntity = ImageEntity.builder()
                     .referenceType(imageTypeCode)
                     .referenceId(referenceId)
                     .originalName(file.getOriginalFilename())
-                    .storedName(extractStoredName(uploadedPath))
-                    .filePath(uploadedPath)
+                    .storedName(s3Key)  // S3에서는 key가 stored name
+                    .filePath(s3Key)    // S3에서는 key가 file path
                     .fileSize(file.getSize())
                     .fileExtension(getFileExtension(file.getOriginalFilename()))
                     .mimeType(file.getContentType())
@@ -201,8 +205,8 @@ public class ImageService {
         Optional<ImageEntity> imageOpt = imageRepository.findById(imageId);
         if (imageOpt.isPresent()) {
             ImageEntity image = imageOpt.get();
-            // 파일 시스템에서 실제 파일 삭제
-            fileUtil.deleteFile(image.getFilePath());
+            // S3에서 실제 파일 삭제
+            s3FileService.deleteFile(image.getFilePath());
             // DB에서 소프트 삭제
             imageRepository.softDeleteById(imageId);
         }
@@ -213,12 +217,12 @@ public class ImageService {
      */
     public void deleteAllImagesByReference(String imageTypeCode, String referenceId) {
         List<ImageEntity> images = getImagesByReference(imageTypeCode, referenceId);
-        
-        // 파일 시스템에서 실제 파일들 삭제
+
+        // S3에서 실제 파일들 삭제
         for (ImageEntity image : images) {
-            fileUtil.deleteFile(image.getFilePath());
+            s3FileService.deleteFile(image.getFilePath());
         }
-        
+
         // DB에서 소프트 삭제
         imageRepository.softDeleteAllByReference(imageTypeCode, referenceId);
     }
@@ -266,19 +270,19 @@ public class ImageService {
             // URL에서 이미지 다운로드
             URL url = new URL(imageUrl);
             try (InputStream inputStream = url.openStream()) {
-                // FileUtil을 사용해서 InputStream을 파일로 저장
-                String uploadedFilePath = fileUtil.uploadImageFromInputStream(inputStream, imageTypeCode, getFileExtensionFromUrl(imageUrl));
+                // S3FileService를 사용해서 InputStream을 S3에 저장
+                String s3Key = s3FileService.uploadImageFromInputStream(inputStream, imageTypeCode, getFileExtensionFromUrl(imageUrl));
 
                 // 표시 순서 계산
                 Integer maxOrder = imageRepository.findMaxDisplayOrderByReference(imageTypeCode, referenceId);
                 Integer nextOrder = (maxOrder != null) ? maxOrder + 1 : 1;
 
-                // ImageEntity 생성 및 저장
+                // ImageEntity 생성 및 저장 (S3)
                 ImageEntity imageEntity = ImageEntity.builder()
                         .referenceType(imageTypeCode)
                         .referenceId(referenceId)
-                        .filePath(uploadedFilePath)
-                        .storedName(extractStoredName(uploadedFilePath))
+                        .filePath(s3Key)    // S3에서는 key가 file path
+                        .storedName(s3Key)  // S3에서는 key가 stored name
                         .originalName(extractFileNameFromUrl(imageUrl))
                         .fileSize(0L) // URL 다운로드이므로 크기는 0으로 설정
                         .fileExtension(getFileExtensionFromUrl(imageUrl))
@@ -291,7 +295,7 @@ public class ImageService {
                         .build();
 
                 ImageEntity savedImage = imageRepository.save(imageEntity);
-                log.info("URL 이미지 저장 완료: {} -> {}", imageUrl, uploadedFilePath);
+                log.info("URL 이미지 S3 저장 완료: {} -> {}", imageUrl, s3Key);
 
                 return savedImage;
             }
@@ -340,6 +344,26 @@ public class ImageService {
         }
 
         return Optional.empty();
+    }
+
+    /**
+     * S3 이미지 URL 조회
+     */
+    public String getImageUrl(ImageEntity image) {
+        if (image == null || image.getFilePath() == null) {
+            return null;
+        }
+        return s3FileService.getFileUrl(image.getFilePath());
+    }
+
+    /**
+     * S3 이미지 URL 조회 (파일 경로로)
+     */
+    public String getImageUrl(String s3Key) {
+        if (s3Key == null || s3Key.isBlank()) {
+            return null;
+        }
+        return s3FileService.getFileUrl(s3Key);
     }
 
     /**
@@ -400,9 +424,6 @@ public class ImageService {
         }
     }
     
-    private String extractStoredName(String filePath) {
-        return filePath.substring(filePath.lastIndexOf('/') + 1);
-    }
     
     private String getFileExtension(String filename) {
         if (filename == null || filename.isEmpty()) {
