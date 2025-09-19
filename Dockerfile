@@ -1,5 +1,5 @@
 # Multi-stage build for Spring Boot
-FROM openjdk:21-jdk-slim as build
+FROM eclipse-temurin:21-jdk-alpine as build
 
 # 작업 디렉토리 설정
 WORKDIR /app
@@ -21,7 +21,7 @@ COPY src src
 RUN ./gradlew bootJar --no-daemon
 
 # 실행 단계
-FROM openjdk:21-jre-slim
+FROM eclipse-temurin:21-jre-alpine
 
 # 애플리케이션 JAR 복사
 COPY --from=build /app/build/libs/*.jar app.jar
