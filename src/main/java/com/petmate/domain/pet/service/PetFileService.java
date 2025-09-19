@@ -20,7 +20,7 @@ public class PetFileService {
 
     private final UserRepository userRepository;
 
-    @Value("${public-img-url:http://localhost:8090/img/}")
+    @Value("${app.public-img-url}")
     private String publicImgUrl;
 
     /** 이미지 저장 후 공개 URL 반환 */
