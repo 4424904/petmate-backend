@@ -23,6 +23,8 @@ spring:
         format_sql: true
         default_batch_fetch_size: 100
     open-in-view: false
+    naming:
+      physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
   security:
     oauth2:
       client:

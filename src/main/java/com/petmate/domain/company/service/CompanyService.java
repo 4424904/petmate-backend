@@ -134,6 +134,22 @@ public class CompanyService {
         return mapToResponseDto(savedCompany);
     }
 
+    /**
+     * 업체 ID만으로 업체 정보 조회 (타임슬롯 조회용)
+     * 권한 체크 없이 승인된 업체만 조회
+     */
+    public CompanyResponseDto getCompanyByIdPublic(Integer id) {
+        CompanyEntity company = companyRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("업체를 찾을 수 없습니다."));
+
+        // 승인된 업체만 허용 (보안)
+        if (!"A".equals(company.getStatus())) {
+            throw new IllegalArgumentException("승인되지 않은 업체입니다.");
+        }
+
+        return mapToResponseDto(company);
+    }
+
 
     public CompanyResponseDto getCompanyById(Integer id, Integer userId) {
         CompanyEntity company = companyRepository.findByIdAndCreatedBy(id, userId)

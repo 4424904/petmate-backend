@@ -6,7 +6,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-@MapperScan("com.petmate.domain.product.repository.mybatis")
+@MapperScan("com.petmate.domain")
 public class PetmateApplication {
     public static void main(String[] args) {
         // .env 파일 로딩 (여러 위치에서 시도)

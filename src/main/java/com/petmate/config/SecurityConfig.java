@@ -67,6 +67,13 @@ public class SecurityConfig {
                         // 공개 API
                         .requestMatchers(HttpMethod.GET, "/pet/breeds", "/pet/breeds/**").permitAll()
 
+                        // 타임슬롯 조회 허용 추가 (이 줄을 추가하세요!)
+                        .requestMatchers(HttpMethod.GET, "/api/products/*/available-slots").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/products/*/refresh-slots").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/payment/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/payment/**").permitAll()
+                        .requestMatchers("/api/payment/danal/**").permitAll()
+
                         // 파일 업로드(인증 필요)
                         .requestMatchers(HttpMethod.POST, "/upload/pet").authenticated()
 
