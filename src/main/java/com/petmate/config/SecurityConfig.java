@@ -16,6 +16,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.List;
 
 @Configuration
 @RequiredArgsConstructor
@@ -36,7 +41,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .cors(c -> {})
+                .cors(c -> c.configurationSource(corsConfigurationSource()))
                 .csrf(c -> c.disable())
                 .formLogin(f -> f.disable())
                 .httpBasic(b -> b.disable())
@@ -45,39 +50,42 @@ public class SecurityConfig {
                         .authenticationEntryPoint((req, res, ex) -> {
                             res.setStatus(401);
                             res.setContentType("application/json;charset=UTF-8");
-                            res.getWriter().write("{\"error\":\"unauthorized\"}");
+                            res.getWriter().write("{\"code\":\"UNAUTHORIZED\",\"message\":\"unauthorized\",\"path\":\"" + req.getRequestURI() + "\"}");
                         })
                         .accessDeniedHandler((req, res, ex) -> {
                             res.setStatus(403);
                             res.setContentType("application/json;charset=UTF-8");
-                            res.getWriter().write("{\"error\":\"forbidden\"}");
+                            res.getWriter().write("{\"code\":\"FORBIDDEN\",\"message\":\"forbidden\",\"path\":\"" + req.getRequestURI() + "\"}");
                         })
                 )
                 .authorizeHttpRequests(auth -> auth
+                        // Preflight
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
-                        // 정적 리소스(읽기만 허용)
+                        // Static
                         .requestMatchers(HttpMethod.GET,
-                                "/files/**", "/static/**", "/favicon.ico", "/error", "/img/**"
-                        ).permitAll()
+                                "/files/**", "/static/**", "/favicon.ico", "/error", "/img/**").permitAll()
 
-                        // 인증 관련
+                        // Auth endpoints
                         .requestMatchers("/auth/signin", "/auth/signup", "/auth/refresh", "/auth/signout").permitAll()
 
-                        // 공개 API
+                        // ✅ Restore endpoint 공개
+                        .requestMatchers(HttpMethod.POST, "/user/restore").permitAll()
+                        // Public API
                         .requestMatchers(HttpMethod.GET, "/pet/breeds", "/pet/breeds/**").permitAll()
 
-                        // 파일 업로드(인증 필요)
+                        // Upload (need auth)
                         .requestMatchers(HttpMethod.POST, "/upload/pet").authenticated()
 
-                        // 보호 자원
-                        .requestMatchers("/auth/me").authenticated()
-                        .requestMatchers(HttpMethod.POST, "/pet/apply").authenticated()
+                        // Me endpoints - HTTP 메서드별로 명시적 설정
+                        .requestMatchers(HttpMethod.GET, "/auth/me").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/user/me").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/user/me").authenticated()  // ✅ 추가
+                        .requestMatchers(HttpMethod.DELETE, "/user/me").authenticated()
 
-                        // 내 반려동물 조회
+                        // Pet APIs
                         .requestMatchers(HttpMethod.GET, "/pet/my", "/pet/my/**").authenticated()
-
-                        // 수정/삭제는 /pet/{petId}
+                        .requestMatchers(HttpMethod.POST, "/pet/apply").authenticated()
                         .requestMatchers(HttpMethod.PUT, "/pet/**").authenticated()
                         .requestMatchers(HttpMethod.DELETE, "/pet/**").authenticated()
 
@@ -90,5 +98,20 @@ public class SecurityConfig {
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration c = new CorsConfiguration();
+        c.setAllowedOriginPatterns(List.of(
+                "http://localhost:*",
+                "http://127.0.0.1:*"
+        ));
+        c.setAllowedMethods(List.of("GET","POST","PUT","PATCH","DELETE","OPTIONS"));
+        c.setAllowedHeaders(List.of("Authorization","Content-Type","X-Requested-With"));
+        c.setAllowCredentials(true);
+        UrlBasedCorsConfigurationSource s = new UrlBasedCorsConfigurationSource();
+        s.registerCorsConfiguration("/**", c);
+        return s;
     }
 }

@@ -46,15 +46,13 @@ public class UserFactory {
                        String nickName,
                        String phone,
                        String gender,
-                       Integer age,
+                       LocalDate birthDate,
                        String provider) {
         if (!blank(name))     u.setName(name);
         if (!blank(nickName)) u.setNickName(nickName);
         if (!blank(phone))    u.setPhone(phone);
         if (!blank(gender))   u.setGender(gender);
-        if (age != null && age > 0) {
-            u.setBirthDate(LocalDate.now().minusYears(age));
-        }
+        if (birthDate != null) u.setBirthDate(birthDate);
         if (!blank(provider)) u.setProvider(normalize(provider));
     }
 
