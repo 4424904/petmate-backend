@@ -238,4 +238,44 @@ public class PaymentService {
         }
     }
 
+    public PaymentResponseDto getPaymentByOrderId(String orderId) {
+        log.info("OrderId로 결제 조회 : {}" , orderId);
+
+        try {
+            if (orderId.startsWith("booking_")) {
+                String[] parts = orderId.split("_");
+                if (parts.length >= 2) {
+                    try {
+                        int reservationId = Integer.parseInt(parts[1]);
+                        List<PaymentEntity> payments =
+                                paymentRepository.findByReservationId(reservationId);
+
+                        if (!payments.isEmpty()) {
+                            // 가장 최근 결제 반환
+                            PaymentEntity latestPayment = payments.get(payments.size() -
+                                    1);
+                            return PaymentResponseDto.from(latestPayment);
+                        }
+                    } catch (NumberFormatException e) {
+                        log.warn("OrderId에서 reservationId 추출 실패: {}", orderId);
+                    }
+                }
+            }
+
+            // providerTxId로 직접 검색(제발..)
+            Optional<PaymentEntity> paymentOpt =
+                    paymentRepository.findByProviderTxId(orderId);
+            if (paymentOpt.isPresent()) {
+                return PaymentResponseDto.from(paymentOpt.get());
+            }
+
+            log.warn("OrderId로 결제 정보를 찾을 수 없음: {}", orderId);
+            return null;
+
+        } catch (Exception e) {
+            log.error("OrderId로 결제 조회 중 오류: ", e);
+            throw e;
+        }
+    }
+
 }

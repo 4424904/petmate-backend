@@ -5,6 +5,7 @@ import com.petmate.domain.booking.dto.request.BookingSearchRequest;
 import com.petmate.domain.booking.dto.response.BookingResponseDto;
 import com.petmate.domain.booking.entity.BookingEntity;
 import com.petmate.domain.booking.service.BookingService;
+import com.petmate.domain.product.service.ProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +24,7 @@ import java.util.List;
 public class BookingController {
 
     private final BookingService bookingService;
+    private final ProductService productService;
 
     // 예약 생성
     @PostMapping
@@ -31,6 +33,8 @@ public class BookingController {
             ) {
         log.info("== 예약 생성 수신 ==");
         log.info("요청 데이터 {}", request);
+        log.info("날짜/시간 상세 - startDt: {}, endDt: {}", request.getStartDt(), request.getEndDt());
+        log.info("현재 서버 시간: {}", java.time.LocalDateTime.now());
 
         try {
             BookingResponseDto responseDto = bookingService.createBooking(request);
@@ -73,7 +77,7 @@ public class BookingController {
     }
 
     // 업체별 예약 목록 조회
-    @GetMapping("/company/{compayId}")
+    @GetMapping("/company/{companyId}")
     public ResponseEntity<List<BookingResponseDto>> getBookingByCompany(
             @PathVariable Integer companyId,
             @ModelAttribute BookingSearchRequest request

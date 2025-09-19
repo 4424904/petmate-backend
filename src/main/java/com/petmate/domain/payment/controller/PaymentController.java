@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.*;
 
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 
 @RestController
 @RequestMapping("/api/payment")
@@ -92,6 +94,35 @@ public class PaymentController {
     @GetMapping("/health")
     public ResponseEntity<String> healthCheck() {
         return ResponseEntity.ok("Payment service is running");
+    }
+
+    // 결제 상태 조회 API
+    @GetMapping("/status/{orderId}")
+    public ResponseEntity<?> getPaymentStatus(@PathVariable String orderId) {
+        log.info("결제 상태 조회 요청: {}", orderId);
+
+        try {
+            PaymentResponseDto payment = paymentService.getPaymentByOrderId(orderId);
+
+            Map<String, Object> response = new HashMap<>();
+            if (payment != null) {
+                response.put("status", payment.getStatus());
+                response.put("orderId", orderId);
+                response.put("amount", payment.getAmount());
+                response.put("transactionId", payment.getProviderTxId());
+            } else {
+                response.put("status", "NOT_FOUND");
+                response.put("orderId", orderId);
+            }
+
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            log.error("결제 상태 조회 실패: ", e);
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("status", "ERROR");
+            errorResponse.put("orderId", orderId);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
     }
 
     // 다날 결제 성공 콜백 처리

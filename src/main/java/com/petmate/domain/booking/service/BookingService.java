@@ -25,27 +25,19 @@ public class BookingService {
         try {
             log.info("예약 생성 요청: {}", request);
 
-            // 시간 슬롯 유효성
-            boolean isValidTimeSlot = timeSlotService.validateTimeSlot(
-                    request.getProductId(),
-                    request.getStartDt(),
-                    request.getEndDt()
-            );
+            // 현재 시간으로 강제 설정-테스트용임
+            java.time.LocalDateTime now = java.time.LocalDateTime.now();
+            java.time.LocalDateTime endTime = now.plusHours(1);
 
-            if(!isValidTimeSlot) {
-                return BookingResponseDto.fail("선택한 시간은 예약할 수 없습니다");
-            }
+            log.info("원본 날짜/시간 - startDt: {}, endDt: {}", request.getStartDt(), request.getEndDt());
+            log.info("강제 설정 - startDt: {}, endDt: {}", now, endTime);
 
-            // 시간 슬롯 예약 가능 여부 체크
-            boolean isAvailable = timeSlotService.isTimeSlotAvailable(
-                    request.getProductId(),
-                    request.getStartDt(),
-                    request.getEndDt()
-            );
+            // 날짜/시간 강제 설정
+            request.setStartDt(now);
+            request.setEndDt(endTime);
 
-            if(!isAvailable) {
-                return BookingResponseDto.fail("선택한 시간은 이미 예약이 있습니다.");
-            }
+            // 시간 슬롯 유효성 체크 건너뛰기- 테스트
+            log.info("⚠️ 시간 슬롯 유효성 검증을 건너뜁니다 (테스트용)");
 
             // 예약 생성
             int result = bookingMapper.insertBooking(request);

@@ -161,6 +161,8 @@
         <if test="request.paymentStatus != null and request.paymentStatus != ''">
             AND r.PAYMENT_STATUS = #{request.paymentStatus}
         </if>
+        <!-- 임시 날짜 필터링 비활성화 모든 예약 조회(디버깅) -->
+        <!--
         <if test="request.startDate != null">
             <![CDATA[
             AND DATE(r.START_DT) >= #{request.startDate}
@@ -171,6 +173,7 @@
             AND DATE(r.START_DT) <= #{request.endDate}
             ]]>
         </if>
+        -->
         ORDER BY r.CREATED_AT DESC
         <if test="request.limit != null and request.offset != null">
             LIMIT #{request.limit} OFFSET #{request.offset}

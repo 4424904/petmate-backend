@@ -9,6 +9,8 @@ import com.petmate.domain.product.dto.response.ProductResponseDto;
 import com.petmate.domain.product.entity.ProductEntity;
 import com.petmate.domain.product.repository.jpa.ProductRepository;
 import com.petmate.domain.product.repository.mybatis.ProductMapper;
+import com.petmate.domain.user.entity.UserEntity;
+import com.petmate.domain.user.repository.jpa.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -30,29 +32,68 @@ public class ProductService {
     private final ProductMapper productMapper;
     private final AvailabilitySlotService slotService;
     private final CompanyService companyService;
+    private final UserRepository userRepository;
 
     // 전체상품조회(사용자별)
     @Transactional(readOnly = true)
-    public List<ProductResponseDto> getAllProducts(String userId) {
-        // 사용자가 등록한 업체 ID 목록 조회
-        List<CompanyResponseDto> myCompanies = companyService.getMyCompanies(Integer.parseInt(userId));
+    public List<ProductResponseDto> getAllProducts(String userEmail) {
+        try {
+            log.info("=== getAllProducts 호출 시작 ===");
+            log.info("userEmail: {}", userEmail);
 
-        // CompanyResponseDto -> ID 가져오기
-        List<Integer> myCompanyIds = myCompanies.stream()
-                .map(CompanyResponseDto::getId)
-                .toList();
+            // 이메일로 실제 userId 조회
+            Integer actualUserId = getUserIdByEmail(userEmail);
+            log.info("실제 userId: {}", actualUserId);
 
-        // 해당 업체 상품 조회
-        List<ProductEntity> products;
-        if(myCompanyIds.isEmpty()) {
-            products = new ArrayList<>();
-        } else {
-            products = productRepository.findByCompanyIdIn(myCompanyIds);
+            // 사용자가 등록한 업체 ID 목록 조회
+            List<CompanyResponseDto> myCompanies = companyService.getMyCompanies(actualUserId);
+            log.info("조회된 업체 수: {}", myCompanies.size());
+
+            // CompanyResponseDto -> ID 가져오기
+            List<Integer> myCompanyIds = myCompanies.stream()
+                    .map(CompanyResponseDto::getId)
+                    .toList();
+            log.info("업체 ID 목록: {}", myCompanyIds);
+
+            // 해당 업체 상품 조회
+            List<ProductEntity> products;
+            if(myCompanyIds.isEmpty()) {
+                log.info("등록된 업체가 없음 - 빈 목록 반환");
+                products = new ArrayList<>();
+            } else {
+                products = productRepository.findByCompanyIdIn(myCompanyIds);
+                log.info("조회된 상품 수: {}", products.size());
+            }
+
+            List<ProductResponseDto> result = products.stream()
+                    .map(ProductResponseDto::from)
+                    .collect(Collectors.toList());
+
+            log.info("=== getAllProducts 호출 완료 ===");
+            return result;
+
+        } catch (Exception e) {
+            log.error("getAllProducts 에러:", e);
+            throw e;
         }
+    }
 
-        return products.stream()
-                .map(ProductResponseDto::from)
-                .collect(Collectors.toList());
+    // 이메일로 userId 조회 헬퍼 메서드
+    public Integer getUserIdByEmail(String email) {
+        log.info("이메일로 사용자 조회: {}", email);
+
+        try {
+            UserEntity user = userRepository.findByEmail(email)
+                    .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다: " + email));
+
+            Integer userId = user.getId().intValue();
+            log.info("사용자 조회 성공 - ID: {}, 닉네임: {}", userId, user.getNickName());
+
+            return userId;
+        } catch (Exception e) {
+            log.error("getUserIdByEmail 실패:", e);
+            throw new RuntimeException("사용자 조회 실패: " + email, e);
+        }
     }
 
     // 상품 생성
