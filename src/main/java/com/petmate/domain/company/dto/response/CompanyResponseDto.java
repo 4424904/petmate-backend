@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
 
 @Data
 @NoArgsConstructor
@@ -39,4 +41,10 @@ public class CompanyResponseDto {
     private Integer createdBy;  // 등록자(FK -> users.id)
     private LocalDateTime createdAt;    // 등록일(기본값: current_timestamp)
 
+    private String currentBusinessStatus;    // "영업중", "영업전", "휴무", "정보없음"
+    private String currentBusinessMessage;   // "18:00에 영업 종료", "09:00에 영업 시작"
+    private String todayHours;              // "09:00 - 18:00", "24시간 영업", "오늘 휴무"
+    private List<String> serviceNames;      // 파싱된 서비스명 리스트 ["돌봄", "산책"]
+    private List<Map<String, String>> weeklySchedule;   // 요일별 영업시간 스케줄
+    private Double distanceKm; // 사용자 위치로부터의 거리(km)
 }

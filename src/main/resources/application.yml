@@ -91,7 +91,8 @@ logging:
 app:
   upload:
     dir: C:/petmate
-  public-img-url: "http://localhost:8090/img/"
+  public-img-url: "${SPRING_APP_API_BASE:http://localhost:8090}/img/"
+  front-base-url: "${REACT_APP_API_BASE:http://localhost:3000}"
   encryption:
     secret-key: PetMateSecretKey123456789012
   nts:

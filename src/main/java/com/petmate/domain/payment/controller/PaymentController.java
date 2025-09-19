@@ -5,6 +5,7 @@ import com.petmate.domain.payment.dto.response.PaymentResponseDto;
 import com.petmate.domain.payment.service.PaymentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +21,9 @@ import java.util.List;
 public class PaymentController {
 
     private final PaymentService paymentService;
+
+    @Value("${app.front-base-url}")
+    private String frontendUrl;
 
     @PostMapping("/process")
     public ResponseEntity<PaymentResponseDto> processPayment(@RequestBody PaymentRequestDto request) {
@@ -109,7 +113,7 @@ public class PaymentController {
             }
 
             // 프론트엔드 성공 페이지로 리다이렉트
-            String frontendSuccessUrl = "http://localhost:3000/payment/success" +
+            String frontendSuccessUrl = frontendUrl + "/payment/success" +
                     "?orderId=" + (orderId != null ? orderId : "") +
                     "&transactionId=" + (transactionId != null ? transactionId : "") +
                     "&amount=" + (amount != null ? amount : "");
@@ -118,7 +122,7 @@ public class PaymentController {
 
         } catch (Exception e) {
             log.error("결제 성공 처리 중 오류 발생", e);
-            response.sendRedirect("http://localhost:3000/payment/fail?error=processing_error");
+            response.sendRedirect(frontendUrl + "/payment/fail?error=processing_error");
         }
     }
 
@@ -140,7 +144,7 @@ public class PaymentController {
             }
 
             // 프론트엔드 실패 페이지로 리다이렉트
-            String frontendFailUrl = "http://localhost:3000/payment/fail" +
+            String frontendFailUrl = frontendUrl + "/payment/fail" +
                     "?orderId=" + (orderId != null ? orderId : "") +
                     "&errorCode=" + (errorCode != null ? errorCode : "") +
                     "&errorMessage=" + (errorMessage != null ? errorMessage : "");
@@ -149,7 +153,7 @@ public class PaymentController {
 
         } catch (Exception e) {
             log.error("결제 실패 처리 중 오류 발생", e);
-            response.sendRedirect("http://localhost:3000/payment/fail?error=processing_error");
+            response.sendRedirect(frontendUrl + "/payment/fail?error=processing_error");
         }
     }
 

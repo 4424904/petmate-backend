@@ -1,4 +1,3 @@
-// src/main/java/com/petmate/security/JwtAuthenticationFilter.java
 package com.petmate.security;
 
 import com.petmate.security.jwt.JwtClaimAccessor;
@@ -25,8 +24,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-// src/main/java/com/petmate/security/JwtAuthenticationFilter.java
-// ... import 동일
+
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -36,7 +34,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final SessionManagementService sessionManagementService;
 
     private boolean isPublicPath(String uri) {
-        // 딱 필요한 공개 경로만 허용
         return uri.equals("/auth/signin")
                 || uri.equals("/auth/signup")
                 || uri.equals("/auth/refresh")
@@ -116,10 +113,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
 
             String email = JwtClaimAccessor.email(claims);
-            String principalValue = claims.getSubject();
-            // if (principalValue == null || principalValue.isBlank()) {
-            //     principalValue = (email != null && !email.isBlank()) ? email : null;
-            // }
+            String subject = claims.getSubject(); // 보통 userId
+
+            // ✅ 컨트롤러에서 @AuthenticationPrincipal String email 로 주입되도록 principal=이메일
+            String principalValue = (email != null && !email.isBlank()) ? email : subject;
+
             String roleCode = JwtClaimAccessor.role(claims);
             System.out.println("[JWT-DBG] principal=" + principalValue + " role=" + roleCode);
 
@@ -127,20 +125,23 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             switch (roleCode) {
                 case "2" -> authorities.add(new SimpleGrantedAuthority("ROLE_PETOWNER"));
                 case "3" -> authorities.add(new SimpleGrantedAuthority("ROLE_PETMATE"));
-                case "4" -> { authorities.add(new SimpleGrantedAuthority("ROLE_PETOWNER"));
-                    authorities.add(new SimpleGrantedAuthority("ROLE_PETMATE")); }
+                case "4" -> {
+                    authorities.add(new SimpleGrantedAuthority("ROLE_PETOWNER"));
+                    authorities.add(new SimpleGrantedAuthority("ROLE_PETMATE"));
+                }
                 case "9" -> authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
                 default -> authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
             }
 
-            var auth = new UsernamePasswordAuthenticationToken(principalValue, null, authorities);
+            UsernamePasswordAuthenticationToken auth =
+                    new UsernamePasswordAuthenticationToken(principalValue, null, authorities);
             auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
             SecurityContextHolder.getContext().setAuthentication(auth);
             System.out.println("[JWT-DBG] authenticated principal set");
 
-            // 세션 활성화 (30분 타이머 리셋)
+            // 세션 활성화는 subject(userId)로
             try {
-                Long userId = Long.parseLong(claims.getSubject());
+                Long userId = Long.parseLong(subject);
                 sessionManagementService.updateSessionActivityByUserId(userId);
                 System.out.println("[JWT-DBG] session activity updated for userId: " + userId);
             } catch (Exception ex) {

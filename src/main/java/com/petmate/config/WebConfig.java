@@ -13,12 +13,16 @@ public class WebConfig implements WebMvcConfigurer {
     @Value("${app.upload.dir:C:/petmate}")
     private String uploadRoot;
 
+    @Value("${REACT_APP_API_BASE:http://localhost:3000}")
+    private String frontendUrl;
+
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
                 .allowedOrigins(
-                        "http://localhost:3000",
+                        frontendUrl,
                         "http://127.0.0.1:3000",
+                        "http://localhost:3000",
                         "http://localhost:3001"
                 )
                 .allowedMethods("GET","POST","PUT","DELETE","PATCH","OPTIONS")

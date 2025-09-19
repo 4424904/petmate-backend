@@ -41,6 +41,8 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
     private final UserRepository userRepository;
     private final RefreshTokenRepository refreshTokenRepository;
 
+    private static final String STATUS_WITHDRAWN = "0"; // UserService.withdraw에서 사용
+
     private boolean isLocal(HttpServletRequest req) {
         String h = req.getServerName();
         return "localhost".equalsIgnoreCase(h) || "127.0.0.1".equals(h);
@@ -56,12 +58,20 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
                 .maxAge(7 * 24 * 60 * 60)
                 .build();
     }
+    private static boolean isWithdrawnStatus(String status) {
+        if (status == null) return false;
+        String s = status.trim();
+        return STATUS_WITHDRAWN.equals(s)
+                || "withdrawn".equalsIgnoreCase(s)
+                || "deleted".equalsIgnoreCase(s)
+                || "inactive".equalsIgnoreCase(s);
+    }
+    private static String enc(String v){ return URLEncoder.encode(v==null?"":v, StandardCharsets.UTF_8); }
 
     @Override
     @Transactional
-    public void onAuthenticationSuccess(
-            HttpServletRequest req, HttpServletResponse res, Authentication authentication
-    ) throws IOException {
+    public void onAuthenticationSuccess(HttpServletRequest req, HttpServletResponse res, Authentication authentication)
+            throws IOException {
 
         OAuth2User p = (OAuth2User) authentication.getPrincipal();
         Map<String, Object> a = p.getAttributes();
@@ -71,15 +81,27 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         String email    = str(a.get("email"), provider.toLowerCase(Locale.ROOT) + "_" + rawId + "@oauth.local");
         String name     = str(a.get("name"), null);
         String nickname = str(a.get("nickname"), null);
-        String picture  = str(a.get("picture"), null); // 소셜 프로필 이미지 URL 추가
+        String picture  = str(a.get("picture"), null);
 
-        Long userId = userService.applyBasicUser(
-                email, provider, name, nickname, null, null, null, picture
-        );
+        userService.applyBasicUser(email, provider, name, nickname, null, null, null, picture);
         UserEntity ue = userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalStateException("가입 직후 사용자 조회 실패: " + email));
 
-        // access 토큰
+        // ✅ 탈퇴/비활성: 복구 페이지로 리다이렉트 (토큰/쿠키 발급 금지)
+        if (isWithdrawnStatus(ue.getStatus())) {
+            String next = req.getParameter("next");
+            String path = (next != null && next.startsWith("/")) ? next : "/home";
+            String url = frontBaseUrl
+                    + "/oauth2/restore"
+                    + "?email="    + enc(email)
+                    + "&provider=" + enc(provider)
+                    + "&next="     + enc(path);
+            log.warn("▶ 탈퇴 계정 복구 유도: email={}, status={}, redirect={}", email, ue.getStatus(), url);
+            res.sendRedirect(url);
+            return;
+        }
+
+        // 정상 로그인: access/refresh 발급
         String access = jwtUtil.issue(
                 String.valueOf(ue.getId()),
                 jwtUtil.accessTtlMs(),
@@ -91,56 +113,46 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
                         ue.getGender(), ue.getPhone()
                 )
         );
-        // refresh 토큰 + 쿠키
         String refresh = jwtUtil.issue(
                 String.valueOf(ue.getId()),
                 jwtUtil.refreshTtlMs(),
                 JwtClaimAccessor.refreshClaims()
         );
-
-        // RefreshToken DB 저장
         saveRefreshToken(ue, refresh);
 
         boolean local = isLocal(req);
         ResponseCookie cookie = buildRefreshCookie(refresh, local);
         res.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
-        log.info("[OAUTH] success email={}, local={}, setCookie={}", email, local, cookie.toString());
 
-        // 프론트로 accessToken 전달
         String next = req.getParameter("next");
         String path = (next != null && next.startsWith("/")) ? next : "/home";
         String url = frontBaseUrl
                 + "/oauth2/redirect"
-                + "?accessToken=" + URLEncoder.encode(access, StandardCharsets.UTF_8)
-                + "&next="        + URLEncoder.encode(path,   StandardCharsets.UTF_8);
+                + "?accessToken=" + enc(access)
+                + "&next="        + enc(path);
         res.sendRedirect(url);
     }
 
-    private static String str(Object v, String def) {
-        if (v == null) return def;
-        String s = String.valueOf(v);
-        return (s.isBlank() || "null".equalsIgnoreCase(s)) ? def : s;
-    }
-
-    /** RefreshToken 저장 */
     private void saveRefreshToken(UserEntity user, String token) {
-        // 기존 토큰 개수 제한 (예: 최대 5개)
         long tokenCount = refreshTokenRepository.countByUser(user);
         if (tokenCount >= 5) {
-            // 가장 오래된 토큰 삭제
             var oldTokens = refreshTokenRepository.findByUserOrderByCreatedAtDesc(user);
             if (!oldTokens.isEmpty()) {
                 refreshTokenRepository.delete(oldTokens.get(oldTokens.size() - 1));
             }
         }
-
         LocalDateTime expiresAt = LocalDateTime.now().plusSeconds(jwtUtil.refreshTtlMs() / 1000);
         RefreshTokenEntity tokenEntity = RefreshTokenEntity.builder()
                 .user(user)
                 .token(token)
                 .expiresAt(expiresAt)
                 .build();
-
         refreshTokenRepository.save(tokenEntity);
+    }
+
+    private static String str(Object v, String def) {
+        if (v == null) return def;
+        String s = String.valueOf(v).trim();
+        return (s.isBlank() || "null".equalsIgnoreCase(s)) ? def : s;
     }
 }

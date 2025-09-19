@@ -43,27 +43,16 @@ public class UserFileService {
 
         log.info("프로필 이미지 업로드 시작 - userId: {}, 기존 이미지: {}", user.getId(), user.getProfileImage());
 
-        // 기존 UUID가 있으면 재사용, 없으면 새로 생성
-        String existingUuid = user.getProfileImage();
-        String uuid;
+        // ✅ 항상 새 UUID 생성 (캐시 무효 보장)
+        String ext = FilenameUtils.getExtension(file.getOriginalFilename());
+        if (ext == null || ext.isBlank()) ext = "png";
+        ext = ext.toLowerCase();
+        String newUuid = java.util.UUID.randomUUID().toString() + "." + ext;
 
-        if (existingUuid != null && !existingUuid.isBlank() &&
-                !existingUuid.equals("profiles/default.png") && !existingUuid.equals("default.png")) {
-            // 기존 UUID 재사용
-            uuid = existingUuid;
-            log.info("기존 UUID 재사용: {}", uuid);
-        } else {
-            // 새 UUID 생성
-            String ext = FilenameUtils.getExtension(file.getOriginalFilename());
-            if (ext == null || ext.isBlank()) ext = "png";
-            ext = ext.toLowerCase();
-            uuid = UUID.randomUUID().toString() + "." + ext;
-            log.info("새 UUID 생성: {}", uuid);
-        }
-
-        Path savePath = Paths.get(uploadRoot, String.valueOf(user.getId()), "profile", uuid);
+        // 기존 파일 경로 기억해서 저장 후 삭제
+        String oldUuid = user.getProfileImage();
+        Path savePath = Paths.get(uploadRoot, String.valueOf(user.getId()), "profile", newUuid);
         try {
-            log.info("프로필 이미지 저장 시작: {}", savePath);
             Files.createDirectories(savePath.getParent());
             file.transferTo(savePath.toFile());
             log.info("프로필 이미지 저장 완료: {}", savePath);
@@ -72,13 +61,27 @@ public class UserFileService {
             throw new RuntimeException("프로필 저장 실패", e);
         }
 
-        // ProfileImageMap 업데이트 (기존 UUID 유지)
-        updateImageMapWithExistingUuid(user.getEmail(), uuid, savePath.toString());
+        // ✅ 매핑을 새 UUID로 업데이트
+        updateImageMapWithExistingUuid(user.getEmail(), newUuid, savePath.toString());
 
-        // user 테이블의 profile_image도 동일한 UUID로 설정
-        user.setProfileImage(uuid);
-        return uuid;
+        // ✅ user.profile_image 갱신
+        user.setProfileImage(newUuid);
+
+        // (선택) 기존 파일 삭제
+        if (oldUuid != null && !oldUuid.isBlank() && !oldUuid.equals("default.png")
+                && !oldUuid.equals("profiles/default.png") && !oldUuid.equals(newUuid)) {
+            try {
+                Path oldPath = Paths.get(uploadRoot, String.valueOf(user.getId()), "profile", oldUuid);
+                Files.deleteIfExists(oldPath);
+                log.info("이전 프로필 파일 삭제: {}", oldPath);
+            } catch (Exception ex) {
+                log.warn("이전 프로필 파일 삭제 실패: {}", oldUuid, ex);
+            }
+        }
+
+        return newUuid;
     }
+
 
     @Transactional
     public String storeProfileFromUrl(UserEntity user, String imageUrl) {

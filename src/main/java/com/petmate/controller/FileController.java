@@ -15,7 +15,6 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/files")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:3000")
 public class FileController {
     
     private final ImageService imageService;

@@ -46,12 +46,25 @@ public class AddressController {
 
     // 주소 목록 조회
     @GetMapping
-    public ResponseEntity<List<AddressResponseDto>> getAddresses(Authentication authentication) {
+    public ResponseEntity<List<AddressResponseDto>> getAddresses(
+            Authentication authentication,
+            @RequestParam(required = false) Double userLat,
+            @RequestParam(required = false) Double userLng
+    ) {
         String userId = getUserId(authentication);
-        log.info("사용자 주소 목록 조회 요청 - userId: {}", userId);
+        log.info("사용자 주소 목록 조회 요청 - userId: {}, userLat: {}, userLng: {}", userId, userLat, userLng);
 
-        List<AddressResponseDto> addresses = addressService.getUserAddresses(userId);
-        log.info("사용자 주소 목록 조회 완료 - userId: {}, 주소 개수: {}", userId, addresses.size());
+        List<AddressResponseDto> addresses;
+
+        if(userLat != null && userLng != null) {
+
+            addresses = addressService.getAddressesWithDistance(Integer.valueOf(userId), userLat, userLng);
+            log.info("거리 계산 포함 주소 목록 조회 완료 - userId: {}, 주소 개수: {}", userId, addresses.size());
+
+        } else {
+            addresses = addressService.getUserAddresses(userId);
+            log.info("기본 주소 목록 조회 완료 - userId: {}, 주소 개수: {}", userId, addresses.size());
+        }
 
         return ResponseEntity.ok(addresses);
     }
@@ -130,4 +143,6 @@ public class AddressController {
 
         return ResponseEntity.ok(addresses);
     }
+
+
 }

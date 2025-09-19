@@ -13,7 +13,7 @@ public class PetmateApplyRequest {
     private String nickName;        // 닉네임  ← 추가
     private String phone;           // 휴대폰   ← 추가
     private String gender;          // 성별
-    private Integer age;            // 나이
+    private String birthDate;            // 나이
     private String provider;        // 소셜 제공자
 
     private MultipartFile profile;          // 프로필 단일

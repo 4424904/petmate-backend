@@ -8,6 +8,9 @@ import com.petmate.domain.company.dto.response.BusinessInfoResponseDto;
 import com.petmate.domain.company.dto.response.CompanyResponseDto;
 import com.petmate.domain.company.entity.CompanyEntity;
 import com.petmate.domain.company.repository.CompanyRepository;
+import com.petmate.domain.company.util.BusinessHoursCalculator;
+import com.petmate.domain.company.util.ServiceParser;
+import com.petmate.common.util.DistanceCalculatorUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -240,6 +243,14 @@ public class CompanyService {
      * Entity → ResponseDto 매핑 (공통코드명 포함)
      */
     private CompanyResponseDto mapToResponseDto(CompanyEntity entity) {
+
+        // 계산 로직 실행
+        Map<String, String> businessStatus = BusinessHoursCalculator.calculateCurrentBusinessStatus(entity.getOperatingHours());
+        String todayHours = BusinessHoursCalculator.calculateTodayHours(entity.getOperatingHours());
+        List<String> serviceNames = ServiceParser.parseServices(entity.getServices(), entity.getRepService());
+        List<Map<String, String>> weeklySchedule = BusinessHoursCalculator.calculateWeeklySchedule(entity.getOperatingHours());
+
+
         return CompanyResponseDto.builder()
                 .id(entity.getId())
                 .type(entity.getType())
@@ -261,6 +272,12 @@ public class CompanyService {
                 .createdBy(entity.getCreatedBy())
                 .createdAt(entity.getCreatedAt())
                 .descText(entity.getDescText())
+                // 계산된 필드 추가
+                .currentBusinessStatus(businessStatus.get("status"))
+                .currentBusinessMessage(businessStatus.get("message"))
+                .todayHours(todayHours)
+                .serviceNames(serviceNames)
+                .weeklySchedule(weeklySchedule)
                 .build();
     }
 
@@ -338,46 +355,32 @@ public class CompanyService {
 
         return approvedCompanies.stream()
                 .filter(company -> company.getLatitude() != null && company.getLongitude() != null) // 좌표 있는 업체만 조회
-                .filter(company -> {
-                    // 하버사인 거리 계산
-                    double distance = calculateDistance(
+                .map(company -> {
+                    // 거리 계산
+                    double distance = DistanceCalculatorUtil.calculateDistance(
                             userLat,
                             userLng,
                             company.getLatitude().doubleValue(),
                             company.getLongitude().doubleValue()
                     );
 
-                    log.info("업체 '{}': 좌표({}, {}), 거리={}km, 반경내={}",
+                    // dto 생성 후 거리 설정
+                    CompanyResponseDto companyResponseDto = mapToResponseDto(company);
+                    companyResponseDto.setDistanceKm(distance);
+
+                    log.info("업체 '{}': 좌표({},{}), 거리={}km",
                             company.getName(),
                             company.getLatitude(),
                             company.getLongitude(),
-                            distance,
-                            distance <= radiusKm);
+                            distance);
 
-                    return distance <= radiusKm;
+                    return companyResponseDto;
                 })
-                .filter(company -> serviceType == null || serviceType.isEmpty() || company.getRepService().equals(serviceType))
-                .map(this::mapToResponseDto)
+                .filter(dto -> dto.getDistanceKm() <= radiusKm)
+                .filter(dto -> serviceType == null || serviceType.isEmpty() ||
+                        dto.getRepService().equals(serviceType))
+                .sorted((a, b) -> Double.compare(a.getDistanceKm(), b.getDistanceKm())) // 거리순 정렬
                 .toList();
-
-    }
-
-
-    private double calculateDistance(double lat1, double lng1, double lat2, double lng2) {
-
-        final int R = 6371; // 지구 반지름
-
-        double latDistance = Math.toRadians(lat2 - lat1);
-        double lngDistance = Math.toRadians(lng2 - lng1);
-
-        double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
-                + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
-                * Math.sin(lngDistance / 2) * Math.sin(lngDistance / 2);
-
-        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-
-        return R*c; // 거리(km)
-
     }
 
 }
