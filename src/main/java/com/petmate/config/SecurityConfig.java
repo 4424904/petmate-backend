@@ -73,6 +73,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/user/restore").permitAll()
                         // Public API
                         .requestMatchers(HttpMethod.GET, "/pet/breeds", "/pet/breeds/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/company/nearby").permitAll()
 
                         // Upload (need auth)
                         .requestMatchers(HttpMethod.POST, "/upload/pet").authenticated()

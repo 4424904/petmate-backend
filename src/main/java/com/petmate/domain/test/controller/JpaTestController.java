@@ -24,7 +24,6 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/api/test/jpa")
 @RequiredArgsConstructor
 @Slf4j
-@CrossOrigin(origins = "http://localhost:3000")
 public class JpaTestController {
 
     private final JpaTestService jpaTestService;
