@@ -1,0 +1,14 @@
+logs/
+*.log
+.env
+.env
+.env
+/build/
+/.gradle/
+/.idea/
+logs/*.log
+.env
+/build/
+/.gradle/
+/.idea/
+logs/*.log
