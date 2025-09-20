@@ -54,4 +54,9 @@ public interface BookingMapper {
             @Param("paymentStatus") String paymentStatus
     );
 
+    // 디버깅용: 전체 예약 데이터 조회 (WHERE 조건 없음)
+    List<BookingResponseDto> selectAllBookingsForDebug(
+            @Param("request") BookingSearchRequest request
+    );
+
 }

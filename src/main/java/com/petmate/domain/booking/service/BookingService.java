@@ -36,8 +36,6 @@ public class BookingService {
             request.setStartDt(now);
             request.setEndDt(endTime);
 
-            // 시간 슬롯 유효성 체크 건너뛰기- 테스트
-            log.info("⚠️ 시간 슬롯 유효성 검증을 건너뜁니다 (테스트용)");
 
             // 예약 생성
             int result = bookingMapper.insertBooking(request);
@@ -77,7 +75,17 @@ public class BookingService {
 
     public List<BookingResponseDto> getBookingByCompany(Integer companyId, BookingSearchRequest request) {
         try {
-            return bookingMapper.selectBookingByCompany(companyId, request);
+            log.info("=== getBookingByCompany 호출 ===");
+            log.info("companyId: {}, request: {}", companyId, request);
+
+            List<BookingResponseDto> result = bookingMapper.selectBookingByCompany(companyId, request);
+            log.info("조회된 예약 수: {}", result.size());
+
+            if (!result.isEmpty()) {
+                log.info("첫 번째 예약 정보: {}", result.get(0));
+            }
+
+            return result;
         } catch (Exception e) {
             log.error("업체 예약 목록 조회 중 오류 발생 : companyId={}", companyId, e);
             return List.of();

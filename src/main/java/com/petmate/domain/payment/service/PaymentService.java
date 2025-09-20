@@ -6,6 +6,7 @@ import com.petmate.domain.payment.entity.GroupCodeEntity;
 import com.petmate.domain.payment.entity.PaymentEntity;
 import com.petmate.domain.payment.repository.jpa.CommonCodeRepository;
 import com.petmate.domain.payment.repository.jpa.PaymentRepository;
+import com.petmate.domain.booking.repository.mybatis.BookingMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,7 @@ public class PaymentService {
 
     private final PaymentRepository paymentRepository;
     private final CommonCodeRepository commonCodeRepository;
+    private final BookingMapper bookingMapper;
 
     public PaymentResponseDto processPayment(PaymentRequestDto reqDto) {
         try {
@@ -52,12 +54,18 @@ public class PaymentService {
 
             log.info("저장 완료 - 결제 ID: {}, 상태: {}", savedPayment.getId(), savedPayment.getStatus());
 
+            // 🔥 결제 성공 시 reservation 테이블의 payment_status도 업데이트
+            if ("1".equals(savedPayment.getStatus())) {
+                log.info("결제 성공 - reservation ID {}의 payment_status를 1로 업데이트", reqDto.getReservationId());
+                bookingMapper.updatePaymentStatus(reqDto.getReservationId(), "1");
+            }
+
             String statusDesc = getStatusDescription(savedPayment.getStatus());
             String providerDesc = getProviderDescription(savedPayment.getProvider());
 
             PaymentResponseDto response = PaymentResponseDto.success(savedPayment, statusDesc, providerDesc);
             log.info("응답 데이터: {}", response);
-            
+
             return response;
         } catch (Exception e) {
             log.error("=== 결제 처리 실패 ===", e);
@@ -189,7 +197,11 @@ public class PaymentService {
                 payment.setRawJson(updatedJson);
                 
                 paymentRepository.save(payment);
-                
+
+                // reservation 테이블의 payment_status도 업데이트
+                log.info("결제 성공 - reservation ID {}의 payment_status를 1로 업데이트", payment.getReservationId());
+                bookingMapper.updatePaymentStatus(payment.getReservationId(), "1");
+
                 log.info("결제 성공 처리 완료 - Payment ID: {}", payment.getId());
             } else {
                 log.warn("결제 정보를 찾을 수 없음 - orderId: {}", orderId);

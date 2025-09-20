@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
@@ -25,6 +26,7 @@ public class BookingResponseDto {
     private String statusName;
     private LocalDateTime startDt;
     private LocalDateTime endDt;
+    private LocalDate reservationDate;
     private Integer petCount;
     private String specialRequest;
     private Integer totalPrice;
