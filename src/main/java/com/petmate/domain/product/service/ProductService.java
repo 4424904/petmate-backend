@@ -36,13 +36,13 @@ public class ProductService {
 
     // 전체상품조회(사용자별)
     @Transactional(readOnly = true)
-    public List<ProductResponseDto> getAllProducts(String userEmail) {
+    public List<ProductResponseDto> getAllProducts(String userId) {
         try {
             log.info("=== getAllProducts 호출 시작 ===");
-            log.info("userEmail: {}", userEmail);
+            log.info("userId: {}", userId);
 
-            // 이메일로 실제 userId 조회
-            Integer actualUserId = getUserIdByEmail(userEmail);
+            // userId를 직접 변환
+            Integer actualUserId = Integer.parseInt(userId);
             log.info("실제 userId: {}", actualUserId);
 
             // 사용자가 등록한 업체 ID 목록 조회

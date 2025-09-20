@@ -40,10 +40,10 @@ public class ProductController {
     // 내 업체 목록 조회(상품 등록시 사용)
     @GetMapping("/companies")
     public ResponseEntity<List<Map<String, Object>>> getMyCompaniesForProduct(
-            @AuthenticationPrincipal String userEmail) {
+            @AuthenticationPrincipal String userId) {
 
-        log.info("업체 목록 조회 요청 - userEmail: {}", userEmail);
-        Integer actualUserId = productService.getUserIdByEmail(userEmail);
+        log.info("업체 목록 조회 요청 - userEmail: {}", userId);
+        Integer actualUserId = Integer.parseInt(userId);
         log.info("실제 userId: {}", actualUserId);
 
         List<CompanyResponseDto> companies = companyService.getMyCompanies(actualUserId);
