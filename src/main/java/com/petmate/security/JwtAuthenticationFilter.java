@@ -114,9 +114,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             String email = JwtClaimAccessor.email(claims);
             String subject = claims.getSubject(); // 보통 userId
-
-            // ✅ 컨트롤러에서 @AuthenticationPrincipal String email 로 주입되도록 principal=이메일
-            String principalValue = (email != null && !email.isBlank()) ? email : subject;
+            
+            String principalValue = claims.getSubject();
+            // if (principalValue == null || principalValue.isBlank()) {
+            //     principalValue = (email != null && !email.isBlank()) ? email : null;
+            // }
 
             String roleCode = JwtClaimAccessor.role(claims);
             System.out.println("[JWT-DBG] principal=" + principalValue + " role=" + roleCode);
