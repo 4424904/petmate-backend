@@ -91,7 +91,7 @@ app:
   upload:
     dir: ${UPLOAD_ROOT_DIR:C:/petmate}
   public-img-url: "${REACT_APP_SPRING_API_BASE:http://localhost:8090}/img/"
-  front-base-url: "${REACT_APP_SPRING_API_BASE:http://localhost:3000}"
+  front-base-url: "${REACT_APP_FRONT_BASE_URL:http://petmate.p-e.kr}"
   encryption:
     secret-key: PetMateSecretKey123456789012
   nts:
