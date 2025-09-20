@@ -13,7 +13,7 @@ public class WebConfig implements WebMvcConfigurer {
     @Value("${app.upload.dir:C:/petmate}")
     private String uploadRoot;
 
-    @Value("${REACT_APP_API_BASE:http://localhost:3000}")
+    @Value("${REACT_APP_SPRING_API_BASE:http://localhost:3000}")
     private String frontendUrl;
 
     @Override
