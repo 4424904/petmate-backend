@@ -10,10 +10,9 @@ spring:
     allow-bean-definition-overriding: true
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-#    url: jdbc:mysql://localhost:3306/DB_PETMATE?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
-    url: jdbc:mysql://3.37.65.250:3306/DB_PETMATE?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
-    username: root
-    password: 1234
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
   jpa:
     hibernate:
       ddl-auto: update
@@ -33,20 +32,20 @@ spring:
             client-id: ${GOOGLE_CLIENT_ID}
             client-secret: ${GOOGLE_CLIENT_SECRET}
             scope: [profile, email]
-            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+            redirect-uri: "${REACT_APP_SPRING_API_BASE:http://localhost:8090}/login/oauth2/code/{registrationId}"
           kakao:
             client-id: ${KAKAO_CLIENT_ID}
             client-secret: ${KAKAO_CLIENT_SECRET}
             client-authentication-method: client_secret_post
             authorization-grant-type: authorization_code
-            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+            redirect-uri: "${REACT_APP_SPRING_API_BASE:http://localhost:8090}/login/oauth2/code/{registrationId}"
             scope: [account_email, profile_nickname, profile_image]
           naver:
             client-id: ${NAVER_CLIENT_ID}
             client-secret: ${NAVER_CLIENT_SECRET}
             client-name: NAVER
             authorization-grant-type: authorization_code
-            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+            redirect-uri: "${REACT_APP_SPRING_API_BASE:http://localhost:8090}/login/oauth2/code/{registrationId}"
             scope: [name, email, nickname]
         provider:
           kakao:
@@ -66,10 +65,10 @@ mybatis:
   type-aliases-package: com.petmate.dto
 
 jwt:
-  secret: djdjdjeueueushshshznmqasdklheqweqwasdasxzc
-  issuer: petmate
-  expiration: 3600000         # 1시간 (60분 * 60초 * 1000ms)
-  refresh-expiration: 2592000000  # 30일 (30일 * 24시간 * 60분 * 60초 * 1000ms)
+  secret: ${JWT_SECRET}
+  issuer: ${JWT_ISSUER}
+  expiration: ${JWT_EXPIRATION}
+  refresh-expiration: ${JWT_REFRESH_EXPIRATION}
 
 logging:
   level:
@@ -90,9 +89,9 @@ logging:
 
 app:
   upload:
-    dir: C:/petmate
-  public-img-url: "${SPRING_APP_API_BASE:http://localhost:8090}/img/"
-  front-base-url: "${REACT_APP_FRONT_BASE_URL:http://localhost:3000}"
+    dir: ${UPLOAD_ROOT_DIR:C:/petmate}
+  public-img-url: "${REACT_APP_SPRING_API_BASE:http://localhost:8090}/img/"
+  front-base-url: "${REACT_APP_SPRING_API_BASE:http://localhost:3000}"
   encryption:
     secret-key: PetMateSecretKey123456789012
   nts:
