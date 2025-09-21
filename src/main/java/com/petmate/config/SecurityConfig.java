@@ -74,7 +74,8 @@ public class SecurityConfig {
                         // Public API
                         .requestMatchers(HttpMethod.GET, "/pet/breeds", "/pet/breeds/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/company/nearby").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/company/*/service-types").permitAll()  // 업체별 서비스 유형 조회
+                        .requestMatchers(HttpMethod.GET, "/api/company/*/service-types").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/company/public/*").permitAll()  // 업체별 서비스 유형 조회
                         .requestMatchers(HttpMethod.GET, "/api/companies").permitAll()  // 업체 목록 조회
                         .requestMatchers(HttpMethod.GET, "/api/products/companies").permitAll()  // 상품용 업체 목록
                         .requestMatchers(HttpMethod.GET, "/api/service-categories").permitAll()  // 서비스 카테고리 조회
@@ -85,6 +86,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/payment/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/payment/**").permitAll()
                         .requestMatchers("/api/payment/danal/**").permitAll()
+                        .requestMatchers(HttpMethod.DELETE, "/api/booking/payment-failed/*").permitAll()
 
                         // 파일 업로드(인증 필요)
                         // Upload (need auth)

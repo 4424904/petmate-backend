@@ -195,4 +195,21 @@ public class CompanyController {
         return ResponseEntity.ok(serviceTypes);
     }
 
+    // 공개 업체 정보 조회 (인증 불필요, 예약에서 사용)
+    @GetMapping("/public/{id}")
+    public ResponseEntity<CompanyResponseDto> getCompanyByIdPublic(@PathVariable Integer id) {
+        log.info("공개 업체 정보 조회 요청 - companyId: {}", id);
+
+        try {
+            CompanyResponseDto company = companyService.getCompanyByIdPublic(id);
+            return ResponseEntity.ok(company);
+        } catch (IllegalArgumentException e) {
+            log.error("업체 조회 실패: {}", e.getMessage());
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            log.error("업체 조회 중 오류 발생", e);
+            return ResponseEntity.status(500).build();
+        }
+    }
+
 }

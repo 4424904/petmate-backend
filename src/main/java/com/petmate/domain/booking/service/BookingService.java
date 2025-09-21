@@ -133,4 +133,25 @@ public class BookingService {
         return updateBookingStatus(id, "1"); // 1 = 예약확정
     }
 
+    public BookingResponseDto rejectReservation(Integer id) {
+        return updateBookingStatus(id, "2"); // 2 = 예약거절
+    }
+
+    public BookingResponseDto deleteReservation(Integer id) {
+        try {
+            // 결제 실패/취소로 인한 예약 삭제는 실제 DB에서 삭제하지 않고 상태를 취소로 변경
+            int result = bookingMapper.updateBookingStatus(id, "3"); // 3 = 예약취소
+
+            if (result > 0) {
+                log.info("결제 실패로 인한 예약 취소 성공: reservationId = {}", id);
+                return BookingResponseDto.success("예약이 취소되었습니다.");
+            } else {
+                return BookingResponseDto.fail("예약 취소에 실패했습니다.");
+            }
+        } catch (Exception e) {
+            log.error("예약 취소 중 오류 발생: ID = {}", id, e);
+            return BookingResponseDto.fail("예약 취소 중 오류가 발생했습니다.");
+        }
+    }
+
 }

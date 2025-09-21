@@ -16,27 +16,47 @@ public class OperatingHoursParser {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    public OperatingHours parseOperatingHours(String operatingHours, LocalDate date) {
+    public OperatingHours parseOperatingHours(String operatingHoursJson, LocalDate date) {
         try {
-            if(operatingHours == null || operatingHours.trim().isEmpty()) {
+            if(operatingHoursJson == null || operatingHoursJson.trim().isEmpty()) {
                 return getDefaultOperatingHours();
             }
 
-            JsonNode root = objectMapper.readTree(operatingHours);
+            JsonNode root = objectMapper.readTree(operatingHoursJson);
+
+            // 24시간 영업 체크
+            if (root.has("allDay") && root.get("allDay").asBoolean()) {
+                return OperatingHours.builder()
+                        .startTime(LocalTime.of(0, 0))
+                        .endTime(LocalTime.of(23, 59))
+                        .closed(false)
+                        .build();
+            }
+
+            // schedule 구조 체크
+            if (!root.has("schedule")) {
+                return getDefaultOperatingHours();
+            }
+
+            JsonNode schedule = root.get("schedule");
             String dayKey = getDayKey(date.getDayOfWeek());
-            JsonNode dayNode = root.get(dayKey);
+            JsonNode dayNode = schedule.get(dayKey);
 
             if(dayNode == null) {
                 return getDefaultOperatingHours();
             }
 
+            // 휴무일 체크
             boolean closed = dayNode.has("closed") && dayNode.get("closed").asBoolean(false);
             if(closed) {
-                return OperatingHours.builder().build();
+                return OperatingHours.builder()
+                        .closed(true)
+                        .build();
             }
 
-            String startTimeStr = dayNode.has("start") ? dayNode.get("start").asText() : "09:00";
-            String endTimeStr = dayNode.has("end") ? dayNode.get("end").asText() : "18:00";
+            // 시간 파싱 (open/close 키 사용)
+            String startTimeStr = dayNode.has("open") ? dayNode.get("open").asText() : "09:00";
+            String endTimeStr = dayNode.has("close") ? dayNode.get("close").asText() : "18:00";
 
             LocalTime startTime = LocalTime.parse(startTimeStr);
             LocalTime endTime = LocalTime.parse(endTimeStr);
@@ -48,7 +68,7 @@ public class OperatingHoursParser {
                     .build();
 
         } catch (Exception e) {
-            log.error("운영시간 파싱 오류 {}", operatingHours ,e);
+            log.error("운영시간 파싱 오류 {}", operatingHoursJson, e);
             return getDefaultOperatingHours();
         }
     }
@@ -64,21 +84,21 @@ public class OperatingHoursParser {
     private String getDayKey(DayOfWeek dayOfWeek) {
         switch (dayOfWeek) {
             case MONDAY:
-                return "monday";
+                return "월요일";
             case TUESDAY:
-                return "tuesday";
+                return "화요일";
             case WEDNESDAY:
-                return "wednesday";
+                return "수요일";
             case THURSDAY:
-                return "thursday";
+                return "목요일";
             case FRIDAY:
-                return "friday";
+                return "금요일";
             case SATURDAY:
-                return "saturday";
+                return "토요일";
             case SUNDAY:
-                return "sunday";
+                return "일요일";
             default:
-                return "monday";
+                return "월요일";
         }
     }
 

@@ -82,6 +82,8 @@
         r.START_DT as startDt,
         r.END_DT as endDt,
         DATE(r.START_DT) as reservationDate,
+        TIME(r.START_DT) as startTime,
+        TIME(r.END_DT) as endTime,
         r.PET_COUNT as petCount,
         r.TOTAL_PRICE as totalPrice,
         r.PAYMENT_STATUS as paymentStatus,
