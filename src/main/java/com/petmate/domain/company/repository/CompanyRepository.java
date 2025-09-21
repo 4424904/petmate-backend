@@ -18,8 +18,8 @@ public interface CompanyRepository extends JpaRepository<CompanyEntity, Integer>
     // 사업자등록번호 중복 체크
     boolean existsByBizRegNo(String bizRegNo);
 
-    // 개인 업체 중복 체크 (업체명 + 사용자ID 조합)
-    boolean existsByTypeAndNameAndCreatedBy(String type, String name, Integer createdBy);
+    // 개인 업체 등록 여부 확인 (createdBy + type 기반)
+    boolean existsByCreatedByAndType(Integer createdBy, String type);
 
     // 특정 상태의 업체 목록을 등록일 내림차순으로 조회(관리자용)
     List<CompanyEntity> findByStatusOrderByCreatedAtDesc(String status);

@@ -117,74 +117,6 @@ public class CompanyController {
     }
 
 
-    // 개인 신원 인증 (JWT 토큰의 이름 vs 입력한 이름)
-    @PostMapping("/verify-personal")
-    public ResponseEntity<Map<String, Object>> verifyPersonalIdentity(
-            @RequestBody Map<String, String> request,
-            HttpServletRequest httpRequest) {
-
-        log.info("개인 신원 인증 요청: {}", request);
-
-        String personalName = request.get("personalName");
-        if (personalName == null || personalName.trim().isEmpty()) {
-            return ResponseEntity.badRequest()
-                .body(Map.of(
-                    "success", false,
-                    "message", "개인 이름을 입력해주세요"
-                ));
-        }
-
-        try {
-            // Authorization 헤더에서 JWT 토큰 추출
-            String authHeader = httpRequest.getHeader("Authorization");
-            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-                return ResponseEntity.badRequest()
-                    .body(Map.of(
-                        "success", false,
-                        "message", "로그인이 필요합니다"
-                    ));
-            }
-
-            String token = authHeader.substring(7);
-
-            // JWT 토큰에서 이름 추출
-            var claims = jwtUtil.parse(token);
-            String jwtName = JwtClaimAccessor.name(claims);
-
-            if (jwtName == null || jwtName.trim().isEmpty()) {
-                return ResponseEntity.badRequest()
-                    .body(Map.of(
-                        "success", false,
-                        "message", "토큰에서 이름 정보를 찾을 수 없습니다"
-                    ));
-            }
-
-            // 이름 비교 (정규화 후)
-            String normalizedJwtName = jwtName.trim().replaceAll("\\s+", "").toLowerCase();
-            String normalizedInputName = personalName.trim().replaceAll("\\s+", "").toLowerCase();
-
-            boolean isVerified = normalizedJwtName.equals(normalizedInputName);
-
-            log.info("개인 신원 인증 결과: {} (JWT: '{}' vs 입력: '{}')",
-                isVerified ? "성공" : "실패", jwtName, personalName);
-
-            return ResponseEntity.ok(Map.of(
-                "success", isVerified,
-                "message", isVerified ? "신원 인증이 완료되었습니다" : "입력하신 이름이 등록된 정보와 일치하지 않습니다",
-                "jwtName", jwtName,
-                "inputName", personalName
-            ));
-
-        } catch (Exception e) {
-            log.error("개인 신원 인증 중 오류 발생: ", e);
-            return ResponseEntity.badRequest()
-                .body(Map.of(
-                    "success", false,
-                    "message", "인증 처리 중 오류가 발생했습니다: " + e.getMessage()
-                ));
-        }
-    }
-
     // 사업자등록번호 중복 체크 (DB 기반)
     @PostMapping("/get-business-info")
     public ResponseEntity<BusinessInfoResponseDto> getBusinessInfo(
@@ -215,6 +147,31 @@ public class CompanyController {
 
         BusinessInfoResponseDto result = companyService.getBusinessInfo(cleanBusinessNumber);
         return ResponseEntity.ok(result);
+    }
+
+    // 개인 업체 등록 여부 확인 (createdBy 기반)
+    @GetMapping("/check-personal-exists")
+    public ResponseEntity<Map<String, Object>> checkPersonalCompanyExists(
+            @AuthenticationPrincipal String userId) {
+
+        log.info("개인 업체 중복 확인 요청 - userId: {}", userId);
+
+        try {
+            boolean exists = companyService.checkPersonalCompanyExists(Integer.parseInt(userId));
+
+            return ResponseEntity.ok(Map.of(
+                "exists", exists,
+                "message", exists ? "이미 등록된 개인 업체가 있습니다." : "개인 업체 등록이 가능합니다."
+            ));
+
+        } catch (Exception e) {
+            log.error("개인 업체 중복 확인 중 오류 발생: ", e);
+            return ResponseEntity.status(500)
+                .body(Map.of(
+                    "exists", true,
+                    "message", "확인 중 오류가 발생했습니다: " + e.getMessage()
+                ));
+        }
     }
 
     @GetMapping("/nearby")

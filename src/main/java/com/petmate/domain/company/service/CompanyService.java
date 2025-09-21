@@ -53,13 +53,11 @@ public class CompanyService {
                 ? dto.getRepresentativeName() // 개인: 대표자명 = 개인명
                 : dto.getCorporationName();
 
-        // 개인 업체 중복 체크 (한 사람당 하나의 개인 업체만 등록 가능)
-        if ("P".equals(type) && companyName != null) {
-            boolean existsPersonalCompany = companyRepository.existsByTypeAndNameAndCreatedBy(
-                    "P", companyName, userId
-            );
+        // 개인 업체 중복 체크 (한 사용자당 하나의 개인 업체만 등록 가능)
+        if ("P".equals(type)) {
+            boolean existsPersonalCompany = companyRepository.existsByCreatedByAndType(userId, "P");
             if (existsPersonalCompany) {
-                throw new IllegalArgumentException("이미 해당 이름으로 등록된 개인 업체가 있습니다.");
+                throw new IllegalArgumentException("이미 등록된 개인 업체가 있습니다. 한 사용자는 하나의 개인 업체만 등록할 수 있습니다.");
             }
         }
         String repServiceCode = findServiceCodeByName(dto.getRepService());
@@ -381,6 +379,17 @@ public class CompanyService {
                         dto.getRepService().equals(serviceType))
                 .sorted((a, b) -> Double.compare(a.getDistanceKm(), b.getDistanceKm())) // 거리순 정렬
                 .toList();
+    }
+
+    // 개인 업체 등록 여부 확인 (createdBy 기반)
+    public boolean checkPersonalCompanyExists(Integer userId) {
+        log.info("개인 업체 중복 확인 - userId: {}", userId);
+
+        boolean exists = companyRepository.existsByCreatedByAndType(userId, "P");
+
+        log.info("개인 업체 중복 확인 결과 - userId: {}, exists: {}", userId, exists);
+
+        return exists;
     }
 
 }
