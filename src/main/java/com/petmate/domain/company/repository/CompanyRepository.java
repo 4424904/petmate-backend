@@ -5,6 +5,7 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,4 +29,21 @@ public interface CompanyRepository extends JpaRepository<CompanyEntity, Integer>
 
     // 특정 상태의 업체 목록을 등록일 내림차순으로 조회(관리자용)
     List<CompanyEntity> findByStatusOrderByCreatedAtDesc(String status);
+
+    // 지리적 범위 내 업체 조회 (성능 최적화)
+    @Query("""
+        SELECT c FROM CompanyEntity c
+        WHERE c.status = 'A'
+        AND c.latitude IS NOT NULL
+        AND c.longitude IS NOT NULL
+        AND c.latitude BETWEEN :minLat AND :maxLat
+        AND c.longitude BETWEEN :minLng AND :maxLng
+        ORDER BY c.createdAt DESC
+    """)
+    List<CompanyEntity> findNearbyCompanies(
+        @Param("minLat") BigDecimal minLat,
+        @Param("maxLat") BigDecimal maxLat,
+        @Param("minLng") BigDecimal minLng,
+        @Param("maxLng") BigDecimal maxLng
+    );
 }

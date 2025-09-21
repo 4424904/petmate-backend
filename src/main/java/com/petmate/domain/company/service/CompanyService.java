@@ -423,15 +423,31 @@ public class CompanyService {
             Double radiusKm,
             String serviceType
     ) {
+        log.info("근처 업체 조회 시작 - 위치: ({}, {}), 반경: {}km, 서비스타입: {}",
+                userLat, userLng, radiusKm, serviceType);
 
-        // 승인된 업체만 조회
-        List<CompanyEntity> approvedCompanies = companyRepository.findByStatusOrderByCreatedAtDesc("A");
-        log.info("승인된 업체 총 {}개", approvedCompanies.size());
+        // 1. 사각형 범위 계산 (대략적인 지리적 필터링)
+        double latDelta = radiusKm / 111.0; // 위도 1도 ≈ 111km
+        double lngDelta = radiusKm / (111.0 * Math.cos(Math.toRadians(userLat))); // 경도는 위도에 따라 변함
 
-        return approvedCompanies.stream()
-                .filter(company -> company.getLatitude() != null && company.getLongitude() != null) // 좌표 있는 업체만 조회
+        BigDecimal minLat = BigDecimal.valueOf(userLat - latDelta);
+        BigDecimal maxLat = BigDecimal.valueOf(userLat + latDelta);
+        BigDecimal minLng = BigDecimal.valueOf(userLng - lngDelta);
+        BigDecimal maxLng = BigDecimal.valueOf(userLng + lngDelta);
+
+        log.info("사각형 범위 - 위도: {} ~ {}, 경도: {} ~ {}",
+                minLat, maxLat, minLng, maxLng);
+
+        // 2. 사각형 범위로 DB에서 미리 필터링 (성능 최적화)
+        List<CompanyEntity> nearbyCompanies = companyRepository.findNearbyCompanies(
+                minLat, maxLat, minLng, maxLng);
+
+        log.info("DB에서 필터링된 업체 수: {}개", nearbyCompanies.size());
+
+        // 3. 줄어든 데이터로만 정확한 거리 계산 및 최종 필터링
+        return nearbyCompanies.stream()
                 .map(company -> {
-                    // 거리 계산
+                    // 정확한 거리 계산
                     double distance = DistanceCalculatorUtil.calculateDistance(
                             userLat,
                             userLng,
@@ -439,22 +455,17 @@ public class CompanyService {
                             company.getLongitude().doubleValue()
                     );
 
-                    // dto 생성 후 거리 설정
+                    // DTO 생성 후 거리 설정
                     CompanyResponseDto companyResponseDto = mapToResponseDto(company);
                     companyResponseDto.setDistanceKm(distance);
 
-                    log.info("업체 '{}': 좌표({},{}), 거리={}km",
-                            company.getName(),
-                            company.getLatitude(),
-                            company.getLongitude(),
-                            distance);
-
                     return companyResponseDto;
                 })
-                .filter(dto -> dto.getDistanceKm() <= radiusKm)
+                .filter(dto -> dto.getDistanceKm() <= radiusKm) // 정확한 반경 내 업체만
                 .filter(dto -> serviceType == null || serviceType.isEmpty() ||
-                        dto.getRepService().equals(serviceType))
+                        dto.getRepService().equals(serviceType)) // 서비스 타입 필터
                 .sorted((a, b) -> Double.compare(a.getDistanceKm(), b.getDistanceKm())) // 거리순 정렬
+                .limit(50) // 성능을 위해 최대 50개로 제한
                 .toList();
     }
 

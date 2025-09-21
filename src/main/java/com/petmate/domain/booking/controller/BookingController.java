@@ -173,5 +173,25 @@ public class BookingController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    // 결제 실패/취소로 인한 예약 삭제 (인증 불필요)
+    @DeleteMapping("/payment-failed/{id}")
+    public ResponseEntity<BookingResponseDto> deleteBookingForPaymentFailed(@PathVariable Integer id) {
+        log.info("결제 실패로 인한 예약 삭제 요청 id={}", id);
+
+        try {
+            BookingResponseDto responseDto = bookingService.deleteReservation(id);
+
+            if (responseDto.isSuccess()) {
+                return ResponseEntity.ok(responseDto);
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
+            }
+        } catch (Exception e) {
+            log.error("결제 실패로 인한 예약 삭제 중 오류 발생", e);
+            BookingResponseDto errResponse = BookingResponseDto.fail("예약 삭제 중 오류가 발생했습니다.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errResponse);
+        }
+    }
+
 
 }

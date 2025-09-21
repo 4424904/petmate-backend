@@ -16,4 +16,8 @@ public class OperatingHours {
     private LocalTime startTime;
     private LocalTime endTime;
     private boolean closed;
+
+    public boolean isClosed() {
+        return closed;
+    }
 }
