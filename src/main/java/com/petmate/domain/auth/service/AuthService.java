@@ -59,7 +59,7 @@ public class AuthService {
                         user.getEmail(),
                         user.getName(),
                         user.getNickName(),
-                        user.getProfileImage(),
+                        toImgUrl(user.getProfileImage()),
                         role,
                         user.getBirthDate() != null ? user.getBirthDate().toString() : null,
                         user.getGender(),
