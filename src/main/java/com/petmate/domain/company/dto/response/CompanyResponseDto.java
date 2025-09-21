@@ -47,4 +47,7 @@ public class CompanyResponseDto {
     private List<String> serviceNames;      // 파싱된 서비스명 리스트 ["돌봄", "산책"]
     private List<Map<String, String>> weeklySchedule;   // 요일별 영업시간 스케줄
     private Double distanceKm; // 사용자 위치로부터의 거리(km)
+
+    // 업체 이미지 정보
+    private List<CompanyImageDto> images;    // 업체 이미지 목록
 }

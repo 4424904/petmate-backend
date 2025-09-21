@@ -1,6 +1,7 @@
 package com.petmate.domain.company.repository;
 
 import com.petmate.domain.company.entity.CompanyEntity;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -20,6 +21,10 @@ public interface CompanyRepository extends JpaRepository<CompanyEntity, Integer>
 
     // 개인 업체 등록 여부 확인 (createdBy + type 기반)
     boolean existsByCreatedByAndType(Integer createdBy, String type);
+
+    // 생년월일로 시작하는 biz_reg_no 개수 조회 (개인업체 순차번호 생성용)
+    @Query("SELECT COUNT(c) FROM CompanyEntity c WHERE c.bizRegNo LIKE CONCAT(:ssnFirst, '%') AND c.type = 'P'")
+    long countBySsnFirstPattern(@Param("ssnFirst") String ssnFirst);
 
     // 특정 상태의 업체 목록을 등록일 내림차순으로 조회(관리자용)
     List<CompanyEntity> findByStatusOrderByCreatedAtDesc(String status);

@@ -2,10 +2,13 @@ package com.petmate.domain.company.service;
 
 import com.petmate.common.service.ImageService;
 import com.petmate.common.util.CodeUtil;
+import com.petmate.common.entity.ImageEntity;
+import com.petmate.common.repository.ImageRepository;
 import com.petmate.domain.company.dto.request.CompanyRegisterRequestDto;
 import com.petmate.domain.company.dto.request.CompanyUpdateRequestDto;
 import com.petmate.domain.company.dto.response.BusinessInfoResponseDto;
 import com.petmate.domain.company.dto.response.CompanyResponseDto;
+import com.petmate.domain.company.dto.response.CompanyImageDto;
 import com.petmate.domain.company.entity.CompanyEntity;
 import com.petmate.domain.company.repository.CompanyRepository;
 import com.petmate.domain.company.util.BusinessHoursCalculator;
@@ -29,6 +32,7 @@ public class CompanyService {
     private final CompanyRepository companyRepository;
     private final CodeUtil codeUtil;
     private final ImageService imageService;
+    private final ImageRepository imageRepository;
 
     @Transactional
     public CompanyResponseDto registerCompany(CompanyRegisterRequestDto dto, Integer userId) {
@@ -94,15 +98,18 @@ public class CompanyService {
                 .createdBy(userId)
                 .descText(dto.getIntroduction())
                 .createdAt(java.time.LocalDateTime.now())
-                .status("P");  // 명시적으로 승인대기 상태 설정
+                .status("A");  // 명시적으로 승인대기 상태 설정
 
         // 개인(일반인) vs 사업자별 추가 정보
         if ("PERSONAL".equals(dto.getType())) {
             // JWT 토큰 기반 신원 인증을 별도 API로 처리 완료
             log.info("개인 업체 등록: repName={}", dto.getRepresentativeName());
 
+            // 개인업체 biz_reg_no 자동 생성 (생년월일 + 순차번호)
+            String generatedBizRegNo = generatePersonalBizRegNo(dto.getSsnFirst());
+
             builder.ssnFirst(dto.getSsnFirst());
-            builder.bizRegNo(dto.getSsnFirst());
+            builder.bizRegNo(generatedBizRegNo);
         } else {
             builder.bizRegNo(dto.getBizRegNo());
         }
@@ -115,10 +122,16 @@ public class CompanyService {
         if (dto.getImages() != null && !dto.getImages().isEmpty()) {
             log.info("업체 이미지 저장 시작 - 파일 개수: {}", dto.getImages().size());
             try {
+                // 이미지 저장용 reference_id 생성 (개인업체는 하이픈 제거한 생년월일만 사용)
+                String imageReferenceId = "P".equals(savedCompany.getType()) ?
+                        savedCompany.getSsnFirst() : savedCompany.getBizRegNo();
+
+                log.info("이미지 저장 - reference_id: {}, type: {}", imageReferenceId, savedCompany.getType());
+
                 List<com.petmate.common.entity.ImageEntity> savedImages = imageService.uploadMultipleImages(
                         dto.getImages(),        // 업로드할 파일들
                         "03",                   // IMAGE_TYPE 코드 (COMPANY_REG)
-                        savedCompany.getId().toString(),   // 업체 ID (Long 타입으로 변환)
+                        imageReferenceId,       // 개인: 생년월일(하이픈X), 사업자: 사업자번호
                         true                    // 첫 번째 이미지를 썸네일로 설정
                 );
                 log.info("업체 이미지 {} 개 저장 완료! 저장된 이미지 IDs: {}",
@@ -248,6 +261,11 @@ public class CompanyService {
         List<String> serviceNames = ServiceParser.parseServices(entity.getServices(), entity.getRepService());
         List<Map<String, String>> weeklySchedule = BusinessHoursCalculator.calculateWeeklySchedule(entity.getOperatingHours());
 
+        // 업체 이미지 조회 (개인업체는 하이픈 제거한 생년월일로 조회)
+        String imageReferenceId = "P".equals(entity.getType()) ?
+                entity.getSsnFirst() : entity.getBizRegNo();
+        List<CompanyImageDto> images = getCompanyImages(imageReferenceId);
+
 
         return CompanyResponseDto.builder()
                 .id(entity.getId())
@@ -276,7 +294,66 @@ public class CompanyService {
                 .todayHours(todayHours)
                 .serviceNames(serviceNames)
                 .weeklySchedule(weeklySchedule)
+                .images(images)
                 .build();
+    }
+
+    /**
+     * 업체 이미지 조회 (reference_id = biz_no, reference_type = "03")
+     */
+    private List<CompanyImageDto> getCompanyImages(String bizRegNo) {
+        log.info("업체 이미지 조회 시작 - bizRegNo: {}", bizRegNo);
+
+        if (bizRegNo == null || bizRegNo.trim().isEmpty()) {
+            log.warn("bizRegNo가 null 또는 빈 문자열입니다.");
+            return List.of(); // 빈 리스트 반환
+        }
+
+        try {
+            List<ImageEntity> imageEntities = imageRepository.findActiveImagesByReference("03", bizRegNo);
+            log.info("조회된 이미지 개수: {} - bizRegNo: {}", imageEntities.size(), bizRegNo);
+
+            return imageEntities.stream()
+                    .map(image -> {
+                        log.info("이미지 변환 중 - id: {}, filePath: {}, displayOrder: {}",
+                                image.getId(), image.getFilePath(), image.getDisplayOrder());
+                        return CompanyImageDto.builder()
+                                .id(image.getId())
+                                .filePath(image.getFilePath())
+                                .originalName(image.getOriginalName())
+                                .altText(image.getAltText())
+                                .description(image.getDescription())
+                                .displayOrder(image.getDisplayOrder())
+                                .isThumbnail("Y".equals(image.getIsThumbnail()))
+                                .mimeType(image.getMimeType())
+                                .fileSize(image.getFileSize())
+                                .build();
+                    })
+                    .toList();
+        } catch (Exception e) {
+            log.error("업체 이미지 조회 중 오류 발생 - bizRegNo: {}, error: {}", bizRegNo, e.getMessage(), e);
+            return List.of(); // 오류 시 빈 리스트 반환
+        }
+    }
+
+    /**
+     * 개인업체 biz_reg_no 자동 생성 (생년월일 + 순차번호)
+     */
+    private String generatePersonalBizRegNo(String ssnFirst) {
+        log.info("개인업체 biz_reg_no 생성 시작 - ssnFirst: {}", ssnFirst);
+
+        // 해당 생년월일로 시작하는 biz_reg_no 개수 조회
+        long count = companyRepository.countBySsnFirstPattern(ssnFirst);
+
+        // 순차번호 생성 (1부터 시작, 5자리 패딩)
+        long nextNumber = count + 1;
+        String sequenceNumber = String.format("%05d", nextNumber);
+
+        String generatedBizRegNo = ssnFirst + "-" + sequenceNumber;
+
+        log.info("개인업체 biz_reg_no 생성 완료 - {} (기존 개수: {})", generatedBizRegNo, count);
+
+        return generatedBizRegNo;
     }
 
     /**
