@@ -74,6 +74,10 @@ public class SecurityConfig {
                         // Public API
                         .requestMatchers(HttpMethod.GET, "/pet/breeds", "/pet/breeds/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/company/nearby").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/company/*/service-types").permitAll()  // 업체별 서비스 유형 조회
+                        .requestMatchers(HttpMethod.GET, "/api/companies").permitAll()  // 업체 목록 조회
+                        .requestMatchers(HttpMethod.GET, "/api/products/companies").permitAll()  // 상품용 업체 목록
+                        .requestMatchers(HttpMethod.GET, "/api/service-categories").permitAll()  // 서비스 카테고리 조회
 
                         // 타임슬롯 조회 허용 추가 (이 줄을 추가하세요!)
                         .requestMatchers(HttpMethod.GET, "/api/products/*/available-slots").permitAll()

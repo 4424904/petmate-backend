@@ -469,4 +469,93 @@ public class CompanyService {
         return exists;
     }
 
+    /**
+     * 업체별 제공 서비스 유형 조회
+     */
+    public List<String> getCompanyServiceTypes(Integer companyId) {
+        CompanyEntity company = companyRepository.findById(companyId)
+                .orElseThrow(() -> new IllegalArgumentException("업체를 찾을 수 없습니다."));
+
+        // 승인된 업체만 조회 가능 (임시로 주석 처리하여 모든 업체 조회 가능하게)
+        // if (!"A".equals(company.getStatus())) {
+        //     throw new IllegalArgumentException("승인되지 않은 업체입니다.");
+        // }
+
+        List<String> serviceTypes = ServiceParser.parseServiceTypes(company.getServices());
+
+        // 서비스 유형이 비어있다면 대표 서비스로 대체
+        if (serviceTypes.isEmpty() && company.getRepService() != null) {
+            String repServiceCode = convertRepServiceToCode(company.getRepService());
+            if (repServiceCode != null) {
+                serviceTypes.add(repServiceCode);
+            }
+        }
+
+        // 개발용: 서비스 유형이 없거나 적을 때 임시 할당 (실제 운영 시 제거 필요)
+        if (serviceTypes.size() <= 1) {
+            List<String> diverseServiceTypes = getTemporaryServiceTypes(companyId);
+            return diverseServiceTypes;
+        }
+
+        return serviceTypes;
+    }
+
+    /**
+     * 대표 서비스 코드를 프론트엔드 서비스 타입 코드로 변환
+     */
+    private String convertRepServiceToCode(String repService) {
+        return switch(repService) {
+            case "1" -> "C"; // 돌봄
+            case "2" -> "W"; // 산책
+            case "3" -> "G"; // 미용
+            case "4" -> "M"; // 병원
+            case "9" -> "E"; // 기타
+            default -> {
+                log.warn("알 수 없는 대표 서비스 코드: {}", repService);
+                yield null;
+            }
+        };
+    }
+
+    /**
+     * 개발/테스트용: 업체별 임시 서비스 유형 할당 (실제 운영 시 제거 필요)
+     */
+    private List<String> getTemporaryServiceTypes(Integer companyId) {
+        // 업체 ID에 따라 다양한 서비스 유형 할당
+        return switch(companyId % 7) {
+            case 0 -> List.of("C"); // 돌봄만
+            case 1 -> List.of("W"); // 산책만
+            case 2 -> List.of("G"); // 미용만
+            case 3 -> List.of("M"); // 병원만
+            case 4 -> List.of("C", "W"); // 돌봄 + 산책
+            case 5 -> List.of("G", "M"); // 미용 + 병원
+            case 6 -> List.of("C", "W", "G"); // 돌봄 + 산책 + 미용
+            default -> List.of("E"); // 기타
+        };
+    }
+
+    /**
+     * 모든 승인된 업체 조회 (상품 등록용)
+     */
+    public List<CompanyResponseDto> getAllApprovedCompanies() {
+        log.info("모든 승인된 업체 조회 시작");
+
+        // 승인된 업체들만 조회 (임시로 모든 업체 조회하도록 수정)
+        List<CompanyEntity> companies = companyRepository.findAll();
+        log.info("전체 업체 {} 개 조회됨", companies.size());
+
+        // 각 업체의 서비스 정보 로깅
+        companies.forEach(company -> {
+            log.info("업체 [{}] - ID: {}, Services: {}, RepService: {}",
+                    company.getName(), company.getId(), company.getServices(), company.getRepService());
+        });
+
+        List<CompanyResponseDto> result = companies.stream()
+                .map(this::mapToResponseDto)
+                .toList();
+
+        log.info("변환된 업체 {} 개 반환", result.size());
+        return result;
+    }
+
 }

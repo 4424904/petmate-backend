@@ -186,4 +186,13 @@ public class CompanyController {
         return ResponseEntity.ok(companies);
     }
 
+    // 업체별 제공 서비스 유형 조회
+    @GetMapping("/{id}/service-types")
+    public ResponseEntity<List<String>> getCompanyServiceTypes(@PathVariable Integer id) {
+        log.info("업체별 서비스 유형 조회 요청 - companyId: {}", id);
+
+        List<String> serviceTypes = companyService.getCompanyServiceTypes(id);
+        return ResponseEntity.ok(serviceTypes);
+    }
+
 }
