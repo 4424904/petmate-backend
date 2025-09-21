@@ -10,13 +10,17 @@ import com.petmate.security.jwt.JwtUtil;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
 
 @RestController
 @RequestMapping("/auth")
@@ -27,6 +31,9 @@ public class AuthController {
     private final AuthService authService;
     private final JwtUtil jwtUtil;
     private final RefreshTokenCleanupService cleanupService;
+
+    @Value("${app.front-base-url:http://localhost:3000}")
+    private String frontBaseUrl;
 
     private boolean isLocal(HttpServletRequest req) {
         String host = req.getServerName();
@@ -163,5 +170,28 @@ public class AuthController {
     public ResponseEntity<String> cleanupExpiredTokens() {
         int deletedCount = cleanupService.manualCleanup();
         return ResponseEntity.ok("정리 완료: " + deletedCount + "개의 만료된 토큰을 삭제했습니다.");
+    }
+}
+
+@RestController
+@RequiredArgsConstructor
+@Slf4j
+class OAuth2RedirectController {
+
+    @Value("${app.front-base-url:http://localhost:3000}")
+    private String frontBaseUrl;
+
+    /** OAuth2 리다이렉트 엔드포인트 */
+    @GetMapping("/oauth2/redirect")
+    public void oauth2Redirect(
+            @RequestParam(required = false) String accessToken,
+            @RequestParam(required = false) String next,
+            HttpServletResponse response) throws IOException {
+
+        String nextPath = (next != null && next.startsWith("/")) ? next : "/home";
+        String redirectUrl = frontBaseUrl + "/oauth2/redirect?accessToken=" + accessToken + "&next=" + nextPath;
+
+        log.info("[OAuth2] Redirecting to frontend: {}", redirectUrl);
+        response.sendRedirect(redirectUrl);
     }
 }
