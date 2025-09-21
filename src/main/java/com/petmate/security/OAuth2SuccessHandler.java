@@ -87,6 +87,9 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         UserEntity ue = userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalStateException("가입 직후 사용자 조회 실패: " + email));
 
+        log.info("🔍 OAuth2 로그인 사용자 정보: id={}, email={}, role={}, status={}",
+                ue.getId(), ue.getEmail(), ue.getRole(), ue.getStatus());
+
         // ✅ 탈퇴/비활성: 복구 페이지로 리다이렉트 (토큰/쿠키 발급 금지)
         if (isWithdrawnStatus(ue.getStatus())) {
             String next = req.getParameter("next");
