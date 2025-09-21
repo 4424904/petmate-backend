@@ -9,7 +9,7 @@ import lombok.*;
 @Getter @Setter @Builder @NoArgsConstructor @AllArgsConstructor
 public class PetmateCertEntity extends BaseEntity {
     @Id @GeneratedValue(strategy=GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
     @Column(name="USER_ID", nullable=false)
     private Long userId;

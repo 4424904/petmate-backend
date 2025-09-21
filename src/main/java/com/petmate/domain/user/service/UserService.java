@@ -1,3 +1,4 @@
+// src/main/java/com/petmate/domain/user/service/UserService.java
 package com.petmate.domain.user.service;
 
 import com.petmate.domain.img.entity.ProfileImageMap;
@@ -77,7 +78,6 @@ public class UserService {
     public Long apply(String email, PetmateApplyRequest req) {
         log.info("=== 펫메이트 신청 시작 === email={}", email);
 
-        // 없으면 기본 생성(role=3, status=2)
         UserEntity user = userRepository.findByEmail(email).orElseGet(() ->
                 userRepository.save(
                         userFactory.create(
@@ -92,7 +92,6 @@ public class UserService {
                 )
         );
 
-        // 기본 정보 갱신(역할/상태 비변경) — birthDate 반영
         userFactory.update(
                 user,
                 req.getName(),
@@ -103,20 +102,17 @@ public class UserService {
                 req.getProvider()
         );
 
-        // 역할 병합
         String oldRole = user.getRole();
         String newRole = mergeToPetmate(oldRole);
         user.setRole(newRole);
         user.setStatus(STATUS_PETMATE);
 
-        // 프로필 이미지
         if (req.getProfile() != null && !req.getProfile().isEmpty()) {
             userFileService.storeProfile(user, req.getProfile());
         } else {
             userFileService.storeDefaultProfileIfAbsent(user);
         }
 
-        // 자격증 저장
         userFileService.storeCertificates(user, req.getCertificates());
 
         userRepository.save(user);
@@ -132,7 +128,6 @@ public class UserService {
         UserEntity user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다: " + email));
 
-        // 기본 정보 업데이트
         userFactory.update(
                 user,
                 req.getName(),
@@ -143,12 +138,10 @@ public class UserService {
                 req.getProvider()
         );
 
-        // 역할 설정
         String currentRole = user.getRole();
         String newRole = calculateNewRole(currentRole, targetRole);
         user.setRole(newRole);
 
-        // 상태 업데이트
         if ("3".equals(targetRole) || "4".equals(targetRole)) {
             user.setStatus(STATUS_PETMATE);
         } else {
@@ -172,16 +165,15 @@ public class UserService {
     /** 기본 유저 생성/동기화 (소셜 로그인 시) */
     @Transactional
     public Long applyBasicUser(String email,
-                               String provider,
-                               String name,
-                               String nickName,
-                               String phone,
-                               String gender,
-                               String birthDate,
-                               String profileImageUrl) {
+                                  String provider,
+                                  String name,
+                                  String nickName,
+                                  String phone,
+                                  String gender,
+                                  String birthDate,
+                                  String profileImageUrl) {
         log.info("=== applyBasicUser 시작 === email={}, birthDate={}", email, birthDate);
 
-        // 없으면 USER 생성(role=1, status=1)
         UserEntity user = userRepository.findByEmail(email).orElseGet(() ->
                 userRepository.save(
                         userFactory.create(
@@ -196,7 +188,6 @@ public class UserService {
                 )
         );
 
-        // 역할/상태는 되돌리지 않음
         userFactory.update(
                 user,
                 name,
@@ -207,7 +198,6 @@ public class UserService {
                 provider
         );
 
-        // 프로필 이미지 처리
         ensureSocialProfileImages(user.getEmail(), profileImageUrl);
 
         userRepository.save(user);
@@ -254,7 +244,6 @@ public class UserService {
     public Long applyPetOwner(String email, PetmateApplyRequest req) {
         log.info("=== 반려인 신청 시작 === email={}", email);
 
-        // 없으면 기본 생성(role=2, status=1)
         UserEntity user = userRepository.findByEmail(email).orElseGet(() ->
                 userRepository.save(
                         userFactory.create(
@@ -269,7 +258,6 @@ public class UserService {
                 )
         );
 
-        // 기본 정보 갱신
         userFactory.update(
                 user,
                 req.getName(),
@@ -280,12 +268,10 @@ public class UserService {
                 req.getProvider()
         );
 
-        // 역할 병합
         String oldRole = user.getRole();
         String newRole = mergeToPetOwner(oldRole);
         user.setRole(newRole);
 
-        // 프로필 이미지
         if (req.getProfile() != null && !req.getProfile().isEmpty()) {
             userFileService.storeProfile(user, req.getProfile());
         } else {
@@ -308,15 +294,9 @@ public class UserService {
         UserEntity user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다: " + email));
 
-        if (req.getName() != null && !req.getName().isBlank()) {
-            user.setName(req.getName());
-        }
-        if (req.getNickName() != null && !req.getNickName().isBlank()) {
-            user.setNickName(req.getNickName());
-        }
-        if (req.getPhone() != null && !req.getPhone().isBlank()) {
-            user.setPhone(req.getPhone());
-        }
+        if (req.getName() != null && !req.getName().isBlank()) user.setName(req.getName());
+        if (req.getNickName() != null && !req.getNickName().isBlank()) user.setNickName(req.getNickName());
+        if (req.getPhone() != null && !req.getPhone().isBlank()) user.setPhone(req.getPhone());
 
         if (req.getGender() != null && !req.getGender().isBlank()) {
             String g = req.getGender().trim().toUpperCase();
@@ -343,7 +323,7 @@ public class UserService {
                 user.getBirthDate(), user.getGender(), user.getNickName());
     }
 
-    /** ✅ 파일 포함 오버로드: pictureFile 저장까지 처리 */
+    /** 파일 포함 오버로드 */
     @Transactional
     public void updateMyInfo(String email, UserUpdateRequest req, MultipartFile pictureFile) {
         log.info("📌 내 정보 수정+파일 => email={}, birthDate={}", email, req.getBirthDate());
@@ -351,7 +331,6 @@ public class UserService {
         UserEntity user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다: " + email));
 
-        // 필드 반영
         if (req.getName() != null && !req.getName().isBlank()) user.setName(req.getName());
         if (req.getNickName() != null && !req.getNickName().isBlank()) user.setNickName(req.getNickName());
         if (req.getPhone() != null && !req.getPhone().isBlank()) user.setPhone(req.getPhone());
@@ -373,7 +352,6 @@ public class UserService {
             user.setProfileImage(req.getProfileImageUrl());
         }
 
-        // 파일이 있으면 저장하고 UUID 반영
         if (pictureFile != null && !pictureFile.isEmpty()) {
             String uuid = userFileService.storeProfile(user, pictureFile);
             user.setProfileImage(uuid);
@@ -421,7 +399,6 @@ public class UserService {
         userRepository.save(user);
     }
 
-    // UserService.java
     public Map<String,Object> findByEmail(String email){
         var u = userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다: " + email));
@@ -432,13 +409,11 @@ public class UserService {
                 "nickname", u.getNickName(),
                 "gender", u.getGender(),
                 "birthDate", u.getBirthDate()!=null? u.getBirthDate().toString():null,
-                // ✅ 절대 URL로 교체
                 "picture", findProfileImageByEmail(email),
                 "provider", u.getProvider(),
                 "role", u.getRole()
         );
     }
-
 
     // =========================
     // Utils

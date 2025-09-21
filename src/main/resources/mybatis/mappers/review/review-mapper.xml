@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.petmate.domain.review.repository.mybatis.ReviewMapper">
+
+    <insert id="insertReviewKeywords">
+        INSERT INTO review_keyword_mapping (review_id, keyword_id)
+        VALUES
+        <foreach collection="keywordIds" item="kid" separator=",">
+            (#{reviewId}, #{kid})
+        </foreach>
+        ON DUPLICATE KEY UPDATE keyword_id = VALUES(keyword_id)
+    </insert>
+
+    <delete id="deleteKeywordsByReviewId">
+        DELETE FROM review_keyword_mapping
+        WHERE review_id = #{reviewId}
+    </delete>
+
+    <select id="selectKeywordsByReviewId"
+            resultType="com.petmate.domain.review.repository.mybatis.ReviewMapper$KeywordRow">
+        SELECT
+        k.id           AS id,
+        k.label        AS label,
+        k.category     AS category,
+        k.service_type AS serviceType
+        FROM review_keyword_mapping m
+        JOIN review_keyword k ON k.id = m.keyword_id
+        WHERE m.review_id = #{reviewId}
+        ORDER BY k.id
+    </select>
+
+    <select id="selectKeywordsByReviewIds"
+            resultType="com.petmate.domain.review.repository.mybatis.ReviewMapper$KeywordWithReviewRow">
+        SELECT
+        m.review_id    AS reviewId,
+        k.id           AS id,
+        k.label        AS label,
+        k.category     AS category,
+        k.service_type AS serviceType
+        FROM review_keyword_mapping m
+        JOIN review_keyword k ON k.id = m.keyword_id
+        WHERE m.review_id IN
+        <foreach collection="reviewIds" item="rid" open="(" close=")" separator=",">
+            #{rid}
+        </foreach>
+        ORDER BY m.review_id, k.id
+    </select>
+
+</mapper>

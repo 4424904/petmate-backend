@@ -63,40 +63,42 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
                         // Static
-                        .requestMatchers(HttpMethod.GET,
-                                "/files/**", "/static/**", "/favicon.ico", "/error", "/img/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/files/**", "/static/**", "/favicon.ico", "/error", "/img/**").permitAll()
 
                         // Auth endpoints
                         .requestMatchers("/auth/signin", "/auth/signup", "/auth/refresh", "/auth/signout").permitAll()
 
-                        // ✅ Restore endpoint 공개
+                        // Restore
                         .requestMatchers(HttpMethod.POST, "/user/restore").permitAll()
+
                         // Public API
                         .requestMatchers(HttpMethod.GET, "/pet/breeds", "/pet/breeds/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/company/nearby").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/company/*/service-types").permitAll()  // 업체별 서비스 유형 조회
-                        .requestMatchers(HttpMethod.GET, "/api/companies").permitAll()  // 업체 목록 조회
-                        .requestMatchers(HttpMethod.GET, "/api/products/companies").permitAll()  // 상품용 업체 목록
-                        .requestMatchers(HttpMethod.GET, "/api/service-categories").permitAll()  // 서비스 카테고리 조회
+                        .requestMatchers(HttpMethod.GET, "/api/company/*/service-types").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/companies").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/products/companies").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/service-categories").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/review-keywords/**").permitAll()   // ★ 추가
 
-                        // 타임슬롯 조회 허용 추가 (이 줄을 추가하세요!)
+                        // Products time-slots
                         .requestMatchers(HttpMethod.GET, "/api/products/*/available-slots").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/products/*/refresh-slots").permitAll()
+
+                        // Payment
                         .requestMatchers(HttpMethod.POST, "/api/payment/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/payment/**").permitAll()
                         .requestMatchers("/api/payment/danal/**").permitAll()
 
-                        // 파일 업로드(인증 필요)
                         // Upload (need auth)
                         .requestMatchers(HttpMethod.POST, "/upload/pet").authenticated()
 
-                        // Me endpoints - HTTP 메서드별로 명시적 설정
+                        // Me
                         .requestMatchers(HttpMethod.GET, "/auth/me").authenticated()
                         .requestMatchers(HttpMethod.GET, "/user/me").authenticated()
-                        .requestMatchers(HttpMethod.PUT, "/user/me").authenticated()  // ✅ 추가
+                        .requestMatchers(HttpMethod.PUT, "/user/me").authenticated()
                         .requestMatchers(HttpMethod.DELETE, "/user/me").authenticated()
 
-                        // Pet APIs
+                        // Pet
                         .requestMatchers(HttpMethod.GET, "/pet/my", "/pet/my/**").authenticated()
                         .requestMatchers(HttpMethod.POST, "/pet/apply").authenticated()
                         .requestMatchers(HttpMethod.PUT, "/pet/**").authenticated()
