@@ -75,37 +75,45 @@ public class AuthController {
                 .body("로그아웃 성공");
     }
 
-    /** AccessToken 재발급 (refresh 쿠키 필요) */
     @PostMapping("/refresh")
     public ResponseEntity<TokenResponseDto> refresh(HttpServletRequest request) {
+        String origin = request.getHeader("Origin");
+        String host   = request.getServerName();
+        String cookieStr = request.getHeader("Cookie"); // 원문 쿠키 확인용
+        log.info("[AUTH] /auth/refresh called. Origin={}, Host={}, CookieHeader={}", origin, host, cookieStr);
+
         String refreshToken = null;
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             for (Cookie c : cookies) {
+                log.info("[AUTH] cookie: {}={}", c.getName(), c.getValue() != null ? "***" : null);
                 if ("refreshToken".equals(c.getName())) {
                     refreshToken = c.getValue();
-                    break;
                 }
             }
         }
         if (refreshToken == null || refreshToken.isBlank()) {
-            log.warn("[AUTH] refresh 401 - no refreshToken cookie. serverName={}", request.getServerName());
+            log.warn("[AUTH] refresh 401 - no refreshToken cookie. scheme={}, host={}, origin={}",
+                    request.getScheme(), host, origin);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        TokenResponseDto newToken = authService.refreshAccessToken(refreshToken);
-
-        boolean local = isLocal(request);
-        if (newToken.getRefreshToken() != null && !newToken.getRefreshToken().isBlank()) {
-            ResponseCookie rc = buildRefreshCookie(newToken.getRefreshToken(), local);
-            log.info("[AUTH] refresh ok - new refresh cookie set. local={}", local);
-            return ResponseEntity.ok()
-                    .header(HttpHeaders.SET_COOKIE, rc.toString())
-                    .body(new TokenResponseDto(newToken.getAccessToken()));
+        try {
+            TokenResponseDto newToken = authService.refreshAccessToken(refreshToken);
+            boolean local = isLocal(request);
+            if (newToken.getRefreshToken() != null && !newToken.getRefreshToken().isBlank()) {
+                ResponseCookie rc = buildRefreshCookie(newToken.getRefreshToken(), local);
+                return ResponseEntity.ok()
+                        .header(HttpHeaders.SET_COOKIE, rc.toString())
+                        .body(new TokenResponseDto(newToken.getAccessToken()));
+            }
+            return ResponseEntity.ok(new TokenResponseDto(newToken.getAccessToken()));
+        } catch (Exception ex) {
+            log.warn("[AUTH] refresh 401 - invalid/expired refresh. msg={}", ex.getMessage());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        log.info("[AUTH] refresh ok - access only");
-        return ResponseEntity.ok(new TokenResponseDto(newToken.getAccessToken()));
     }
+
 
     /** 내 정보 조회 (access 토큰만 검증) */
     @GetMapping("/me")

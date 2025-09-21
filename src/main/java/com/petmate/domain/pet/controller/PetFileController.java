@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.security.Principal;
 import java.util.Map;
 
-
 @RestController
 @RequestMapping("/upload")
 @RequiredArgsConstructor
@@ -19,6 +18,7 @@ public class PetFileController {
 
     private final PetFileService petFileService;
 
+    /** 반려동물 이미지 업로드 */
     @PostMapping("/pet")
     public ResponseEntity<Map<String, String>> uploadPetImage(
             @RequestParam("file") MultipartFile file,
@@ -27,7 +27,10 @@ public class PetFileController {
         if (principal == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        String url = petFileService.savePetImage(file, principal.getName());
+
+        Long userId = Long.parseLong(principal.getName());
+        String url = petFileService.savePetImage(file, userId);
+
         return ResponseEntity.ok(Map.of("url", url));
     }
 }

@@ -1,12 +1,16 @@
+// ====================================
 // src/main/java/com/petmate/domain/pet/repository/jpa/PetBreedRepository.java
+// ====================================
 package com.petmate.domain.pet.repository.jpa;
 
 import com.petmate.domain.pet.entity.PetBreedEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 
+@Repository
 public interface PetBreedRepository extends JpaRepository<PetBreedEntity, Long> {
 
     List<PetBreedEntity> findBySpeciesOrderByNameAsc(String species);

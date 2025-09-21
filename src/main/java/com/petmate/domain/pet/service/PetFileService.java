@@ -1,7 +1,5 @@
 package com.petmate.domain.pet.service;
 
-import com.petmate.domain.user.entity.UserEntity;
-import com.petmate.domain.user.repository.jpa.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,20 +16,16 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class PetFileService {
 
-    private final UserRepository userRepository;
-
     @Value("${app.public-img-url}")
     private String publicImgUrl;
 
-    /** 이미지 저장 후 공개 URL 반환 */
-    public String savePetImage(MultipartFile file, String userEmail) throws IOException {
+    /**
+     * 반려동물 이미지 저장 후 접근 가능한 공개 URL 반환
+     */
+    public String savePetImage(MultipartFile file, Long userId) throws IOException {
         if (file == null || file.isEmpty()) {
             throw new IllegalArgumentException("파일이 비어 있습니다.");
         }
-
-        Long userId = userRepository.findByEmail(userEmail)
-                .map(UserEntity::getId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자: " + userEmail));
 
         String baseDir = "c:/petmate/" + userId + "/pet/";
         Files.createDirectories(Path.of(baseDir));
@@ -45,7 +39,7 @@ public class PetFileService {
         Path savePath = Path.of(baseDir, filename);
         file.transferTo(savePath.toFile());
 
-        // ✅ 절대 URL 반환 (application.yml 값 활용)
+        // application.yml/app.properties에 지정된 publicImgUrl 기반으로 URL 생성
         return publicImgUrl + "pet/" + userId + "/" + filename;
     }
 }
