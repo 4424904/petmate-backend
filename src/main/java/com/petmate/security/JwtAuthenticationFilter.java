@@ -64,7 +64,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
-        log.info("[JWT-DBG] uri=" + uri);
+        log.info("[JWT-DBG]L uri=" + uri);
+        System.out.println("[JWT-DBG]P uri=" + uri);
         if (isPublicPath(uri)) {
             System.out.println("[JWT-DBG] public path " + uri + " -> pass");
             chain.doFilter(request, response);
