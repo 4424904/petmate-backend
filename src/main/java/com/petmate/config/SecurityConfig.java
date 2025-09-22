@@ -31,9 +31,7 @@ public class SecurityConfig {
     private final OAuth2SuccessHandler oAuth2SuccessHandler;
 
     @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+    public PasswordEncoder passwordEncoder() { return new BCryptPasswordEncoder(); }
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration cfg) throws Exception {
@@ -64,8 +62,9 @@ public class SecurityConfig {
                         // Preflight
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
-                        // Static
-                        .requestMatchers(HttpMethod.GET, "/files/**", "/static/**", "/favicon.ico", "/error", "/img/**").permitAll()
+                        // Static (이미지 포함)
+                        .requestMatchers("/img/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/files/**", "/static/**", "/favicon.ico", "/error").permitAll()
 
                         // Auth endpoints
                         .requestMatchers("/auth/signin", "/auth/signup", "/auth/refresh", "/auth/signout").permitAll()
