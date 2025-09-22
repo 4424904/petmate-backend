@@ -12,13 +12,9 @@ import com.petmate.domain.booking.repository.jpa.BookingRepository;
 import com.petmate.domain.user.repository.jpa.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-<<<<<<< HEAD
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-=======
-import org.springframework.data.domain.PageRequest;
->>>>>>> ea1543b5233146b9006eb2d1e3dd05ad78f90955
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -34,11 +30,7 @@ public class ReviewService {
     private final CompanyRepository companyRepository;
     private final ReviewMapper reviewMapper;
 
-<<<<<<< HEAD
     private static final String RESV_STATUS_COMPLETED = "1";
-=======
-    private static final String RESV_STATUS_COMPLETED = "2";
->>>>>>> ea1543b5233146b9006eb2d1e3dd05ad78f90955
 
     private void validateRequest(ReviewRequestDto req) {
         if (req == null) throw new IllegalArgumentException("요청이 없습니다.");
@@ -102,7 +94,6 @@ public class ReviewService {
         return ReviewResponseDto.from(saved, kws);
     }
 
-    /** 컨트롤러에서 요구 */
     @Transactional
     public ReviewResponseDto getMyReviewByReservation(Integer reservationId, Integer ownerUserId) {
         ReviewEntity r = reviewRepository
@@ -130,7 +121,6 @@ public class ReviewService {
 
         List<Integer> rids = reviews.stream().map(ReviewEntity::getId).toList();
 
-        // 배치 조회 후 그룹핑
         var rows = reviewMapper.selectKeywordsByReviewIds(rids);
         Map<Integer, List<ReviewResponseDto.KeywordDto>> kwMap = rows.stream()
                 .collect(Collectors.groupingBy(
@@ -152,16 +142,14 @@ public class ReviewService {
     public void deleteMyReview(Integer reviewId, Integer ownerUserId) {
         ReviewEntity r = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new IllegalArgumentException("리뷰가 없습니다."));
-        Long ownerId = r.getOwnerUser().getId(); // UserEntity PK = Long
+        Long ownerId = r.getOwnerUser().getId();
         if (!Objects.equals(ownerId, ownerUserId.longValue()))
             throw new IllegalStateException("본인 리뷰만 삭제할 수 있습니다.");
 
         reviewMapper.deleteKeywordsByReviewId(reviewId);
         reviewRepository.delete(r);
     }
-<<<<<<< HEAD
 
-    // ReviewService.java
     @Transactional
     public List<ReviewResponseDto> getReviewsByCompany(Integer companyId, int page, int size) {
         PageRequest pr = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "id"));
@@ -187,7 +175,4 @@ public class ReviewService {
                 .map(r -> ReviewResponseDto.from(r, kwMap.getOrDefault(r.getId(), List.of())))
                 .toList();
     }
-
-=======
->>>>>>> ea1543b5233146b9006eb2d1e3dd05ad78f90955
 }

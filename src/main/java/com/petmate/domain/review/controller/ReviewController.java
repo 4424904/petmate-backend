@@ -75,16 +75,15 @@ public class ReviewController {
         reviewService.deleteMyReview(reviewId, ownerUserId);
         return ResponseEntity.noContent().build();
     }
-<<<<<<< HEAD
 
+    /** 회사별 리뷰 목록 조회 (공개 API) */
     @GetMapping("/company/{companyId}")
     public ResponseEntity<List<ReviewResponseDto>> getByCompany(
             @PathVariable Integer companyId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
+
         List<ReviewResponseDto> list = reviewService.getReviewsByCompany(companyId, page, size);
         return ResponseEntity.ok(list);
     }
-=======
->>>>>>> ea1543b5233146b9006eb2d1e3dd05ad78f90955
 }

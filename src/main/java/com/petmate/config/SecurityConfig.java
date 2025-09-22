@@ -31,7 +31,9 @@ public class SecurityConfig {
     private final OAuth2SuccessHandler oAuth2SuccessHandler;
 
     @Bean
-    public PasswordEncoder passwordEncoder() { return new BCryptPasswordEncoder(); }
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration cfg) throws Exception {
@@ -75,23 +77,13 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/pet/breeds", "/pet/breeds/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/company/nearby").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/company/*/service-types").permitAll()
-<<<<<<< HEAD
                         .requestMatchers(HttpMethod.GET, "/api/company/public/*").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/companies").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/products/companies").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/service-categories").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/review-keywords/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/files/view").permitAll()
-                        // Reviews: 회사별 조회 공개
                         .requestMatchers(HttpMethod.GET, "/api/reviews/company/**").permitAll()
-=======
-                        .requestMatchers(HttpMethod.GET, "/api/company/public/*").permitAll()      // 업체별 서비스 유형 조회(공개)
-                        .requestMatchers(HttpMethod.GET, "/api/companies").permitAll()             // 업체 목록 조회
-                        .requestMatchers(HttpMethod.GET, "/api/products/companies").permitAll()    // 상품용 업체 목록
-                        .requestMatchers(HttpMethod.GET, "/api/service-categories").permitAll()    // 서비스 카테고리 조회
-                        .requestMatchers(HttpMethod.GET, "/api/review-keywords/**").permitAll()    // 리뷰 키워드 공개
-                        .requestMatchers(HttpMethod.GET, "/api/files/view").permitAll()            // 파일 조회 공개
->>>>>>> ea1543b5233146b9006eb2d1e3dd05ad78f90955
 
                         // Products time-slots
                         .requestMatchers(HttpMethod.GET, "/api/products/*/available-slots").permitAll()
@@ -118,14 +110,11 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PUT, "/pet/**").authenticated()
                         .requestMatchers(HttpMethod.DELETE, "/pet/**").authenticated()
 
-<<<<<<< HEAD
-                        // Review APIs (인증 필요)
+                        // Review APIs
                         .requestMatchers(HttpMethod.POST, "/api/reviews", "/api/review").authenticated()
                         .requestMatchers(HttpMethod.GET, "/api/reviews/my/**", "/api/reviews/reservation/**").authenticated()
                         .requestMatchers(HttpMethod.DELETE, "/api/reviews/**").authenticated()
 
-=======
->>>>>>> ea1543b5233146b9006eb2d1e3dd05ad78f90955
                         .anyRequest().authenticated()
                 )
                 .oauth2Login(o -> o
@@ -149,6 +138,7 @@ public class SecurityConfig {
         c.setAllowedMethods(List.of("GET","POST","PUT","PATCH","DELETE","OPTIONS"));
         c.setAllowedHeaders(List.of("Authorization","Content-Type","X-Requested-With"));
         c.setAllowCredentials(true);
+
         UrlBasedCorsConfigurationSource s = new UrlBasedCorsConfigurationSource();
         s.registerCorsConfiguration("/**", c);
         return s;
