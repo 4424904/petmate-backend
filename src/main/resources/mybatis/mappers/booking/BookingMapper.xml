@@ -11,11 +11,11 @@
         INSERT INTO reservation (
         OWNER_USER_ID, COMPANY_ID, PRODUCT_ID, STATUS,
         START_DT, END_DT, PET_COUNT, SPECIAL_REQUEST,
-        TOTAL_PRICE, PAYMENT_STATUS, CREATED_AT
+        TOTAL_PRICE, PAYMENT_STATUS, SELECTED_PET_IDS, CREATED_AT
         ) VALUES (
         #{ownerUserId}, #{companyId}, #{productId}, '0',
         #{startDt}, #{endDt}, #{petCount}, #{specialRequest},
-        #{totalPrice}, '0', NOW()
+        #{totalPrice}, '0', #{selectedPetIds}, NOW()
         )
     </insert>
 
@@ -94,7 +94,19 @@
         WHEN '3' THEN '결제실패'
         ELSE '알 수 없음'
         END as paymentStatusName,
-        r.CREATED_AT as createdAt
+        r.CREATED_AT as createdAt,
+        (SELECT GROUP_CONCAT(pet.NAME ORDER BY pet.NAME SEPARATOR ', ')
+         FROM pet
+         WHERE pet.OWNER_USER_ID = r.OWNER_USER_ID
+         AND (r.SELECTED_PET_IDS IS NULL OR r.SELECTED_PET_IDS = '' OR JSON_CONTAINS(r.SELECTED_PET_IDS, CAST(pet.ID AS JSON)))) as petNames,
+        (SELECT GROUP_CONCAT(CONCAT(pet.NAME, '(',
+                                   COALESCE(breed.NAME, '품종미상'), ' ',
+                                   COALESCE(pet.AGE_YEAR, 0), '살)')
+                           ORDER BY pet.NAME SEPARATOR ', ')
+         FROM pet
+         LEFT JOIN breed ON pet.BREED_ID = breed.ID
+         WHERE pet.OWNER_USER_ID = r.OWNER_USER_ID
+         AND (r.SELECTED_PET_IDS IS NULL OR r.SELECTED_PET_IDS = '' OR JSON_CONTAINS(r.SELECTED_PET_IDS, CAST(pet.ID AS JSON)))) as petInfo
         FROM reservation r
         LEFT JOIN company c ON r.company_id = c.ID
         LEFT JOIN product p ON r.product_id = p.ID
@@ -152,7 +164,19 @@
         WHEN '3' THEN '결제실패'
         ELSE '알 수 없음'
         END as paymentStatusName,
-        r.CREATED_AT as createdAt
+        r.CREATED_AT as createdAt,
+        (SELECT GROUP_CONCAT(pet.NAME ORDER BY pet.NAME SEPARATOR ', ')
+         FROM pet
+         WHERE pet.OWNER_USER_ID = r.OWNER_USER_ID
+         AND (r.SELECTED_PET_IDS IS NULL OR r.SELECTED_PET_IDS = '' OR JSON_CONTAINS(r.SELECTED_PET_IDS, CAST(pet.ID AS JSON)))) as petNames,
+        (SELECT GROUP_CONCAT(CONCAT(pet.NAME, '(',
+                                   COALESCE(breed.NAME, '품종미상'), ' ',
+                                   COALESCE(pet.AGE_YEAR, 0), '살)')
+                           ORDER BY pet.NAME SEPARATOR ', ')
+         FROM pet
+         LEFT JOIN breed ON pet.BREED_ID = breed.ID
+         WHERE pet.OWNER_USER_ID = r.OWNER_USER_ID
+         AND (r.SELECTED_PET_IDS IS NULL OR r.SELECTED_PET_IDS = '' OR JSON_CONTAINS(r.SELECTED_PET_IDS, CAST(pet.ID AS JSON)))) as petInfo
         FROM reservation r
         LEFT JOIN user u ON r.OWNER_USER_ID = u.ID
         LEFT JOIN product p ON r.PRODUCT_ID = p.ID

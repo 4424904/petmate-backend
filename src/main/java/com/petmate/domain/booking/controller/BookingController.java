@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Controller
+@RestController
 @RequestMapping("/api/booking")
 @RequiredArgsConstructor
 //@CrossOrigin(origins = "*") // 모든 도메인 허용

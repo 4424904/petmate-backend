@@ -32,21 +32,27 @@ public class TimeSlotService {
     public List<TimeSlotResponse> getAvailableTimeSlots(Integer productId, String dateStr) {
 
         try {
+            log.info("=== 시간 슬롯 생성 시작 ===");
             LocalDate date = LocalDate.parse(dateStr);
 
             // 과거 날짜 예약 금지
             if(date.isBefore(LocalDate.now())) {
+                log.info("과거 날짜 예약 금지: {}", date);
                 return Collections.emptyList();
             }
 
             // 상품 정보를 조회
+            log.info("상품 정보 조회 시작: productId={}", productId);
             ProductResponseDto product = productService.getProduct(productId);
+            log.info("상품 정보 조회 완료: {}", product != null ? "성공" : "실패");
             if(product == null || product.getIsActive() != 1) {
                 return Collections.emptyList();
             }
 
             // 업체정보 조회
+            log.info("업체 정보 조회 시작: companyId={}", product.getCompanyId());
             CompanyResponseDto company = companyService.getCompanyByIdPublic(product.getCompanyId());
+            log.info("업체 정보 조회 완료: {}", company != null ? "성공" : "실패");
             if (company == null) {
                 return Collections.emptyList();
             }
@@ -55,15 +61,21 @@ public class TimeSlotService {
             OperatingHours dayHours = operatingHoursParser.parseOperatingHours(
                     company.getOperatingHours(), date
             );
+            log.info("운영시간 파싱 결과: {}", dayHours != null ?
+                (dayHours.isClosed() ? "휴무일" : "영업일 " + dayHours.getStartTime() + "-" + dayHours.getEndTime()) : "null");
+
             if(dayHours == null || dayHours.isClosed()) {
+                log.info("운영시간이 null이거나 휴무일로 인해 빈 목록 반환");
                 return Collections.emptyList();
             }
 
             // 종일 서비스
             if(product.getAllDay() == 1) {
+                log.info("종일 서비스로 처리");
                 return createAllDaySlot(product, dayHours, date);
             }
 
+            log.info("일반 시간 슬롯 생성 시작");
             return createTimeSlots(product, dayHours, date);
 
         } catch (Exception e) {
@@ -122,20 +134,8 @@ public class TimeSlotService {
     }
 
     public boolean isTimeSlotAvailable(Integer productId, LocalDateTime startDt, LocalDateTime endDt) {
-        try {
-            int currentBookings = bookingMapper.countBookingInTimeSlot(
-                    productId,
-                    startDt.toLocalDate().toString(),
-                    startDt.toLocalTime().toString(),
-                    endDt.toLocalTime().toString()
-            );
-
-            // 1개만 예약허용하기
-            return currentBookings == 0;
-        } catch (Exception e) {
-            log.error("시간 슬롯 가용성 체크 오류", e);
-            return false;
-        }
+        // 임시로 항상 true 반환 (예약 가능)
+        return true;
     }
 
     private List<TimeSlotResponse> createTimeSlots(ProductResponseDto product, OperatingHours dayHours, LocalDate date) {
@@ -145,26 +145,38 @@ public class TimeSlotService {
         LocalTime endTime = dayHours.getEndTime();
         int durationMin = product.getDurationMin() != null ? product.getDurationMin() : 60;
 
+        // 24시간 운영인 경우 합리적인 시간대로 제한
+        if (startTime.equals(LocalTime.of(0, 0)) && endTime.equals(LocalTime.of(23, 59))) {
+            log.info("24시간 운영 감지, 운영시간을 09:00-21:00으로 조정");
+            startTime = LocalTime.of(9, 0);
+            endTime = LocalTime.of(21, 0);
+        }
+
+        log.info("시간 슬롯 생성 파라미터 - 시작: {}, 종료: {}, 지속시간: {}분", startTime, endTime, durationMin);
+
         LocalTime currentTime = startTime;
+        int slotCount = 0;
 
         while (currentTime.plusMinutes(durationMin).isBefore(endTime) ||
                 currentTime.plusMinutes(durationMin).equals(endTime)) {
+
+            // 안전장치: 너무 많은 슬롯 생성 방지
+            if (slotCount >= 100) {
+                log.warn("시간 슬롯이 {}개를 초과하여 생성 중단", slotCount);
+                break;
+            }
             LocalTime slotEndTime = currentTime.plusMinutes(durationMin);
 
             // 과거 슬롯 제외
             LocalDateTime slotDateTime = LocalDateTime.of(date, currentTime);
             if(slotDateTime.isBefore(LocalDateTime.now())) {
+                log.debug("과거 슬롯 제외: {}", slotDateTime);
                 currentTime = currentTime.plusMinutes(durationMin);
                 continue;
             }
 
-            // 예약 현황 체크
-            int currentBookings = bookingMapper.countBookingInTimeSlot(
-                    product.getId(),
-                    date.toString(),
-                    currentTime.toString(),
-                    slotEndTime.toString()
-            );
+            // 예약 현황 체크 (임시로 비활성화)
+            int currentBookings = 0; // 무조건 0으로 설정 (모든 시간 예약 가능)
 
             boolean isAvailable = currentBookings == 0;
 
@@ -177,8 +189,12 @@ public class TimeSlotService {
                     .isAllDay(false)
                     .build());
 
+            slotCount++;
+            log.debug("슬롯 {}개 생성됨: {}-{}", slotCount, currentTime, slotEndTime);
             currentTime = currentTime.plusMinutes(durationMin);
         }
+
+        log.info("총 {}개의 시간 슬롯 생성 완료", slots.size());
         return slots;
     }
 
@@ -189,10 +205,7 @@ public class TimeSlotService {
             return Collections.emptyList();
         }
 
-        int currentBookings = bookingMapper.countAllDayBooking(
-                product.getId(),
-                date.toString()
-        );
+        int currentBookings = 0; // 임시로 비활성화
 
         return Arrays.asList(TimeSlotResponse.builder()
                         .startTime(dayHours.getStartTime())

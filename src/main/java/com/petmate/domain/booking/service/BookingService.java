@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.List;
 import java.util.Optional;
@@ -20,10 +21,12 @@ public class BookingService {
 
     private final BookingMapper bookingMapper;
     private final TimeSlotService timeSlotService;
+    private final ObjectMapper objectMapper;
 
     public BookingResponseDto createBooking(BookingCreateRequest request) {
         try {
             log.info("예약 생성 요청: {}", request);
+            log.info("프론트엔드에서 받은 selectedPetIdsList: {}", request.getSelectedPetIdsList());
 
             // 현재 시간으로 강제 설정-테스트용임
             java.time.LocalDateTime now = java.time.LocalDateTime.now();
@@ -36,6 +39,18 @@ public class BookingService {
             request.setStartDt(now);
             request.setEndDt(endTime);
 
+            // 선택된 반려동물 ID들을 JSON 문자열로 변환
+            if (request.getSelectedPetIdsList() != null && !request.getSelectedPetIdsList().isEmpty()) {
+                try {
+                    String selectedPetIdsJson = objectMapper.writeValueAsString(request.getSelectedPetIdsList());
+                    request.setSelectedPetIds(selectedPetIdsJson);
+                    log.info("선택된 반려동물 IDs JSON 변환 성공: {}", selectedPetIdsJson);
+                } catch (Exception e) {
+                    log.error("반려동물 ID 목록 JSON 변환 실패", e);
+                }
+            } else {
+                log.warn("선택된 반려동물 ID 목록이 비어있거나 null입니다.");
+            }
 
             // 예약 생성
             int result = bookingMapper.insertBooking(request);

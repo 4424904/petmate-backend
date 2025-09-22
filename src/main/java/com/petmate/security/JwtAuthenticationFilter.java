@@ -45,9 +45,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 || uri.startsWith("/img/")
                 || uri.equals("/favicon.ico")
                 || uri.equals("/error")
-                // 타임슬롯 API 허용 추가 (이 두 줄을 추가하세요!)
+                // 타임슬롯 API 허용
                 || uri.matches("/api/products/\\d+/available-slots")
-                || uri.matches("/api/products/\\d+/refresh-slots");
+                || uri.matches("/api/products/\\d+/refresh-slots")
+                // 결제 API 허용
+                || uri.startsWith("/api/payment/")
+                // 예약 생성 API 허용
+                || uri.equals("/api/booking");
     }
 
     @Override

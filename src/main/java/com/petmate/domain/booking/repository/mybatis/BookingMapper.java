@@ -33,7 +33,7 @@ public interface BookingMapper {
     int countBookingInTimeSlot(
             @Param("productId") Integer productId,
             @Param("date") String date,
-            @Param("startTime") String startTme,
+            @Param("startTime") String startTime,
             @Param("endTime") String endTime
     );
 

@@ -35,6 +35,10 @@ public class BookingResponseDto {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
+    // 반려동물 정보
+    private String petNames; // 반려동물 이름들 (예: "멍멍이, 야옹이")
+    private String petInfo; // 반려동물 상세 정보 (예: "멍멍이(골든 리트리버 3살), 야옹이(페르시안 2살)")
+
     // API 응답용
     private boolean success;
     private String message;

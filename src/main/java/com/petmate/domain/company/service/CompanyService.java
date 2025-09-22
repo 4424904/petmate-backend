@@ -398,7 +398,8 @@ public class CompanyService {
             Double userLat,
             Double userLng,
             Double radiusKm,
-            String serviceType
+            String serviceType,
+            String keyword
     ) {
         log.info("근처 업체 조회 시작 - 위치: ({}, {}), 반경: {}km, 서비스타입: {}",
                 userLat, userLng, radiusKm, serviceType);
@@ -441,8 +442,12 @@ public class CompanyService {
                 .filter(dto -> dto.getDistanceKm() <= radiusKm) // 정확한 반경 내 업체만
                 .filter(dto -> serviceType == null || serviceType.isEmpty() ||
                         dto.getRepService().equals(serviceType)) // 서비스 타입 필터
+                .filter(dto -> keyword == null || keyword.trim().isEmpty() ||
+                        dto.getName().toLowerCase().contains(keyword.toLowerCase().trim()) ||
+                        dto.getRepName().toLowerCase().contains(keyword.toLowerCase().trim()) ||
+                        dto.getRoadAddr().toLowerCase().contains(keyword.toLowerCase().trim())) // 키워드 필터
                 .sorted((a, b) -> Double.compare(a.getDistanceKm(), b.getDistanceKm())) // 거리순 정렬
-                .limit(50) // 성능을 위해 최대 50개로 제한
+                .limit(30) // 성능을 위해 최대 30개로 제한
                 .toList();
     }
 
