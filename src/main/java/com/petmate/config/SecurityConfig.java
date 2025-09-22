@@ -80,6 +80,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/products/companies").permitAll()    // 상품용 업체 목록
                         .requestMatchers(HttpMethod.GET, "/api/service-categories").permitAll()    // 서비스 카테고리 조회
                         .requestMatchers(HttpMethod.GET, "/api/review-keywords/**").permitAll()    // 리뷰 키워드 공개
+                        .requestMatchers(HttpMethod.GET, "/api/files/view").permitAll()            // 파일 조회 공개
 
                         // Products time-slots
                         .requestMatchers(HttpMethod.GET, "/api/products/*/available-slots").permitAll()

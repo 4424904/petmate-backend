@@ -3,6 +3,7 @@ package com.petmate.controller;
 import com.petmate.common.entity.ImageEntity;
 import com.petmate.common.service.ImageService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -166,7 +167,27 @@ public class FileController {
             return ResponseEntity.badRequest().body(response);
         }
     }
-    
+
+    @GetMapping("/view")
+    public ResponseEntity<?> viewImage(@RequestParam("filePath") String filePath) {
+        try {
+            // S3 URL 생성
+            String imageUrl = imageService.getImageUrl(filePath);
+
+            if (imageUrl != null) {
+                // S3 URL로 리다이렉트
+                return ResponseEntity.status(302)
+                        .header(HttpHeaders.LOCATION, imageUrl)
+                        .build();
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
     @PostMapping("/thumbnail")
     public ResponseEntity<Map<String, Object>> setThumbnail(
             @RequestParam("imageId") Long imageId,
