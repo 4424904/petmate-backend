@@ -45,7 +45,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
     private boolean isLocal(HttpServletRequest req) {
         String h = req.getServerName();
-        return "localhost".equalsIgnoreCase(h) || "127.0.0.1".equals(h);
+        return "localhost".equalsIgnoreCase(h) || "127.0.0.1".equals(h) || "petmate.p-e.kr".equals(h);
     }
     private ResponseCookie buildRefreshCookie(String value, boolean local) {
         String sameSite = local ? "Lax" : "None";

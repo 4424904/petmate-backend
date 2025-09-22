@@ -174,19 +174,28 @@ public class UserService {
                                   String profileImageUrl) {
         log.info("=== applyBasicUser 시작 === email={}, birthDate={}", email, birthDate);
 
-        UserEntity user = userRepository.findByEmail(email).orElseGet(() ->
-                userRepository.save(
-                        userFactory.create(
-                                email,
-                                name,
-                                nickName,
-                                provider,
-                                phone,
-                                ROLE_USER,
-                                STATUS_DEFAULT
-                        )
-                )
-        );
+        Optional<UserEntity> existingUser = userRepository.findByEmail(email);
+        UserEntity user;
+
+        if (existingUser.isPresent()) {
+            user = existingUser.get();
+            log.info("✅ 기존 사용자 찾음: id={}, email={}, role={}, status={}",
+                    user.getId(), user.getEmail(), user.getRole(), user.getStatus());
+        } else {
+            log.info("❌ 기존 사용자 없음 - 새로 생성: email={}", email);
+            user = userRepository.save(
+                    userFactory.create(
+                            email,
+                            name,
+                            nickName,
+                            provider,
+                            phone,
+                            ROLE_USER,
+                            STATUS_DEFAULT
+                    )
+            );
+            log.info("✅ 새 사용자 생성 완료: id={}, email={}", user.getId(), user.getEmail());
+        }
 
         userFactory.update(
                 user,
