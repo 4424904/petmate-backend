@@ -7,6 +7,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Data
 @Builder
@@ -33,6 +35,14 @@ public class BookingCreateRequest {
     @Min(value = 1, message = "펫 마리수는 1 이상이어야 합니다")
     @Max(value = 10, message = "펫 마리수는 10 이하여야 합니다")
     private Integer petCount;
+
+    // 프론트엔드에서 받는 반려동물 ID 목록 (배열)
+    @JsonProperty("selectedPetIds")
+    private List<Long> selectedPetIdsList;
+
+    // 데이터베이스에 저장될 JSON 문자열 (Jackson에서 제외)
+    @com.fasterxml.jackson.annotation.JsonIgnore
+    private String selectedPetIds;
 
     @Size(max = 500, message = "특이사항은 500자 이하여야 합니다")
     private String specialRequest;

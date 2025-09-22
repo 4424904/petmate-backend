@@ -52,5 +52,8 @@ public class BookingEntity extends BaseEntity {
     @Builder.Default
     private String paymentStatus = "0";
 
+    @Column(name = "SELECTED_PET_IDS", columnDefinition = "TEXT")
+    private String selectedPetIds; // JSON 형태로 저장: "[1,2,3]"
+
 
 }

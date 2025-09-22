@@ -95,6 +95,9 @@ public class SecurityConfig {
                         .requestMatchers("/api/payment/danal/**").permitAll()
                         .requestMatchers(HttpMethod.DELETE, "/api/booking/payment-failed/*").permitAll()
 
+                        // Booking (temporary fix)
+                        .requestMatchers(HttpMethod.POST, "/api/booking").permitAll()
+
                         // Upload (need auth)
                         .requestMatchers(HttpMethod.POST, "/upload/pet").authenticated()
 
