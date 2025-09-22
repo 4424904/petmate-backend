@@ -51,7 +51,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 // 결제 API 허용
                 || uri.startsWith("/api/payment/")
                 // 예약 생성 API 허용
-                || uri.equals("/api/booking");
+                || uri.equals("/api/booking")
+                // 상품 API 허용 (상품 등록/수정)
+                || uri.startsWith("/api/products");
     }
 
     @Override
