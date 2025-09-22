@@ -1,0 +1,55 @@
+server:
+  port: 8090
+
+spring:
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 50MB
+  main:
+    allow-bean-definition-overriding: true
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://3.37.65.250:3306/DB_PETMATE?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    username: root
+    password: 1234
+  jpa:
+    hibernate:
+      ddl-auto: validate  # 테스트에서는 validate 사용
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
+        default_batch_fetch_size: 100
+    open-in-view: false
+
+mybatis:
+  config-location: classpath:mybatis/config/mybatis-config.xml
+  mapper-locations: classpath:mybatis/mappers/**/*.xml
+  type-aliases-package: com.petmate.dto
+
+jwt:
+  secret: djdjdjeueueushshshznmqasdklheqweqwasdasxzc
+  issuer: petmate
+  expiration: 3600000
+  refresh-expiration: 2592000000
+
+logging:
+  level:
+    com.petmate: INFO
+    root: WARN
+
+app:
+  upload:
+    dir: /tmp/test-uploads
+  public-img-url: "http://localhost:8090/img/"
+  encryption:
+    secret-key: PetMateSecretKey123456789012
+
+# 테스트용 AWS S3 설정 (실제 값 필요 없음, 빈 값으로 설정)
+aws:
+  s3:
+    bucket: test-bucket
+    access-key: test-access-key
+    secret-key: test-secret-key
+    region: ap-northeast-2

@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.petmate.domain.booking.repository.mybatis.BookingMapper">
+
+    <!-- 예약 생성 -->
+    <insert id="insertBooking"
+            parameterType="com.petmate.domain.booking.dto.request.BookingCreateRequest"
+            useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO reservation (
+        OWNER_USER_ID, COMPANY_ID, PRODUCT_ID, STATUS,
+        START_DT, END_DT, PET_COUNT, SPECIAL_REQUEST,
+        TOTAL_PRICE, PAYMENT_STATUS, CREATED_AT
+        ) VALUES (
+        #{ownerUserId}, #{companyId}, #{productId}, '0',
+        #{startDt}, #{endDt}, #{petCount}, #{specialRequest},
+        #{totalPrice}, '0', NOW()
+        )
+    </insert>
+
+    <!-- 예약 상세 조회 -->
+    <select id="selectBookingDetail" resultType="com.petmate.domain.booking.dto.response.BookingResponseDto">
+        <![CDATA[
+        SELECT
+        r.ID as id,
+        r.OWNER_USER_ID as ownerUserId,
+        u.NAME as ownerUserName,
+        r.COMPANY_ID as companyId,
+        c.NAME as companyName,
+        r.PRODUCT_ID as productId,
+        p.NAME as productName,
+        p.PRICE as productPrice,
+        r.STATUS as status,
+        CASE r.STATUS
+        WHEN '0' THEN '승인대기'
+        WHEN '1' THEN '예약확정'
+        WHEN '2' THEN '예약거절'
+        WHEN '3' THEN '예약취소'
+        ELSE '알 수 없음'
+        END as statusName,
+        r.START_DT as startDt,
+        r.END_DT as endDt,
+        r.PET_COUNT as petCount,
+        r.SPECIAL_REQUEST as specialRequest,
+        r.TOTAL_PRICE as totalPrice,
+        r.PAYMENT_STATUS as paymentStatus,
+        CASE r.PAYMENT_STATUS
+        WHEN '0' THEN '결제전'
+        WHEN '1' THEN '결제완료'
+        WHEN '2' THEN '환불완료'
+        WHEN '3' THEN '결제실패'
+        ELSE '알 수 없음'
+        END as paymentStatusName,
+        r.CREATED_AT as createdAt,
+        r.UPDATED_AT as updatedAt
+        FROM reservation r
+        LEFT JOIN user u ON r.OWNER_USER_ID = u.ID
+        LEFT JOIN company c ON r.COMPANY_ID = c.ID
+        LEFT JOIN product p ON r.PRODUCT_ID = p.ID
+        WHERE r.ID = #{id}
+        ]]>
+    </select>
+
+    <!-- 사용자별 예약 목록 -->
+    <select id="selectBookingByUser" resultType="com.petmate.domain.booking.dto.response.BookingResponseDto">
+        <![CDATA[
+        SELECT
+        r.ID as id,
+        r.COMPANY_ID as companyId,
+        c.NAME as companyName,
+        r.PRODUCT_ID as productId,
+        p.NAME as productName,
+        r.STATUS as status,
+        CASE r.STATUS
+        WHEN '0' THEN '승인대기'
+        WHEN '1' THEN '예약확정'
+        WHEN '2' THEN '예약거절'
+        WHEN '3' THEN '예약취소'
+        ELSE '알 수 없음'
+        END as statusName,
+        r.START_DT as startDt,
+        r.END_DT as endDt,
+        DATE(r.START_DT) as reservationDate,
+        TIME(r.START_DT) as startTime,
+        TIME(r.END_DT) as endTime,
+        r.PET_COUNT as petCount,
+        r.TOTAL_PRICE as totalPrice,
+        r.PAYMENT_STATUS as paymentStatus,
+        CASE r.PAYMENT_STATUS
+        WHEN '0' THEN '결제전'
+        WHEN '1' THEN '결제완료'
+        WHEN '2' THEN '환불완료'
+        WHEN '3' THEN '결제실패'
+        ELSE '알 수 없음'
+        END as paymentStatusName,
+        r.CREATED_AT as createdAt
+        FROM reservation r
+        LEFT JOIN company c ON r.company_id = c.ID
+        LEFT JOIN product p ON r.product_id = p.ID
+        WHERE r.OWNER_USER_ID = #{userId}
+        ]]>
+        <if test="request.status != null and request.status != ''">
+            AND r.STATUS = #{request.status}
+        </if>
+        <if test="request.paymentStatus != null and request.paymentStatus != ''">
+            AND r.PAYMENT_STATUS = #{request.paymentStatus}
+        </if>
+        <if test="request.startDate != null">
+            <![CDATA[
+            AND DATE(r.START_DT) >= #{request.startDate}
+            ]]>
+        </if>
+        <if test="request.endDate != null">
+            <![CDATA[
+            AND DATE(r.START_DT) <= #{request.endDate}
+            ]]>
+        </if>
+        ORDER BY r.CREATED_AT DESC
+        <if test="request.limit != null and request.offset != null">
+            LIMIT #{request.limit} OFFSET #{request.offset}
+        </if>
+    </select>
+
+    <!-- 업체별 예약 목록 -->
+    <select id="selectBookingByCompany" resultType="com.petmate.domain.booking.dto.response.BookingResponseDto">
+        <![CDATA[
+        SELECT
+        r.ID as id,
+        r.OWNER_USER_ID as ownerUserId,
+        u.NAME as ownerUserName,
+        r.product_id as productId,
+        p.NAME as productName,
+        r.STATUS as status,
+        CASE r.STATUS
+        WHEN '0' THEN '승인대기'
+        WHEN '1' THEN '예약확정'
+        WHEN '2' THEN '예약거절'
+        WHEN '3' THEN '예약취소'
+        ELSE '알 수 없음'
+        END as statusName,
+        r.START_DT as startDt,
+        r.END_DT as endDt,
+        r.PET_COUNT as petCount,
+        r.SPECIAL_REQUEST as specialRequest,
+        r.TOTAL_PRICE as totalPrice,
+        r.PAYMENT_STATUS as paymentStatus,
+        CASE r.PAYMENT_STATUS
+        WHEN '0' THEN '결제전'
+        WHEN '1' THEN '결제완료'
+        WHEN '2' THEN '환불완료'
+        WHEN '3' THEN '결제실패'
+        ELSE '알 수 없음'
+        END as paymentStatusName,
+        r.CREATED_AT as createdAt
+        FROM reservation r
+        LEFT JOIN user u ON r.OWNER_USER_ID = u.ID
+        LEFT JOIN product p ON r.PRODUCT_ID = p.ID
+        WHERE r.COMPANY_ID = #{companyId}
+        ]]>
+        <if test="request.status != null and request.status != ''">
+            AND r.STATUS = #{request.status}
+        </if>
+        <if test="request.paymentStatus != null and request.paymentStatus != ''">
+            AND r.PAYMENT_STATUS = #{request.paymentStatus}
+        </if>
+        <if test="request.startDate != null">
+            <![CDATA[
+            AND DATE(r.START_DT) >= #{request.startDate}
+            ]]>
+        </if>
+        <if test="request.endDate != null">
+            <![CDATA[
+            AND DATE(r.START_DT) <= #{request.endDate}
+            ]]>
+        </if>
+        ORDER BY r.CREATED_AT DESC
+        <if test="request.limit != null and request.offset != null">
+            LIMIT #{request.limit} OFFSET #{request.offset}
+        </if>
+    </select>
+
+    <!-- 시간대별 예약 수 체크 -->
+    <select id="countBookingInTimeSlot" resultType="int">
+        <![CDATA[
+        SELECT COUNT(*)
+        FROM reservation
+        WHERE PRODUCT_ID = #{productId}
+        AND DATE(START_DT) = #{date}
+        AND STATUS NOT IN ('2', '3')
+        AND (
+        (TIME(START_DT) <= #{startTime} AND TIME(END_DT) > #{startTime}) OR
+        (TIME(START_DT) < #{endTime} AND TIME(END_DT) >= #{endTime}) OR
+        (TIME(START_DT) >= #{startTime} AND TIME(END_DT) <= #{endTime})
+        )
+        ]]>
+    </select>
+
+    <!-- 종일 예약 수 체크 -->
+    <select id="countAllDayBooking" resultType="int">
+        <![CDATA[
+          SELECT COUNT(*)
+          FROM reservation r
+          INNER JOIN product p ON r.PRODUCT_ID = p.ID
+          WHERE r.PRODUCT_ID = #{productId}
+          AND DATE(r.START_DT) = #{date}
+          AND p.ALL_DAY = 1
+          AND r.STATUS NOT IN ('2', '3')
+        ]]>
+    </select>
+
+    <!-- 예약 상태 업데이트 -->
+    <update id="updateBookingStatus">
+        UPDATE reservation
+        SET STATUS = #{status}, UPDATED_AT = NOW()
+        WHERE ID = #{id}
+    </update>
+
+    <!-- 결제 상태 업데이트 -->
+    <update id="updatePaymentStatus">
+        UPDATE reservation
+        SET PAYMENT_STATUS = #{paymentStatus}, UPDATED_AT = NOW()
+        WHERE ID = #{id}
+    </update>
+
+</mapper>

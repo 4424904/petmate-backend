@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.petmate.common.repository.mybatis.user.MemberMapper">
+
+    <!-- DTO 매핑 -->
+    <resultMap id="MemberMap" type="com.petmate.domain.auth.dto.response.MemberDto">
+        <id     column="NO"   property="no"/>
+        <result column="ID"   property="id"/>
+        <result column="PW"   property="pw"/>
+        <result column="MAIL" property="mail"/>
+    </resultMap>
+
+    <!-- 회원 조회: ID -->
+    <select id="findById"
+            parameterType="string"
+            resultMap="MemberMap">
+        SELECT
+        NO, ID, PW, MAIL, ROLE
+        FROM MEMBER
+        WHERE ID = #{id}
+    </select>
+
+    <!-- 회원 가입 -->
+    <insert id="signup"
+            parameterType="com.petmate.domain.auth.dto.response.MemberDto">
+        INSERT INTO MEMBER (ID, PW, MAIL, ROLE)
+        VALUES (#{id}, #{pw}, #{mail}, #{role})
+    </insert>
+
+</mapper>

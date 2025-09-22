@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.petmate.domain.product.repository.mybatis.ProductMapper">
+
+    <resultMap id="ProductResultMap" type="com.petmate.domain.product.entity.ProductEntity">
+        <id property="id" column="id"/>
+        <result property="companyId" column="company_id"/>
+        <result property="serviceType" column="service_type"/>
+        <result property="name" column="name"/>
+        <result property="price" column="price"/>
+        <result property="allDay" column="all_day"/>
+        <result property="durationMin" column="duration_min"/>
+        <result property="introText" column="intro_text"/>
+        <result property="minPet" column="min_pet"/>
+        <result property="maxPet" column="max_pet"/>
+        <result property="isActive" column="is_active"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+    </resultMap>
+
+    <!-- 복잡한 검색 쿼리 -->
+    <select id="searchProducts" resultMap="ProductResultMap">
+        SELECT p.*, c.name as company_name
+        FROM product p
+        LEFT JOIN company c ON p.company_id = c.id
+        <where>
+            <if test="companyId != null">
+                AND p.company_id = #{companyId}
+            </if>
+            <if test="serviceType != null and serviceType != ''">
+                AND p.service_type = #{serviceType}
+            </if>
+            <if test="minPrice != null">
+                AND p.price >= #{minPrice}
+            </if>
+            <if test="maxPrice != null">
+                AND p.price &lt;= #{maxPrice}
+            </if>
+            <if test="keyword != null and keyword != ''">
+                AND (
+                    p.name LIKE CONCAT('%', #{keyword}, '%')
+                    OR p.intro_text LIKE CONCAT('%', #{keyword}, '%')
+                )
+            </if>
+            <if test="isActive != null">
+                AND p.is_active = #{isActive}
+            </if>
+        </where>
+        ORDER BY p.created_at DESC
+        <if test="limit != null">
+            LIMIT #{limit}
+        </if>
+    </select>
+
+    <!-- 업체별 상품 통계 -->
+    <select id="getProductStatsByCompany" resultType="map">
+        SELECT
+        service_type,
+        COUNT(*) as product_count,
+        AVG(price) as avg_price,
+        MIN(price) as min_price,
+        MAX(price) as max_price
+        FROM product
+        WHERE company_id = #{companyId} AND is_active = 1
+        GROUP BY service_type
+    </select>
+</mapper>

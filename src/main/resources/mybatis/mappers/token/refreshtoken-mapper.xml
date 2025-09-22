@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.petmate.common.repository.mybatis.token.RefreshTokenMapper">
+
+    <insert id="saveToken">
+        INSERT INTO refresh_token (member_no, refresh_token, created_at)
+        VALUES (#{memberNo,jdbcType=BIGINT}, #{token,jdbcType=VARCHAR}, NOW())
+    </insert>
+
+    <delete id="deleteByToken">
+        DELETE FROM refresh_token WHERE refresh_token = #{token,jdbcType=VARCHAR}
+    </delete>
+
+</mapper>
