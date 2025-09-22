@@ -179,9 +179,10 @@ public class CompanyController {
             @RequestParam Double latitude,
             @RequestParam Double longitude,
             @RequestParam(defaultValue = "5.0") Double radius,
-            @RequestParam(required = false) String serviceType
+            @RequestParam(required = false) String serviceType,
+            @RequestParam(required = false) String keyword
     ) {
-        List<CompanyResponseDto> companies = companyService.getNearbyCompanies(latitude, longitude, radius, serviceType);
+        List<CompanyResponseDto> companies = companyService.getNearbyCompanies(latitude, longitude, radius, serviceType, keyword);
 
         return ResponseEntity.ok(companies);
     }
