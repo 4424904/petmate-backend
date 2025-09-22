@@ -75,6 +75,7 @@ public class ReviewController {
         reviewService.deleteMyReview(reviewId, ownerUserId);
         return ResponseEntity.noContent().build();
     }
+<<<<<<< HEAD
 
     @GetMapping("/company/{companyId}")
     public ResponseEntity<List<ReviewResponseDto>> getByCompany(
@@ -84,4 +85,6 @@ public class ReviewController {
         List<ReviewResponseDto> list = reviewService.getReviewsByCompany(companyId, page, size);
         return ResponseEntity.ok(list);
     }
+=======
+>>>>>>> ea1543b5233146b9006eb2d1e3dd05ad78f90955
 }

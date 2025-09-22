@@ -12,9 +12,13 @@ import com.petmate.domain.booking.repository.jpa.BookingRepository;
 import com.petmate.domain.user.repository.jpa.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+<<<<<<< HEAD
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+=======
+import org.springframework.data.domain.PageRequest;
+>>>>>>> ea1543b5233146b9006eb2d1e3dd05ad78f90955
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -30,7 +34,11 @@ public class ReviewService {
     private final CompanyRepository companyRepository;
     private final ReviewMapper reviewMapper;
 
+<<<<<<< HEAD
     private static final String RESV_STATUS_COMPLETED = "1";
+=======
+    private static final String RESV_STATUS_COMPLETED = "2";
+>>>>>>> ea1543b5233146b9006eb2d1e3dd05ad78f90955
 
     private void validateRequest(ReviewRequestDto req) {
         if (req == null) throw new IllegalArgumentException("요청이 없습니다.");
@@ -151,6 +159,7 @@ public class ReviewService {
         reviewMapper.deleteKeywordsByReviewId(reviewId);
         reviewRepository.delete(r);
     }
+<<<<<<< HEAD
 
     // ReviewService.java
     @Transactional
@@ -179,4 +188,6 @@ public class ReviewService {
                 .toList();
     }
 
+=======
+>>>>>>> ea1543b5233146b9006eb2d1e3dd05ad78f90955
 }
