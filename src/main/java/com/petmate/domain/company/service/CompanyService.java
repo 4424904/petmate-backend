@@ -310,8 +310,8 @@ public class CompanyService {
                                 .isThumbnail("Y".equals(image.getIsThumbnail()))
                                 .mimeType(image.getMimeType())
                                 .fileSize(image.getFileSize())
-                                .build();
-                    })
+                                .build()
+                    )
                     .toList();
         } catch (Exception e) {
             log.error("업체 이미지 조회 중 오류 발생 - bizRegNo: {}, error: {}", bizRegNo, e.getMessage(), e);
